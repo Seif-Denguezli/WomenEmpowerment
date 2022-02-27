@@ -8,10 +8,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAspectJAutoProxy
 @EnableScheduling
 @SpringBootApplication
-public class ExamenBlancApplication {
+public class WomenEmpowermentApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ExamenBlancApplication.class, args);
+		SpringApplication.run(WomenEmpowermentApplication.class, args);
 	}
 
 }
