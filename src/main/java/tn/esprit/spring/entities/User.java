@@ -1,6 +1,8 @@
 package tn.esprit.spring.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
@@ -8,6 +10,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,6 +40,14 @@ public class User implements Serializable{
 	
 	// Basic attributes for all actors
 	
+	public User(Long id, String name, String username, String password, Collection<Role> roles) {
+		this.userId = id;
+		this.name = name;
+		this.username = username;
+		this.password = password;
+		this.roles = roles;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long userId;
@@ -58,8 +69,8 @@ public class User implements Serializable{
 	@OneToOne
 	Subscription subscription;
 	
-	@ManyToMany(cascade = CascadeType.ALL)
-	Set<Role> roles;
+	@ManyToMany(fetch = FetchType.EAGER)
+	Collection<Role> roles = new ArrayList<>();
 	
 	@OneToOne
 	User woman; // Reflexive association
@@ -154,7 +165,7 @@ public class User implements Serializable{
 	
 	
 	//******************************************************************//
-	
-	
 
-}
+
+	
+	}

@@ -33,7 +33,5 @@ public class Role implements Serializable {
 	
 	String name;
 	
-	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "roles")
-	Set<User> users;
 
 }
