@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,8 +35,8 @@ public class QuizQuestion implements Serializable {
 	Long questionId;
 	String question;
 	int score;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Answer> answers; // Answers related to questions
-
+	
 }

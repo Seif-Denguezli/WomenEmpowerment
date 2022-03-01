@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,7 +35,7 @@ public class Quiz implements Serializable {
 	Long quizId;
 	
 	String theme;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<QuizQuestion> questions; // Questions related to quizz
 	

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
+import tn.esprit.spring.entities.Answer;
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.QuizQuestion;
@@ -28,6 +29,7 @@ CourseServiceImpl courseService;
 UserCourseService userCourseService;
 @Autowired
 QuizServiceImpl quizService;
+/*******************COURSE*********************/
 @PostMapping(path = "addCourse/{userid}")
 public Course addCourse(@RequestBody Course c,@PathVariable("userid")Long userId) {
 	
@@ -39,6 +41,13 @@ public void deleteCourse(@PathVariable("userId")Long userId,@PathVariable("cours
 	courseService.deleteCourse(userId,courseId);
 	
 }
+
+@PutMapping(path="editCourse")
+public void editCourse(@RequestBody Course c) {
+	courseService.editCourse(c);
+
+}
+/***************************** USER JOIN COURSE**********************/
 @PostMapping(path = "joinCourse/{userid}/{courseid}")
 public void joinCourse(@PathVariable("userid")Long userId,@PathVariable("courseid")Long courseId) {
 	
@@ -50,10 +59,7 @@ public void leaveCourse(@PathVariable("certificateId")Long certificateId) {
    userCourseService.leaveCourse(certificateId);
 	
 }
-@PutMapping(path="editCourse")
-public void editCourse(@RequestBody Course c) {
-	courseService.editCourse(c);
-}
+/************************QUIZ *************************/
 @PostMapping(path = "createQuiz/{courseId}")
 public void createQuiz(@RequestBody Quiz q,@PathVariable("courseId")Long courseId) {
 	
@@ -80,6 +86,12 @@ public void deleteQuestion(@PathVariable("questionId")Long questionId,@PathVaria
 @PutMapping(path="editQuestion")
 public void editQuestion(@RequestBody QuizQuestion q) {
 	quizService.editQuestion(q);
+}
+@PostMapping(path = "addAnswers/{questionId}")
+public void addAnswers(@RequestBody Set<Answer> answer,@PathVariable("questionId")Long questionId) {
+	
+	quizService.addAnswersToQuestion(answer, questionId);
+	
 }
 
 
