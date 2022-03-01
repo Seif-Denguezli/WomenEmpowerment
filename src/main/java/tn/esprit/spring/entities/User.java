@@ -2,6 +2,7 @@ package tn.esprit.spring.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +17,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -52,36 +55,49 @@ public class User implements Serializable{
 	
 	String password;
 	
+	@JsonIgnore
 	@OneToOne
 	Media profilPicture;
 	
+	@JsonIgnore
 	@OneToOne
 	Subscription subscription;
+
 	
+	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL)
 	Set<Role> roles;
 	
+	@JsonIgnore
 	@OneToOne
 	User woman; // Reflexive association
 	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "candidate")
 	Set<Candidacy> candidacies; //Candidatures postulées;
 	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	Set<Appointment> appointments; // Booked appointments
 	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Complaint> complaints; // Created complaints
 	
+	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL)
 	Set<Event> joinedEvents; // Events that user joined
 	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "donor")
 	Set<Donation> donations;
 	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Advertising> advertising;
 	
+
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	Set<Certificate> obtainedCertificates; // Certificates obtained after joining courses
 
@@ -92,10 +108,10 @@ public class User implements Serializable{
 	// Specefic Expert Attributes
 	
 	Long nbCasesSolved;
-	
+	@JsonIgnore
 	@Enumerated(EnumType.STRING)
 	Job job;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Service> createdServices;
 	
@@ -103,7 +119,7 @@ public class User implements Serializable{
 	//******************************************************************//
 	
 	// Specefic Former Attributes
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Course> createdCourses; // Courses created By the former
 	
@@ -115,10 +131,10 @@ public class User implements Serializable{
 	String activityDomain;
 	
 	String address;
-	
+	@JsonIgnore
 	@Temporal(TemporalType.DATE)
 	Date establishmentDate;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Offer> createdOffers;
 	
@@ -128,27 +144,27 @@ public class User implements Serializable{
 	// Specefic Association Attributes
 	
 	int nbEventsCreated;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
-	Set<Event> createdEvents;
+	List<Event> createdEvents;
 	
 	
 	//******************************************************************//
 	
 	// Specefic Forum Attributes
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Post> posts;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	Set<PostLike> postLikes;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	Set<PostDislike> postDislikes;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	Set<PostComment> postComments;
-
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	Set<CommentLike> commentLikes;
 	

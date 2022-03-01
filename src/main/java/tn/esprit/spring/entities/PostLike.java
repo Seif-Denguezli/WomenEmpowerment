@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,16 +28,19 @@ import tn.esprit.spring.enumerations.CandidacyState;
 @Entity
 @ToString
 public class PostLike implements Serializable {
-	
+	@JsonIgnore
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long postLikeId;
 	
 	Date likedAt;
+
+	
 	
 	@ManyToOne
 	User user; // The user who clicked Like
 	
+	@JsonIgnore
 	@ManyToOne
 	Post post; // The post to like
 	

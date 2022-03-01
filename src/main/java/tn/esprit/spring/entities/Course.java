@@ -46,11 +46,14 @@ public class Course implements Serializable {
 	
 	@Temporal(TemporalType.DATE)
 	Date endDate;
-	@JsonIgnore
+
+
+	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course",fetch = FetchType.EAGER)
 	Set<Certificate> certificates;
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+
 	Set<Quiz> quiz; // Quizzes related to course (Unidirectionnelel)
 	
 	
