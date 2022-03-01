@@ -13,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,7 +45,7 @@ public class Service implements Serializable {
 	
 	@Temporal(TemporalType.DATE)
 	Date endDate;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
 	Set<Appointment> appointments;
 	

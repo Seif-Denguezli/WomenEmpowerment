@@ -13,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,10 +45,10 @@ public class Course implements Serializable {
 	
 	@Temporal(TemporalType.DATE)
 	Date endDate;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course")
 	Set<Certificate> certificates;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Quiz> quiz; // Quizzes related to course (Unidirectionnelel)
 	

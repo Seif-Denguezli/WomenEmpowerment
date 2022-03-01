@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,10 +34,10 @@ public class PostLike implements Serializable {
 	Long postLikeId;
 	
 	Date likedAt;
-	
+	@JsonIgnore
 	@ManyToOne
 	User user; // The user who clicked Like
-	
+	@JsonIgnore
 	@ManyToOne
 	Post post; // The post to like
 	

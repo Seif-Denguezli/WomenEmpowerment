@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,13 +39,13 @@ public class Post implements Serializable {
 	Date createdAt;
 	
 	String body;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
 	Set<PostLike> postLikes;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
 	Set<PostDislike> postDislikes;
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
 	Set<PostComment> postComments;
 
