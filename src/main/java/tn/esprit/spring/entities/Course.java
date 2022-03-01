@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -44,10 +45,10 @@ public class Course implements Serializable {
 	@Temporal(TemporalType.DATE)
 	Date endDate;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course",fetch = FetchType.EAGER)
 	Set<Certificate> certificates;
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	Set<Quiz> quiz; // Quizzes related to course (Unidirectionnelel)
 	
 	
