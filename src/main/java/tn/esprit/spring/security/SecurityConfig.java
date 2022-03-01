@@ -39,10 +39,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http) throws Exception {
 		CustomAthenticationFilter customAthenticationFilter = new CustomAthenticationFilter(authenticationManagerBean());
 		//Override Default Login Path from (( localhost:SpringMVC/login )) to (( localhost:SpringMVC/api/login ))
-		customAthenticationFilter.setFilterProcessesUrl("/api/login");
+		customAthenticationFilter.setFilterProcessesUrl("/api/authentication/login");
 		http.csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.authorizeRequests().antMatchers("/api/login/**", "/api/token/refresh/**").permitAll();
+		http.authorizeRequests().antMatchers("/api/authentication/login/**", "/api/authentication/sign-up/**", "/api/token/refresh/**").permitAll();
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/users/**").hasAnyAuthority("ROLE_MANAGER");
 		http.authorizeRequests().anyRequest().authenticated();
 		http.addFilter(customAthenticationFilter);

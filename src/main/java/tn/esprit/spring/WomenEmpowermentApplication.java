@@ -29,17 +29,5 @@ public class WomenEmpowermentApplication {
 		SpringApplication.run(WomenEmpowermentApplication.class, args);
 	}
 	
-	@Bean
-	CommandLineRunner run(IUserService userService) {
-		return args -> {
-			
-			userService.saveRole(new Role(null, "ROLE_USER"));
-			userService.saveRole(new Role(null, "ROLE_ADMIN"));
-			userService.saveRole(new Role(null, "ROLE_SUPERADMIN"));
-			userService.saveRole(new Role(null, "ROLE_MANAGER"));
-			
-			userService.saveUser(new User(1L, "SeifDenguezli", "seifdenguezli", "azerty123", new ArrayList<>()));
-			userService.addRoleToUser("seifdenguezli", "ROLE_MANAGER");
-		};
-	}
+
 }

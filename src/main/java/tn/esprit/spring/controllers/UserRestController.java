@@ -16,9 +16,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,27 +44,36 @@ public class UserRestController {
 	private IUserService userService;
 	
 	@GetMapping("/users")
-	public ResponseEntity<List<User>> getUsers(){
-		return ResponseEntity.ok().body(userService.getUsers());
+	public List<User> getUsers(){
+		return userService.getUsers();
 	}
 	
-	@PostMapping("/user/save")
-	public ResponseEntity<User> saveUser(@RequestBody User user){
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
-		return ResponseEntity.created(uri).body(userService.saveUser(user));
-	}
 	
 	@PostMapping("/role/save")
-	public ResponseEntity<Role> saveRole(@RequestBody Role role){
-		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
-		return ResponseEntity.created(uri).body(userService.saveRole(role));
+	public Role saveRole(@RequestBody Role role){
+		return userService.saveRole(role);
 	}
 	
 	@PostMapping("/user/addRoleToUser/{username}/{role}")
-	public ResponseEntity<?> addRoleToUser(@PathVariable(value="username") String username, @PathVariable(value="role") String role){
+	public void addRoleToUser(@PathVariable(value="username") String username, @PathVariable(value="role") String role){
 		userService.addRoleToUser(username, role);
-		return ResponseEntity.ok().build();
 	}
+	
+	@PutMapping("/user/update/{username}")
+	public User modifyUser(@PathVariable(value="username") String username, @RequestBody User user) {
+		return userService.modifyUser(username, user);
+	}
+	
+	@DeleteMapping("/user/delete/{username}")
+	public void deleteUser(@PathVariable(value="username") String username) {
+		userService.deleteUser(username);
+	}
+	
+	@DeleteMapping("/role/delete/{roleId}")
+	public void deleteRole(@PathVariable(value="roleId") Long roleId) {
+		userService.deleteRole(roleId);
+	}
+	
 	
 	@GetMapping("/token/refresh")
 	public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException{

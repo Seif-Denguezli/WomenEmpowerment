@@ -58,6 +58,14 @@ public class UserServiceImpl implements IUserService, UserDetailsService{
 	public User saveUser(User user) {
 		log.info("Saving new User to the DB");
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		Role role = roleRepository.findByName("ROLE_USER");
+		if (role != null) {
+			user.getRoles().add(role);
+		}
+		else {
+			role = roleRepository.save(new Role(1L, "ROLE_USER"));
+			user.getRoles().add(role);
+		}
 		return userRepository.save(user);
 	}
 
@@ -86,6 +94,29 @@ public class UserServiceImpl implements IUserService, UserDetailsService{
 	public List<User> getUsers() {
 		log.info("Fetching All Users");
 		return userRepository.findAll();
+	}
+
+	@Override
+	public User modifyUser(String username, User user) {
+		log.info("Modifying User to the DB");
+		//user = userRepository.findByUsername(username);
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		return userRepository.save(user);
+	}
+
+	@Override
+	public void deleteUser(String username) {
+		log.info("Deleting User to the DB");
+		User user = userRepository.findByUsername(username);
+		userRepository.delete(user);
+		
+	}
+
+	@Override
+	public void deleteRole(Long roleId) {
+		log.info("Deleting Role to the DB");
+		Role role = roleRepository.findById(roleId).orElse(null);
+		roleRepository.delete(role);
 	}
 
 }
