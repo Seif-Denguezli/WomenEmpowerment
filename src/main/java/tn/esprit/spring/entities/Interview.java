@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +39,7 @@ public class Interview implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	InterviewState interviewState;
-	
+	@JsonIgnore
 	@OneToOne(mappedBy = "interview")
 	Candidacy candidacy;
 	

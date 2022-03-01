@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +34,7 @@ public class Role implements Serializable {
 	Long roleId;
 	
 	String name;
-	
+	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "roles")
 	Set<User> users;
 

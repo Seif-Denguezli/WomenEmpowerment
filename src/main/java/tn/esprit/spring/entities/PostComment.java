@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,16 +40,16 @@ public class PostComment implements Serializable{
 	String commentBody;
 	
 	Date commentedAt;
-	
+	@JsonIgnore
 	@ManyToOne
 	User user; // The user who wants to comment
-	
+	@JsonIgnore
 	@ManyToOne
 	Post post; // The post to comment
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<PostComment> postComments; //Reflexive association : A comment can have multiple replies
-	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "postComment")
 	Set<CommentLike> commentLikes;
 
