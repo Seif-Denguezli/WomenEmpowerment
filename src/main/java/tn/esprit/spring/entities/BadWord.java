@@ -1,17 +1,11 @@
 package tn.esprit.spring.entities;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,15 +22,12 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @ToString
-public class QuizQuestion implements Serializable {
+public class BadWord implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long questionId;
-	String question;
-	int score;
-	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL)
-	Set<Answer> answers; // Answers related to questions
+	Long IdWord;
+	
+	String word;
 
 }

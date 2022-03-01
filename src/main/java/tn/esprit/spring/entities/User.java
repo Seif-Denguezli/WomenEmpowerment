@@ -55,35 +55,48 @@ public class User implements Serializable{
 	
 	String password;
 	
+	@JsonIgnore
 	@OneToOne
 	Media profilPicture;
 	
+	@JsonIgnore
 	@OneToOne
 	Subscription subscription;
+
+	
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL)
 	Set<Role> roles;
+	
 	@JsonIgnore
 	@OneToOne
 	User woman; // Reflexive association
+	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "candidate")
 	Set<Candidacy> candidacies; //Candidatures postulées;
+	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	Set<Appointment> appointments; // Booked appointments
+	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Complaint> complaints; // Created complaints
+	
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL)
 	Set<Event> joinedEvents; // Events that user joined
+	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "donor")
 	Set<Donation> donations;
+	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Advertising> advertising;
+	
+
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	Set<Certificate> obtainedCertificates; // Certificates obtained after joining courses
@@ -95,7 +108,7 @@ public class User implements Serializable{
 	// Specefic Expert Attributes
 	
 	Long nbCasesSolved;
-	
+	@JsonIgnore
 	@Enumerated(EnumType.STRING)
 	Job job;
 	@JsonIgnore
@@ -118,7 +131,7 @@ public class User implements Serializable{
 	String activityDomain;
 	
 	String address;
-	
+	@JsonIgnore
 	@Temporal(TemporalType.DATE)
 	Date establishmentDate;
 	@JsonIgnore

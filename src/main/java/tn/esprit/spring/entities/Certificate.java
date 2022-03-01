@@ -3,6 +3,7 @@ package tn.esprit.spring.entities;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,8 +39,9 @@ public class Certificate implements Serializable {
 	Date obtainingDate;
 	
 	boolean isAquired;
-	@JsonIgnore
-	@ManyToOne
+
+	@ManyToOne(cascade = CascadeType.ALL)
+
 	User user;
 	@JsonIgnore
 	@ManyToOne

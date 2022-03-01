@@ -34,9 +34,12 @@ public class CommentLike implements Serializable {
 	Long commentLikeId;
 	
 	Date likedAt;
+
+	
 	@JsonIgnore
 	@ManyToOne
 	User user; // The user who clicked Like
+	
 	@JsonIgnore
 	@ManyToOne
 	PostComment postComment; // The comment to like
