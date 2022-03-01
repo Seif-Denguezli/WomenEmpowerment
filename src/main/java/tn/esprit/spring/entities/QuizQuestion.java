@@ -38,5 +38,5 @@ public class QuizQuestion implements Serializable {
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Answer> answers; // Answers related to questions
-
+	
 }

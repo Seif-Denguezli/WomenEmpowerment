@@ -6,8 +6,10 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tn.esprit.spring.entities.Answer;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.QuizQuestion;
+import tn.esprit.spring.repository.AnswerRepository;
 import tn.esprit.spring.repository.QuestionRepository;
 import tn.esprit.spring.repository.QuizzRepository;
 import tn.esprit.spring.serviceInterface.courses.QuizService;
@@ -17,6 +19,8 @@ public class QuizServiceImpl implements QuizService {
 QuizzRepository quizzRepository;
 @Autowired
 QuestionRepository questionRepository;
+@Autowired
+AnswerRepository answerRepository;
 	@Override
 	public void addQuestionToQuiz(QuizQuestion q, Long quizId) {
 		questionRepository.save(q);
@@ -53,6 +57,14 @@ QuestionRepository questionRepository;
 	@Override
 	public void editQuestion(QuizQuestion question) {
 		questionRepository.saveAndFlush(question);		
+	}
+
+	@Override
+	public void addAnswersToQuestion(Set<Answer> answers, Long questionId) {
+		answerRepository.saveAll(answers);
+		QuizQuestion qq = questionRepository.findById(questionId).get();
+		qq.setAnswers(answers);
+		questionRepository.save(qq);
 	}
 	
 

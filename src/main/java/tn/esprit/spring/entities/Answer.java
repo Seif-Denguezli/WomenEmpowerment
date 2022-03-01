@@ -29,7 +29,7 @@ public class Answer implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long answerId;
-	
+	String answerContent;
 	boolean isCorrect;
 	
 
