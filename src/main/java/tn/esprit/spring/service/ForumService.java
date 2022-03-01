@@ -80,7 +80,7 @@ public class ForumService {
 		postLike.setPost(p);
 		return postLikeRepo.save(postLike);
 	}
-
+/*
 	public ResponseEntity<?> addDisLike_to_Post(PostDislike postDisLike, Long idPost, Long idUser) {
 		Post p = postRepo.findById(idPost).orElse(null);
 		User u = userRepo.findById(idUser).orElse(null);
@@ -93,7 +93,7 @@ public class ForumService {
 
 		return ResponseEntity.ok().body(get_like_exist(idUser, idPost).getPostLikeId());
 	}
-
+*/
 	public CommentLike addLike_to_Comment(CommentLike commentLike, Long idComment, Long idUser) {
 		User u = userRepo.findById(idUser).orElse(null);
 		PostComment p = postCommentRepo.findById(idComment).orElse(null);
@@ -213,44 +213,25 @@ public class ForumService {
 
 	public Set<PostLike> Get_post_Likes(Long idPost) {
 		Post post1 = postRepo.findById(idPost).orElseThrow(() -> new EntityNotFoundException("post not found"));
-
-		return post1.getPostLikes();
+		Set<PostLike> pp = post1.getPostLikes();
+		for (PostLike postLike : pp) {
+			if (postLike.getIsLiked()==false) {
+				pp.remove(postLike);}
+		}
+		 return pp;
 	}
 
-	public Set<PostDislike> Get_post_DisLikes(Long idPost) {
+	public Set<PostLike> Get_post_DisLikes(Long idPost) {
 		Post post1 = postRepo.findById(idPost).orElseThrow(() -> new EntityNotFoundException("post not found"));
-
-		return post1.getPostDislikes();
-	}
-
-	public Boolean test_like_exist(Long IdUser, Long IdPost) {
-
-		Boolean b = false;
-		Post post1 = postRepo.findById(IdPost).orElseThrow(() -> new EntityNotFoundException("post not found"));
-		Set<PostLike> p = post1.getPostLikes();
-		for (PostLike postLike : p) {
-			if (postLike.getUser().getUserId().equals(IdUser) == true) {
-				b = true;
-			}
-
+		Set<PostLike> pp = post1.getPostLikes();
+		for (PostLike postLike : pp) {
+			if (postLike.getIsLiked()==true) {
+				pp.remove(postLike);}
 		}
-		return b;
+		 return pp;
 	}
 
-	public PostLike get_like_exist(Long IdUser, Long IdPost) {
 
-		Post post1 = postRepo.findById(IdPost).orElseThrow(() -> new EntityNotFoundException("post not found"));
-		User user = userRepo.findById(IdUser).orElseThrow(() -> new EntityNotFoundException("post not found"));
-		Set<PostLike> p = Get_post_Likes(IdPost);
-		for (PostLike postLike : p) {
-			if (postLike.getUser().equals(user)) {
-				return postLike;
-			}
-
-		}
-		return null;
-
-	}
 
 	public ResponseEntity<?> Delete_PostCom(Long idPostCom, Long idUser) {
 		if (postCommentRepo.existsById(idPostCom)) {
@@ -289,6 +270,13 @@ public class ForumService {
 			 */
 		}
 		return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");
+	}
+
+	public ResponseEntity<?> Swap_like_dislike(Long idLike) {
+		PostLike p = postLikeRepo.findById(idLike).orElse(null);
+		p.setIsLiked(! p.getIsLiked());
+		postLikeRepo.saveAndFlush(p);
+		return ResponseEntity.ok().body(p);
 	}
 
 }
