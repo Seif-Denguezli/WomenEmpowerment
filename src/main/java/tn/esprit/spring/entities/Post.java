@@ -41,6 +41,7 @@ public class Post implements Serializable {
 	Date createdAt;
 	
 	String body;
+
 	
 	@JsonIgnore
 	@ManyToOne 
@@ -54,6 +55,7 @@ public class Post implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
 	Set<PostDislike> postDislikes;
 	
+
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
 	Set<PostComment> postComments;

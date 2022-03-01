@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,13 +39,13 @@ public class Candidacy implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	CandidacyState candidacyState;
-	
+	@JsonIgnore
 	@ManyToOne
 	User candidate;
-	
+	@JsonIgnore
 	@ManyToOne
 	Offer offer; 
-	
+	@JsonIgnore
 	@OneToOne
 	Interview interview;
 

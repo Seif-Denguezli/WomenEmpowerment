@@ -34,6 +34,7 @@ public class CommentLike implements Serializable {
 	Long commentLikeId;
 	
 	Date likedAt;
+
 	
 	@JsonIgnore
 	@ManyToOne

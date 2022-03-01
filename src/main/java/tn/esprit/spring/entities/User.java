@@ -2,6 +2,7 @@ package tn.esprit.spring.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -61,6 +62,7 @@ public class User implements Serializable{
 	@JsonIgnore
 	@OneToOne
 	Subscription subscription;
+
 	
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL)
@@ -94,6 +96,7 @@ public class User implements Serializable{
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Advertising> advertising;
 	
+
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	Set<Certificate> obtainedCertificates; // Certificates obtained after joining courses
@@ -143,7 +146,7 @@ public class User implements Serializable{
 	int nbEventsCreated;
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
-	Set<Event> createdEvents;
+	List<Event> createdEvents;
 	
 	
 	//******************************************************************//

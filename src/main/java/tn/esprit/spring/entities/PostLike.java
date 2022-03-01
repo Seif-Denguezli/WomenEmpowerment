@@ -34,6 +34,7 @@ public class PostLike implements Serializable {
 	Long postLikeId;
 	
 	Date likedAt;
+
 	
 	
 	@ManyToOne
