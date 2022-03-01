@@ -31,7 +31,7 @@ public class QuizQuestion implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long questionId;
-	
+	String question;
 	int score;
 	
 	@OneToMany(cascade = CascadeType.ALL)
