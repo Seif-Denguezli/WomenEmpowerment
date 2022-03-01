@@ -36,6 +36,9 @@ public class PostLike implements Serializable {
 	Date likedAt;
 	
 	
+	Boolean isLiked ;
+	
+	@JsonIgnore
 	@ManyToOne
 	User user; // The user who clicked Like
 	
