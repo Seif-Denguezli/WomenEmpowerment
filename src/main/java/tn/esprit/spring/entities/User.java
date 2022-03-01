@@ -1,24 +1,24 @@
 package tn.esprit.spring.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,6 +28,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import tn.esprit.spring.enumerations.Job;
+import tn.esprit.spring.enumerations.Role;
 
 @Getter
 @Setter
@@ -36,41 +37,46 @@ import tn.esprit.spring.enumerations.Job;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @ToString
+@Table(name = "users")
 public class User implements Serializable{
 	
 	// Basic attributes for all actors
-	
-	public User(Long id, String name, String username, String password, Collection<Role> roles) {
-		this.userId = id;
-		this.name = name;
-		this.username = username;
-		this.password = password;
-		this.roles = roles;
-	}
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long userId;
-	
-	String name;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
+
+    @Column(name = "username", unique = true, nullable = false, length = 100)
+    private String username;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
+
 	
 	String email;
 	
 	@Temporal(TemporalType.DATE)
 	Date birthDate;
-	
-	String username;
-	
-	String password;
+
+    @Transient
+    private String accessToken;
+
+    @Transient
+    private String refreshToken;
 	
 	@OneToOne
 	Media profilPicture;
 	
 	@OneToOne
 	Subscription subscription;
-	
-	@ManyToMany(fetch = FetchType.EAGER)
-	Collection<Role> roles = new ArrayList<>();
 	
 	@OneToOne
 	User woman; // Reflexive association

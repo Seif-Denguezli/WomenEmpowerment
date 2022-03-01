@@ -1,122 +1,61 @@
 package tn.esprit.spring.service.user;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
-import javax.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import lombok.extern.slf4j.Slf4j;
-import tn.esprit.spring.entities.Role;
 import tn.esprit.spring.entities.User;
-import tn.esprit.spring.repository.RoleRepository;
+import tn.esprit.spring.enumerations.Role;
 import tn.esprit.spring.repository.UserRepository;
-import tn.esprit.spring.serviceInterface.user.IUserService;
+import tn.esprit.spring.serviceInterface.user.UserService;
 
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * @author sa
+ * @date 29.10.2021
+ * @time 12:03
+ */
 @Service
-@Slf4j
-@Transactional
-public class UserServiceImpl implements IUserService, UserDetailsService{
+public class UserServiceImpl implements UserService
+{
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-	@Autowired
-	private UserRepository userRepository;
-	
-	@Autowired
-	private RoleRepository roleRepository;
-	
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-	
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder)
+    {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepository.findByUsername(username);
-		if (user==null) {
-			log.error("User Not Found in the DB");
-			throw new UsernameNotFoundException("User Not Found in the DB");
-		}
-		else {
-			log.info("User Found in DB : {}", username);
-			
-		}
-		Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-		user.getRoles().forEach(role -> { 
-			authorities.add(new SimpleGrantedAuthority(role.getName()));
-			});
-		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
-	}
+    @Override
+    public User saveUser(User user)
+    {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
+      
 
-	@Override
-	public User saveUser(User user) {
-		log.info("Saving new User to the DB");
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		Role role = roleRepository.findByName("ROLE_USER");
-		if (role != null) {
-			user.getRoles().add(role);
-		}
-		else {
-			role = roleRepository.save(new Role(1L, "ROLE_USER"));
-			user.getRoles().add(role);
-		}
-		return userRepository.save(user);
-	}
+        return userRepository.save(user);
+    }
 
-	@Override
-	public Role saveRole(Role role) {
-		log.info("Saving new Role {} to the DB", role.getName());
-		return roleRepository.save(role);
-	}
+    @Override
+    public Optional<User> findByUsername(String username)
+    {
+        return userRepository.findByUsername(username);
+    }
 
-	@Override
-	public void addRoleToUser(String username, String roleName) {
-		log.info("Adding Role: {} to User: {}", roleName, username);
-		User user = userRepository.findByUsername(username);
-		Role role = roleRepository.findByName(roleName);
-		user.getRoles().add(role);
-		//@Transactional annotation saves everything in the DB without calling the save method again 
-	}
+    @Override
+    @Transactional //Transactional is required when executing an update/delete query.
+    public void changeRole(Role newRole, String username)
+    {
+        userRepository.updateUserRole(username, newRole);
+    }
 
-	@Override
-	public User getUser(String username) {
-		log.info("Fetching User {}", username);
-		return userRepository.findByUsername(username);
-	}
-
-	@Override
-	public List<User> getUsers() {
-		log.info("Fetching All Users");
-		return userRepository.findAll();
-	}
-
-	@Override
-	public User modifyUser(String username, User user) {
-		log.info("Modifying User to the DB");
-		//user = userRepository.findByUsername(username);
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		return userRepository.save(user);
-	}
-
-	@Override
-	public void deleteUser(String username) {
-		log.info("Deleting User to the DB");
-		User user = userRepository.findByUsername(username);
-		userRepository.delete(user);
-		
-	}
-
-	@Override
-	public void deleteRole(Long roleId) {
-		log.info("Deleting Role to the DB");
-		Role role = roleRepository.findById(roleId).orElse(null);
-		roleRepository.delete(role);
-	}
-
+    @Override
+    public List<User> findAllUsers()
+    {
+        return userRepository.findAll();
+    }
 }
