@@ -1,4 +1,4 @@
-package tn.esprit.spring.serviceEvent;
+package tn.esprit.spring.service.event;
 
 import org.springframework.http.ResponseEntity;
 

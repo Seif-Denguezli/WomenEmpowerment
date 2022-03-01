@@ -1,4 +1,4 @@
-package tn.esprit.spring.serviceEvent.Impl;
+package tn.esprit.spring.serviceInterface.event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.repository.EventRepo;
 import tn.esprit.spring.repository.UserRepo;
-import tn.esprit.spring.serviceEvent.EventService;
+import tn.esprit.spring.service.event.EventService;
 
 @Service
 public class EventServiceImpl implements EventService{
@@ -116,7 +116,7 @@ public void affecterEventToUser(Long idEvent, Long idUser) {
 	event.setParticipants(userList);
 	//projectRepo.save(project);
 	
-	eventRepo.save(event);
+	eventRepo.saveAndFlush(event);
 	
 	
 }

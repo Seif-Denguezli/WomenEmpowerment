@@ -1,4 +1,4 @@
-package tn.esprit.spring.serviceEvent.Impl;
+package tn.esprit.spring.serviceInterface.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import tn.esprit.spring.entities.User;
 import tn.esprit.spring.repository.DonationRepo;
 import tn.esprit.spring.repository.EventRepo;
 import tn.esprit.spring.repository.UserRepo;
-import tn.esprit.spring.serviceEvent.DonationService;
+import tn.esprit.spring.service.event.DonationService;
 
 @Service
 public class DonationServiceImpl implements DonationService {
