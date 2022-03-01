@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import tn.esprit.spring.entities.*;
-
-import tn.esprit.spring.service.*;
+import tn.esprit.spring.service.forum.*;
 
 
 
