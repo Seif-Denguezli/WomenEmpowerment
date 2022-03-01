@@ -1,4 +1,4 @@
-package tn.esprit.spring.service;
+package tn.esprit.spring.service.forum;
 
 import java.util.List;
 import java.util.Set;
