@@ -59,15 +59,7 @@ public class DonationServiceImpl implements DonationService {
 		}
 		
 		
-		/*
-		public PostLike addLike_to_Post(PostLike postLike, Long idPost, Long idUser) {
-			Post p = postRepo.findById(idPost).orElse(null);
-			User u = userRepo.findById(idUser).orElse(null);
-
-			postLike.setUser(u);
-			postLike.setPost(p);
-			return postLikeRepo.save(postLike);
-		}*/
+	
 		
 		
 

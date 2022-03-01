@@ -75,40 +75,6 @@ public class EventServiceImpl implements EventService{
 
 
 
-public ResponseEntity<?> DeleteEvent(Long idEvent, Long idUser) {
-	return null;
-	/*	
-	List<User> ListUser = new ArrayList<User>();
-		if (eventRepo.existsById(idEvent)) {
-			
-		
-			Event event1 = 	eventRepo.findById(idEvent).orElseThrow(
-					 ()->new EntityNotFoundException("event not found")
-							 );
-			User user = 	userRepo.findById(idUser).orElseThrow(
-					 ()->new EntityNotFoundException("User not found")
-							 );
-		
-			 for (User user2 : ListUser) {
-			 				 if (user2.equals(user)) {
-			 					eventRepo.delete(event1);
-					 return ResponseEntity.ok().body(event1);
-			   }
-			 
-			else {
-				return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("No permission to delete this post ");
-				}
-			 
-			 	}
-		}
-		else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("post Not Founf");
-			 
-		}
-		return null;
-		
-*/		
-	}
 
 
 	
@@ -121,8 +87,19 @@ public ResponseEntity<?> DeleteEvent(Long idEvent, Long idUser) {
 		
 	}
 
-public void affecterEventToUser(Long idEvent , Long idUser) {
-	
+
+
+@Override
+public Event deletDoation(Long idUser, Long idEvent) {
+	  User usr = userRepo.findById(idUser).get();
+		Event e = eventRepo.findById(idEvent).orElse(null);
+		usr.getCreatedEvents().remove(e);
+		eventRepo.delete(e);
+		return e ;
+}
+
+@Override
+public void affecterEventToUser(Long idEvent, Long idUser) {
 	List<Event> eventList = new ArrayList<Event>();
 	List<User> userList = new ArrayList<User>();
 		
@@ -142,16 +119,6 @@ public void affecterEventToUser(Long idEvent , Long idUser) {
 	eventRepo.save(event);
 	
 	
-	
-}
-
-@Override
-public Event deletDoation(Long idUser, Long idEvent) {
-	  User usr = userRepo.findById(idUser).get();
-		Event e = eventRepo.findById(idEvent).orElse(null);
-		usr.getCreatedEvents().remove(e);
-		eventRepo.delete(e);
-		return e ;
 }
 
 

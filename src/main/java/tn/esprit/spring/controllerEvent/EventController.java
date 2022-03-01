@@ -22,17 +22,17 @@ public class EventController {
 	EventService eventService;
 	@PutMapping("/Update-Event/{idEvent}/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> Update_Post(@RequestBody Event event, @PathVariable("idEvent") Long idEvent, @PathVariable("IdUser") Long IdUser) {
+	public ResponseEntity<?> Update_Event(@RequestBody Event event, @PathVariable("idEvent") Long idEvent, @PathVariable("IdUser") Long IdUser) {
 		return eventService.Update_Event(event,idEvent,IdUser);
 	}
 	@PostMapping("/add-event")
 	@ResponseBody
-	public void addApprenant(@RequestBody Event event)
+	public void addEvent(@RequestBody Event event)
 	{
 		eventService.addEvent(event);
 	} 
 	@DeleteMapping("/Delete-Event/{idEvent}")
-	public void Delete_DisLike( @PathVariable("idEvent") Long idEvent) {
+	public void DeletEvent( @PathVariable("idEvent") Long idEvent) {
 		 eventService.removeEvent(idEvent);
 	}
 	
@@ -45,11 +45,7 @@ public class EventController {
 	}
 
 	  
-	@DeleteMapping(path="removeEvent/{userId}/{EventId}")
-	public void deleteCourse(@PathVariable("userId")Long userId,@PathVariable("EventId")Long EventId) {
-		eventService.DeleteEvent(userId, EventId);
 		
-	}	
 	
 	  
 	  
