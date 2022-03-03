@@ -2,6 +2,7 @@ package tn.esprit.spring.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -15,6 +16,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -51,10 +54,10 @@ public class Event implements Serializable {
 	String link;
 	
 	String place;
-	
+	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "joinedEvents")
-	Set<User> participants;
-	
+	List<User> participants;
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "event")
 	Set<Donation> donations;
 	
