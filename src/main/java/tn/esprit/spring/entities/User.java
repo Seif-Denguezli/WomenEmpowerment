@@ -100,6 +100,8 @@ public class User implements Serializable{
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	Set<Certificate> obtainedCertificates; // Certificates obtained after joining courses
+	@ManyToMany(cascade = CascadeType.ALL)
+	Set<Answer> answers;
 
 
 	

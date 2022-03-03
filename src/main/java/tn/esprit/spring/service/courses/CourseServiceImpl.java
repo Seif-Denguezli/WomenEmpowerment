@@ -7,6 +7,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.User;
@@ -65,5 +66,43 @@ QuizzRepository quizzRepository;
 		quizzRepository.save(Q);
 		
 	}
-
+	@Override
+	public List<Course> displayAllCourses() {
+		return courseRepository.findAll();
+	}
+	@Override
+	public Course displayCourse(Long courseId) {
+		return courseRepository.findById(courseId).get();
+	}
+	@Override
+	public List<User> getAllParticipants(Long courseId) {
+		Course course = courseRepository.findById(courseId).get();
+		List<User> users = new ArrayList<>();
+		Set<Certificate> c = course.getCertificates();
+		for (Certificate certificate : c) {
+			users.add(certificate.getUser());
+		}
+		return users;
+	}
+	@Override
+	public User getParticipant(Long courseId) {
+		Long id = courseRepository.findUserById(courseId);
+		if(id==null) {
+			return null;
+		}
+		else {
+			return userRepository.findById(id).get();
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
