@@ -6,11 +6,6 @@ import tn.esprit.spring.security.UserPrincipal;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * @author sa
- * @date 29.10.2021
- * @time 13:01
- */
 public interface JwtProvider
 {
     String generateToken(UserPrincipal auth);

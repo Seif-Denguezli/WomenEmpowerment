@@ -18,11 +18,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * @author sa
- * @date 29.10.2021
- * @time 13:41
- */
 @Service
 public class JwtRefreshTokenServiceImpl implements JwtRefreshTokenService
 {

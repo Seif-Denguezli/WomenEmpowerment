@@ -22,11 +22,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * @author sa
- * @date 29.10.2021
- * @time 13:01
- */
+
 @Component
 public class JwtProviderImpl implements JwtProvider
 {

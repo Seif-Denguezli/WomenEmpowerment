@@ -5,11 +5,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * @author sa
- * @date 29.10.2021
- * @time 12:15
- */
+
 public class SecurityUtils
 {
     public static final String ROLE_PREFIX = "ROLE_";

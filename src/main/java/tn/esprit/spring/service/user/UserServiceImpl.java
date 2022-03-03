@@ -13,11 +13,7 @@ import tn.esprit.spring.serviceInterface.user.UserService;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * @author sa
- * @date 29.10.2021
- * @time 12:03
- */
+
 @Service
 public class UserServiceImpl implements UserService
 {
@@ -58,4 +54,12 @@ public class UserServiceImpl implements UserService
     {
         return userRepository.findAll();
     }
+
+	@Override
+	@Transactional //Transactional is required when executing an update/delete query.
+	public void makeAdmin(String username) {
+		userRepository.makeAdmin(username);
+		
+	}
+
 }

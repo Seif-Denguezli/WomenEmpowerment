@@ -10,11 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * @author sa
- * @date 29.10.2021
- * @time 14:51
- */
+
 @RestController
 @RequestMapping("api/authentication")//pre-path
 public class AuthenticationController

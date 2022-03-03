@@ -19,11 +19,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import tn.esprit.spring.enumerations.Role;
 import tn.esprit.spring.security.jwt.JwtAuthorizationFilter;
 
-/**
- * @author sa
- * @date 29.10.2021
- * @time 12:25
- */
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter
