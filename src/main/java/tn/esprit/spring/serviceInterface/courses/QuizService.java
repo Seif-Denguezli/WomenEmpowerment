@@ -18,4 +18,8 @@ public void removeQuestion(Long questionId,Long quizId);
 public void editQuestion(QuizQuestion question);
 public void addAnswersToQuestion(Set<Answer> answers,Long questionId);
 public void setCorrectAnswer(Long answerId);
+public Answer answerQuizQuestion(Long idUser,Long idAnswer);
+public int calculScore(Long idUser,Long idQuiz);
+public int userCourseScore(Long idUser,Long idCourse);
+public int userPassed(Long idUser,Long idCourse);
 }
