@@ -48,32 +48,31 @@ public class User implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    Long userId;
 
     @Column(name = "username", unique = true, nullable = false, length = 100)
-    private String username;
+    String username;
 
     @Column(name = "password", nullable = false)
-    private String password;
+    String password;
 
     @Column(name = "name", nullable = false)
-    private String name;
+    String name;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    private Role role;
+    Role role;
 
-	
 	String email;
 	
 	@Temporal(TemporalType.DATE)
 	Date birthDate;
 
     @Transient
-    private String accessToken;
+    String accessToken;
 
     @Transient
-    private String refreshToken;
+    String refreshToken;
 	
 	@JsonIgnore
 	@OneToOne
@@ -82,6 +81,10 @@ public class User implements Serializable{
 	@JsonIgnore
 	@OneToOne
 	Subscription subscription;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+	@JsonIgnore
+	Set<Notification> notifications;
 
 	
 
