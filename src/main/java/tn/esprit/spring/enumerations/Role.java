@@ -1,5 +1,5 @@
 package tn.esprit.spring.enumerations;
 
 public enum Role {
-	USER,ADMIN
+	USER, ADMIN, FORMER, ASSOCIATION, COMPANY, EXPERT
 }
