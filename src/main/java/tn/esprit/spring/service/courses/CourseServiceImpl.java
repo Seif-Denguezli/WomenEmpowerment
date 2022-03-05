@@ -7,6 +7,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.User;
@@ -28,9 +29,14 @@ QuizzRepository quizzRepository;
 		return courseRepository.save(c);
 	}
 	@Override
-	public Course editCourse(Course c) {
+	public Course editCourse(Course c,Long courseId) {
+		Course course = courseRepository.findById(courseId).get();
 		
-		courseRepository.saveAndFlush(c);
+		course.setCourseName(c.getCourseName());
+		course.setEndDate(c.getEndDate());
+		course.setNbHours(c.getNbHours());
+		course.setStartDate(c.getStartDate());
+		courseRepository.flush();
 		
 		return c;
 	}
@@ -61,9 +67,49 @@ QuizzRepository quizzRepository;
 		Course c = courseRepository.findById(idCourse).get();
 		Set<Quiz> quiz = new HashSet<>();
 		quiz.add(Q);
-		c.setQuiz(quiz);
+		c.getQuiz().add(Q);
+	
+		courseRepository.flush();
 		quizzRepository.save(Q);
 		
 	}
-
+	@Override
+	public List<Course> displayAllCourses() {
+		return courseRepository.findAll();
+	}
+	@Override
+	public Course displayCourse(Long courseId) {
+		return courseRepository.findById(courseId).get();
+	}
+	@Override
+	public List<User> getAllParticipants(Long courseId) {
+		Course course = courseRepository.findById(courseId).get();
+		List<User> users = new ArrayList<>();
+		Set<Certificate> c = course.getCertificates();
+		for (Certificate certificate : c) {
+			users.add(certificate.getUser());
+		}
+		return users;
+	}
+	@Override
+	public User getParticipant(Long courseId) {
+		Long id = courseRepository.findUserById(courseId);
+		if(id==null) {
+			return null;
+		}
+		else {
+			return userRepository.findById(id).get();
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
