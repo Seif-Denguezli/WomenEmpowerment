@@ -38,6 +38,8 @@ public class Offer implements Serializable {
 	
 	float approxSalary;
 	
+	String location;
+	
 	int requiredCandidates;
 	
 	Date createdAt;
