@@ -56,7 +56,7 @@ CertificateRepository certificateRepository;
 	public void addListQuestionsToQuiz(Set<QuizQuestion> questions, Long quizId) {
 		questionRepository.saveAll(questions);
 		Quiz quiz = quizzRepository.findById(quizId).get();
-		quiz.setQuestions(questions);
+		quiz.getQuestions().addAll(questions);
 		quizzRepository.save(quiz);
 		
 
@@ -74,15 +74,18 @@ CertificateRepository certificateRepository;
 	}
 
 	@Override
-	public void editQuestion(QuizQuestion question) {
-		questionRepository.saveAndFlush(question);		
+	public void editQuestion(QuizQuestion question,Long questionId) {
+		QuizQuestion quest = questionRepository.findById(questionId).get();
+		quest.setQuestion(question.getQuestion());
+		quest.setScore(question.getScore());
+		questionRepository.flush();	
 	}
 
 	@Override
 	public void addAnswersToQuestion(Set<Answer> answers, Long questionId) {
 		answerRepository.saveAll(answers);
 		QuizQuestion qq = questionRepository.findById(questionId).get();
-		qq.setAnswers(answers);
+		qq.getAnswers().addAll(answers);
 		questionRepository.save(qq);
 	}
 
@@ -155,6 +158,7 @@ CertificateRepository certificateRepository;
 		for (QuizQuestion question : questions) {
 			nbr= nbr + question.getScore();
 		}
+		}
 		mark= (nbr*70)/100;
 		if(userCourseScore(idUser,idCourse)>=mark) {
 			System.out.println("YOU PASSED THIS COURSE");
@@ -166,26 +170,11 @@ CertificateRepository certificateRepository;
 		else  {
 			System.out.println("You failed the test");
 		}
-		}
+		
 		return nbr;
 	}
 	
 	
-	/*Quiz quiz = quizzRepository.findById(idQuiz).get();
-	Set<QuizQuestion> questions = quiz.getQuestions();
-	for (QuizQuestion quizQuestion : questions) {
-		quizQuestion.getAnswers()
-	}*/
-	
-
-	/*Set<Certificate> certificate = u.getObtainedCertificates();
-	for (Certificate certificate2 : certificate) {
-		Set<Quiz> quiz = certificate2.getCourse().getQuiz();
-		for (Quiz qui : quiz) {
-			
-		}
-	}*/
-
 	
 
 }

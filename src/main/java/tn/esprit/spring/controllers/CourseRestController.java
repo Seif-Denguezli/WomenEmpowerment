@@ -45,9 +45,9 @@ public void deleteCourse(@PathVariable("userId")Long userId,@PathVariable("cours
 	
 }
 
-@PutMapping(path="editCourse")
-public void editCourse(@RequestBody Course c) {
-	courseService.editCourse(c);
+@PutMapping(path="editCourse/{courseId}")
+public void editCourse(@RequestBody Course c,@PathVariable("courseId")Long courseId) {
+	courseService.editCourse(c,courseId);
 
 }
 @GetMapping(path="getAllCourses")

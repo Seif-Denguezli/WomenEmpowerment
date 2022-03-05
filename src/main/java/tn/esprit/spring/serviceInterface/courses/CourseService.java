@@ -13,7 +13,7 @@ public interface CourseService {
 public Course addCourse(Course c);
 public void affectCourseToUser(Long idUser,Course c);
 public Course deleteCourse(Long idUser,Long idCourse);
-public Course editCourse(Course c);
+public Course editCourse(Course c,Long courseId);
 public void createQuizz(Quiz Q, Long idCourse);
 public List<Course> displayAllCourses();
 public Course displayCourse(Long courseId);

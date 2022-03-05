@@ -29,9 +29,14 @@ QuizzRepository quizzRepository;
 		return courseRepository.save(c);
 	}
 	@Override
-	public Course editCourse(Course c) {
+	public Course editCourse(Course c,Long courseId) {
+		Course course = courseRepository.findById(courseId).get();
 		
-		courseRepository.saveAndFlush(c);
+		course.setCourseName(c.getCourseName());
+		course.setEndDate(c.getEndDate());
+		course.setNbHours(c.getNbHours());
+		course.setStartDate(c.getStartDate());
+		courseRepository.flush();
 		
 		return c;
 	}
@@ -62,7 +67,9 @@ QuizzRepository quizzRepository;
 		Course c = courseRepository.findById(idCourse).get();
 		Set<Quiz> quiz = new HashSet<>();
 		quiz.add(Q);
-		c.setQuiz(quiz);
+		c.getQuiz().add(Q);
+	
+		courseRepository.flush();
 		quizzRepository.save(Q);
 		
 	}

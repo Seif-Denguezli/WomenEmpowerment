@@ -54,9 +54,9 @@ public class QuizRestController {
 	   quizService.removeQuestion(questionId,quizId);
 		
 	}
-	@PutMapping(path="editQuestion")
-	public void editQuestion(@RequestBody QuizQuestion q) {
-		quizService.editQuestion(q);
+	@PutMapping(path="editQuestion/{questionId}")
+	public void editQuestion(@RequestBody QuizQuestion q,@PathVariable("questionId")Long questionId) {
+		quizService.editQuestion(q,questionId);
 	}
 	@PostMapping(path = "addAnswers/{questionId}")
 	public void addAnswers(@RequestBody Set<Answer> answer,@PathVariable("questionId")Long questionId) {
