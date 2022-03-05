@@ -47,9 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .anyRequest().authenticated(); 
 			
 
-                .antMatchers("/api/authentication/**", "/swagger-ui/**").permitAll()//login and register pre-path
-                .antMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
-                .anyRequest().authenticated();*/
+               
 
 
         http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
