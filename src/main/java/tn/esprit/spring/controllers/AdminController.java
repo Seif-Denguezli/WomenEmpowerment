@@ -1,5 +1,7 @@
 package tn.esprit.spring.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import tn.esprit.spring.entities.User;
 import tn.esprit.spring.enumerations.Role;
 import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.serviceInterface.user.UserService;
@@ -39,5 +42,11 @@ public class AdminController
     public ResponseEntity<?> makeAdmin(@PathVariable(value="username") String username) {
     	userService.makeAdmin(username);
     	return ResponseEntity.ok(true);
+    }
+    
+    
+    @GetMapping("/subscribed")
+    public List<User> findSubscribedUsers() {
+    	return userService.findSubscribedUsers();
     }
 }

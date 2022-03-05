@@ -1,6 +1,7 @@
 package tn.esprit.spring.repository;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,5 +25,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("update User set role = 'ADMIN' where username = :username")
     void makeAdmin(@Param("username") String username);
+    
+    @Query("select u from User u where u.subscription is not null")
+    public List<User> subscribedUsers();
     
 }
