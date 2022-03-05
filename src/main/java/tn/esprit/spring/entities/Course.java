@@ -55,7 +55,7 @@ public class Course implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 
 	Set<Quiz> quiz; // Quizzes related to course (Unidirectionnelel)
-	
+	boolean onGoing;
 	
 
 }

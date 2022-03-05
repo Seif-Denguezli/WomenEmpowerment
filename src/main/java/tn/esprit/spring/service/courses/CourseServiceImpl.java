@@ -1,11 +1,16 @@
 package tn.esprit.spring.service.courses;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import com.sun.xml.bind.v2.runtime.reflect.Lister.CollectionLister;
 
 import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Course;
@@ -25,7 +30,6 @@ UserRepository userRepository;
 QuizzRepository quizzRepository; 
 	@Override
 	public Course addCourse(Course c) {
-		
 		return courseRepository.save(c);
 	}
 	@Override
@@ -36,6 +40,7 @@ QuizzRepository quizzRepository;
 		course.setEndDate(c.getEndDate());
 		course.setNbHours(c.getNbHours());
 		course.setStartDate(c.getStartDate());
+		course.setOnGoing(c.isOnGoing());
 		courseRepository.flush();
 		
 		return c;
@@ -43,14 +48,17 @@ QuizzRepository quizzRepository;
 
 	@Override
 	public void affectCourseToUser(Long idUser, Course c) {
+		if(courseVerificator(idUser)==true) {
 		courseRepository.save(c);
 		User usr = userRepository.findById(idUser).get();
 		Set<Course> course = new HashSet<>();
 		course.add(c);
 		usr.setCreatedCourses(course);
 		userRepository.flush();
-		
-		
+		}
+		else {
+		System.out.println("cant create course 2 courses allready created");
+	}
 	}
 
 	@Override
@@ -102,6 +110,41 @@ QuizzRepository quizzRepository;
 		}
 		
 		
+		
+	}
+	
+	@Override
+	@Scheduled(cron= "0 0 0 * * *")
+	public String coursesStatus() {
+		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		  Date date = new Date(); 
+		  
+		List<Course> courses = courseRepository.findAll();
+		
+		for (Course course : courses) {
+			if(course.getStartDate().toString().equals(formatter.format(date))) {
+				course.setOnGoing(true);
+				courseRepository.save(course);
+			}
+			
+		}
+		
+		
+		return null;
+	}
+	@Override
+	public boolean courseVerificator(Long userId) {
+		int counter=0;
+		User user = userRepository.findById(userId).get();
+		Set<Course> userCourses = user.getCreatedCourses();
+		for (Course course : userCourses) {
+			if(course.isOnGoing()==true) {
+				counter = counter +1 ;
+			}
+		    
+		}
+		if(counter < 2) return true;
+		else return false;
 	}
 	
 	

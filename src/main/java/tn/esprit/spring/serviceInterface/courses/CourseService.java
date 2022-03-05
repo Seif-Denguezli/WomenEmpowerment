@@ -19,4 +19,6 @@ public List<Course> displayAllCourses();
 public Course displayCourse(Long courseId);
 public List<User> getAllParticipants(Long courseId);
 public User getParticipant(Long courseId);
+public String coursesStatus();
+public boolean courseVerificator(Long userId);
 }
