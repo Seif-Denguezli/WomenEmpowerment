@@ -173,7 +173,13 @@ QuizzRepository quizzRepository;
 		String date ="";
 		Course c = courseRepository.findById(courseId).get();
 		List<String> bothdates = new ArrayList<String>() ;
-		List<String> userJoinedCourses = courseRepository.getUserJoinedCourses(userId);
+		
+		List<String> userJoinedCourses = courseRepository.getUserJoinedCourses(userId,c.getDomain().toString());
+		System.err.println(userJoinedCourses);
+		if(userJoinedCourses.isEmpty()) {
+			return 100;
+		}
+		else {
 		for (String userj : userJoinedCourses) {
 			String [] dato = userj.split(",");
 			date= dato[3];
@@ -181,6 +187,7 @@ QuizzRepository quizzRepository;
 			System.err.println(date);
 			
 		}
+		System.err.println(bothdates);
 		  Period diff = diffCalculator(bothdates.get(0), bothdates.get(1));
 		  Period diff1 = diffCalculator(bothdates.get(1),c.getStartDate().toString());
 			if(diff.getYears()!=0 || diff1.getYears()!=0) {
@@ -193,6 +200,7 @@ QuizzRepository quizzRepository;
 			
 		return counter;
 			}
+	}
 	}
 	@Override
 	public Period diffCalculator(String date1,String date2) {
