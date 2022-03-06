@@ -1,5 +1,6 @@
 package tn.esprit.spring.serviceInterface.courses;
 
+import java.time.Period;
 import java.util.List;
 import java.util.Set;
 
@@ -19,4 +20,9 @@ public List<Course> displayAllCourses();
 public Course displayCourse(Long courseId);
 public List<User> getAllParticipants(Long courseId);
 public User getParticipant(Long courseId);
+public void coursesStatus();
+public void coursesEnded();
+public boolean courseVerificator(Long userId);
+public int userjoinCourseVerificator(Long userId,Long courseId);
+public Period diffCalculator(String date1,String date2);
 }

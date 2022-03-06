@@ -1,9 +1,14 @@
 package tn.esprit.spring.controllers;
 
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.exceptions.EmailExist;
+import tn.esprit.spring.exceptions.UsernameExist;
+import tn.esprit.spring.exceptions.UsernameNotExist;
 import tn.esprit.spring.serviceInterface.user.AuthenticationService;
 import tn.esprit.spring.serviceInterface.user.JwtRefreshTokenService;
 import tn.esprit.spring.serviceInterface.user.UserService;
+
+import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,13 +30,16 @@ public class AuthenticationController
     private JwtRefreshTokenService jwtRefreshTokenService;
 
     @PostMapping("sign-up")//api/authentication/sign-up
-    public ResponseEntity<?> signUp(@RequestBody User user)
+    public ResponseEntity<User> signUp(@RequestBody User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException
     {
-        if (userService.findByUsername(user.getUsername()).isPresent())
+        /*if (userService.findByUsername(user.getUsername()).isPresent())
         {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);*/
+    	userService.saveUser(user);
+    	return new ResponseEntity<>(user, HttpStatus.OK);
+
     }
 
     @PostMapping("sign-in")//api/authentication/sign-in

@@ -79,7 +79,10 @@ public List<User> getParticipants(@PathVariable("courseId")Long courseId){
 public User getParticipant(@PathVariable("courseId")Long courseId){
 	return courseService.getParticipant(courseId);
 }
-
+@GetMapping(path="Verificator/{userId}/{courseId}")
+public int verificate(@PathVariable("userId")Long userId,@PathVariable("courseId")Long courseId) {
+	return courseService.userjoinCourseVerificator(userId, courseId);
+}
 
 
 }
