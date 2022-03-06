@@ -54,10 +54,10 @@ public class User implements Serializable{
 	String username;
 	
 	String password;
-	
+	@JsonIgnore
 	@OneToOne
 	Media profilPicture;
-	
+	@JsonIgnore
 	@OneToOne
 	Subscription subscription;
 	@JsonIgnore
@@ -133,7 +133,7 @@ public class User implements Serializable{
 	int nbEventsCreated;
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
-	List<Event> createdEvents;
+	Set<Event> createdEvents;
 	
 	
 	//******************************************************************//

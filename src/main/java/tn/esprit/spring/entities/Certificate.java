@@ -38,10 +38,10 @@ public class Certificate implements Serializable {
 	Date obtainingDate;
 	
 	boolean isAquired;
-	@JsonIgnore
+
 	@ManyToOne
 	User user;
-	@JsonIgnore
+
 	@ManyToOne
 	Course course;
 

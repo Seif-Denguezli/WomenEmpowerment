@@ -35,7 +35,7 @@ public class QuizQuestion implements Serializable {
 	Long questionId;
 	
 	int score;
-	@JsonIgnore
+	
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Answer> answers; // Answers related to questions
 

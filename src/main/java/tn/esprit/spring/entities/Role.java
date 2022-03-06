@@ -34,7 +34,7 @@ public class Role implements Serializable {
 	Long roleId;
 	
 	String name;
-	@JsonIgnore
+	
 	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "roles")
 	Set<User> users;
 

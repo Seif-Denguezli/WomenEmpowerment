@@ -35,7 +35,7 @@ public class Quiz implements Serializable {
 	Long quizId;
 	
 	String theme;
-	@JsonIgnore
+	
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<QuizQuestion> questions; // Questions related to quizz
 	

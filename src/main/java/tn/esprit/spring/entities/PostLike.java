@@ -34,10 +34,10 @@ public class PostLike implements Serializable {
 	Long postLikeId;
 	
 	Date likedAt;
-	@JsonIgnore
+
 	@ManyToOne
 	User user; // The user who clicked Like
-	@JsonIgnore
+	
 	@ManyToOne
 	Post post; // The post to like
 	
