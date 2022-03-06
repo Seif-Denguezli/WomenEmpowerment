@@ -17,6 +17,8 @@ import tn.esprit.spring.enumerations.Role;
 public interface UserRepository extends JpaRepository<User, Long> {
 	
     Optional<User> findByUsername(String username);
+    
+    Optional<User> findByEmail(String email);
 
     @Modifying
     @Query("update User set role = :role where username = :username")
