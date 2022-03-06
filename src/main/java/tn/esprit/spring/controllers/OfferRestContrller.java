@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
+import tn.esprit.spring.entities.Candidacy;
 import tn.esprit.spring.entities.Offer;
 import tn.esprit.spring.repository.IOfferRepository;
+import tn.esprit.spring.serviceInterface.offer.ICandidacyService;
 import tn.esprit.spring.serviceInterface.offer.IOfferService;
 
 @RestController
@@ -28,6 +29,8 @@ public class OfferRestContrller {
 	IOfferService OfferService;
 	@Autowired
 	IOfferRepository OfferRepo ;
+	@Autowired
+	ICandidacyService CandidacyService;
 	
 	@ApiOperation(value = "Récupérer la liste des Offres")
 	@GetMapping("/retrieve-all-Offers")
@@ -74,6 +77,9 @@ public class OfferRestContrller {
         return OfferService.listAll(keyword);
       
     }
-     
-
-}
+	
+	@PostMapping("/Apply-Offer/{userId}/{offerId}")
+	@ResponseBody
+	void ApplyOffer(@RequestBody Candidacy candidacy,@PathVariable("userId") Long userId,@PathVariable("offerId") Long offerId) {
+		CandidacyService.postulerOffre(candidacy, offerId, userId);
+	}}
