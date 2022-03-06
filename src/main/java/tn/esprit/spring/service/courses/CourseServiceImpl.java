@@ -176,7 +176,7 @@ QuizzRepository quizzRepository;
 		
 		List<String> userJoinedCourses = courseRepository.getUserJoinedCourses(userId,c.getDomain().toString());
 		System.err.println(userJoinedCourses);
-		if(userJoinedCourses.isEmpty()) {
+		if(userJoinedCourses.isEmpty() || userJoinedCourses.size()<=2) {
 			return 100;
 		}
 		else {
