@@ -18,8 +18,14 @@ UserRepository userRepository;
 CourseRepository courseRepository;
 @Autowired
 CertificateRepository certificateRepository;
+@Autowired
+CourseServiceImpl courseService;
 	@Override
 	public void joinCourse(Long idUser, Long idCourse) {
+		if(courseService.userjoinCourseVerificator(idUser, idCourse)>=0 && courseService.userjoinCourseVerificator(idUser, idCourse)<6) {
+			System.err.println("you can't join more than 2 courses in a semester");
+		}
+		else {
 		User us = userRepository.findById(idUser).get();
 		Course course = courseRepository.findById(idCourse).get();
 	    Certificate c = new Certificate();
@@ -27,7 +33,7 @@ CertificateRepository certificateRepository;
 	    c.setCourse(course);
 	    c.setAquired(false);
 	    certificateRepository.save(c);
-	    
+		}
 		
 	}
 	@Override
