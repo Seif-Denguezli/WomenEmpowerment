@@ -5,7 +5,10 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.springframework.lang.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -23,6 +28,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import tn.esprit.spring.enumerations.Domain;
 
 @Getter
 @Setter
@@ -55,7 +61,10 @@ public class Course implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 
 	Set<Quiz> quiz; // Quizzes related to course (Unidirectionnelel)
+	
 	boolean onGoing;
+	@Enumerated(EnumType.STRING)
+	Domain domain;
 	
 
 }

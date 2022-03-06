@@ -1,6 +1,9 @@
 package tn.esprit.spring.service.courses;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +44,7 @@ QuizzRepository quizzRepository;
 		course.setNbHours(c.getNbHours());
 		course.setStartDate(c.getStartDate());
 		course.setOnGoing(c.isOnGoing());
+		course.setDomain(c.getDomain());
 		courseRepository.flush();
 		
 		return c;
@@ -115,7 +119,7 @@ QuizzRepository quizzRepository;
 	
 	@Override
 	@Scheduled(cron= "0 0 0 * * *")
-	public String coursesStatus() {
+	public void coursesStatus() {
 		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		  Date date = new Date(); 
 		  
@@ -129,8 +133,25 @@ QuizzRepository quizzRepository;
 			
 		}
 		
+	}
+	@Override
+	@Scheduled(cron= "0 0 0 * * *")
+	public void coursesEnded() {
+		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		  Date date = new Date(); 
+		  
+		  
+		List<Course> courses = courseRepository.findAll();
 		
-		return null;
+		for (Course course : courses) {
+			if(course.getEndDate().toString().equals(formatter.format(date)) || course.getEndDate().before(date)) {
+				course.setOnGoing(false);
+				courseRepository.save(course);
+			}
+			
+		}
+		
+
 	}
 	@Override
 	public boolean courseVerificator(Long userId) {
@@ -145,6 +166,39 @@ QuizzRepository quizzRepository;
 		}
 		if(counter < 2) return true;
 		else return false;
+	}
+	@Override
+	public int userjoinCourseVerificator(Long userId,Long courseId) {
+		int counter=0;
+		String date ="";
+		Course c = courseRepository.findById(courseId).get();
+		List<String> bothdates = new ArrayList<String>() ;
+		List<String> userJoinedCourses = courseRepository.getUserJoinedCourses(userId);
+		for (String userj : userJoinedCourses) {
+			String [] dato = userj.split(",");
+			date= dato[3];
+			bothdates.add(date);
+			System.err.println(date);
+			
+		}
+		  Period diff = diffCalculator(bothdates.get(0), bothdates.get(1));
+		  Period diff1 = diffCalculator(bothdates.get(1),c.getStartDate().toString());
+			if(diff.getYears()!=0 || diff1.getYears()!=0) {
+				return 100;
+			}
+			else {
+			counter= counter + diff.getMonths();
+			counter= counter + diff1.getMonths();
+			System.err.println(counter);
+			
+		return counter;
+			}
+	}
+	@Override
+	public Period diffCalculator(String date1,String date2) {
+		return Period.between(
+	            LocalDate.parse(date1).withDayOfMonth(1),
+	            LocalDate.parse(date2).withDayOfMonth(1));
 	}
 	
 	
