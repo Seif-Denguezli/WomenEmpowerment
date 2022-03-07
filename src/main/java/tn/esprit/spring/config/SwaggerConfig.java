@@ -41,7 +41,7 @@ public class SwaggerConfig {
 				.select()
 
 				//.apis(RequestHandlerSelectors.any()) //any: documenter toutes les classes dans tous les packages
-				.apis(RequestHandlerSelectors.basePackage("tn.esprit.spring")) // basePackage permet de demander à Swagger de ne rien documenter en dehors du package "com.esprit.examen".
+				.apis(RequestHandlerSelectors.basePackage("tn.esprit.spring.controllers")) // basePackage permet de demander à Swagger de ne rien documenter en dehors du package "com.esprit.examen".
 
 				.paths(PathSelectors.any())
 				//.paths(PathSelectors.regex("/SpringMVC/client.*")) // accepte seulement les URIs qui commençent par /client. 
