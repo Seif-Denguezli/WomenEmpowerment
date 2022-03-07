@@ -82,4 +82,28 @@ public class OfferRestContrller {
 	@ResponseBody
 	void ApplyOffer(@RequestBody Candidacy candidacy,@PathVariable("userId") Long userId,@PathVariable("offerId") Long offerId) {
 		CandidacyService.postulerOffre(candidacy, offerId, userId);
-	}}
+	}
+	
+	@PutMapping ("/Set-Favorite/{id}")
+	@ResponseBody
+	public void SetFavorite ( @PathVariable(value="id") Long candidacy_id,boolean is_bookmarked) {
+		CandidacyService.SetFavorite(candidacy_id, is_bookmarked);
+	}
+	
+	
+	@GetMapping("/listMyCandidacy")
+    public List <String>  listMyCandidacy( @Param("keyword") String keyword) {
+        return CandidacyService.getMyCandidacy(keyword);
+	}
+	
+	@GetMapping("/listMyFavoriteCandidacy")
+    public List <String>  listMyFavoriteCandidacy( @Param("keyword") String keyword) {
+        return CandidacyService.getMyFavoriteCandidacy(keyword);
+	}
+	
+	@PutMapping ("/Hold-Cnadidacy/{id}")
+	@ResponseBody
+	public void HoldCandidacy ( @PathVariable(value="id") Long candidacy_id) {
+		CandidacyService.HoldCandidacy(candidacy_id);
+	}
+}
