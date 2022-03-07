@@ -1,16 +1,16 @@
 package tn.esprit.spring.entities;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.Date;
+import java.util.Optional;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,15 +27,19 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @ToString
-public class Role implements Serializable {
-	
+public class Notification implements Serializable {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long roleId;
+	Long notificationId;
 	
-	String name;
-	@JsonIgnore
-	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "roles")
-	Set<User> users;
-
+	String message;
+	
+	@Temporal(TemporalType.DATE)
+	Date createdAt;
+	
+	boolean isRead;
+	
+	@ManyToOne
+	User user;
 }
