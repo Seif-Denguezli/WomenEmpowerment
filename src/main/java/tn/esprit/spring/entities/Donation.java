@@ -11,6 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,10 +38,10 @@ public class Donation implements Serializable {
 	Date donationDate;
 	
 	float amount;
-	
+	@JsonIgnore
 	@ManyToOne
 	User donor;
-	
+	@JsonIgnore
 	@ManyToOne
 	Event event;
 

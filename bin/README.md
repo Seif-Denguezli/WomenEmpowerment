@@ -1,5 +1,7 @@
 # WomenEmpowerment
-This application is dedicated for all women across the world. It aims for gender equality, working to develop and standars and create an evironment in which evenry women and girl can exercice her humain right and live to get full potential
+
+This application is dedicated for all women across. It aims for gender equality, working to develop and standars and create an evironment in which evenry women and girl can exercice her humain right and live to get full potential
+
 
 <p align="center">
 <img src="https://user-images.githubusercontent.com/73201973/155884051-11c6ff50-bef9-4d13-816b-e265703f3c16.jpg" />
