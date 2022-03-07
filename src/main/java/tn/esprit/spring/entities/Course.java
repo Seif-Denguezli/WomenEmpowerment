@@ -64,5 +64,7 @@ public class Course implements Serializable {
 	@Enumerated(EnumType.STRING)
 	Domain domain;
 	
+	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
+	Set<FileInfo> files;
 
 }

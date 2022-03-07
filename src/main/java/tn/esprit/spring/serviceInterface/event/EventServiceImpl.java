@@ -18,7 +18,7 @@ import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.Transaction;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.repository.EventRepo;
-import tn.esprit.spring.repository.UserRepo;
+import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.service.event.EventService;
 
 @Service
@@ -28,7 +28,7 @@ public class EventServiceImpl implements EventService{
 	EventRepo eventRepo;
 	
 	@Autowired
-	UserRepo userRepo;
+	UserRepository userRepo;
 
 	@Override
 	public void addEvent(Event event) {

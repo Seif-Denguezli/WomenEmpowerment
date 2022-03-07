@@ -25,14 +25,14 @@ public class ServiceAllEmail {
     public void sendNewPasswordEmail(String firstName, String password, String email) throws MessagingException {
         Message message = createEmail(firstName, password, email);
         SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport("smtps");
-        smtpTransport.connect("smtp.gmail.com", "helplinecharityapp@gmail.com", "Azerty123*azerty");
+        smtpTransport.connect("smtp.gmail.com", "womenempowermentapp@gmail.com", "womenempowerment1*");
         smtpTransport.sendMessage(message, message.getAllRecipients());
         smtpTransport.close();
     }
 
     private Message createEmail(String firstName, String password, String email) throws MessagingException {
         Message message = new MimeMessage(getEmailSession());
-        message.setFrom(new InternetAddress("helplinecharityapp@gmail.com"));
+        message.setFrom(new InternetAddress("womenempowermentapp@gmail.com"));
         message.setRecipients(TO, InternetAddress.parse(email, false));
         //message.setRecipients(CC, InternetAddress.parse("bdtcourse@gmail.com", false));
         message.setSubject("Women Empowerment - New Password");
