@@ -13,7 +13,7 @@ import tn.esprit.spring.entities.User;
 public interface DonationService {
 	public Donation addDonation(Donation donation);
 	public Donation addDonation_to_Event(Donation donation, Long idEvent, Long idUser);
-	public Donation addspecificdonation(Donation donation, Long idEvent, Long idUser , float amount  , float tx);
+	//public Donation addspecificdonation(Donation donation, Long idEvent, Long idUser , float amount  , float tx);
 	public Donation addDonation_to_EventAndTransaction(Donation donation, Long idEvent, Long idUser, Long idTransaction);
 	//public ResponseEntity<?> Update_Donation(Donation donation, Long idEvent, Long idUser);
 	public float totaldonationsByUser(Long id);
@@ -22,9 +22,9 @@ public interface DonationService {
 	public ResponseEntity<?> Delete_Donation(Long idDonation, Long idUser);
 	public Set<Donation> Get_Donation_by_User(Long idUser);
 	public Set<Donation> Get_all_Donation();
-	public User addUser(User user );
+	//public User addUser(User user );
 	//SQL
-	public List<Donation> getUserByAmount(Long idUser);
+	//public List<Donation> getUserByAmount(Long idUser);
 	
     
 }

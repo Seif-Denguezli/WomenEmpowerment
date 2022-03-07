@@ -47,8 +47,8 @@ public class EventController {
 		eventService.deleteEvent(idUser, idEvent);
 	}
 	  
-	@PostMapping(path = "joinCourse/{userid}/{idEvent}")
-	public void joinCourse(@PathVariable("userid")Long userid,@PathVariable("idEvent")Long idEvent) {
+	@PostMapping(path = "joinEvent/{userid}/{idEvent}")
+	public void joinEvent(@PathVariable("userid")Long userid,@PathVariable("idEvent")Long idEvent) {
 		
 		eventService.joinEvent(userid, idEvent);
 		

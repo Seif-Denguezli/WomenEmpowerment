@@ -114,22 +114,22 @@ public class DonationServiceImpl implements DonationService {
 	}
 
 
-	@Override
+	/*@Override
 	public List<Donation> getUserByAmount(Long idUser) {
 		return null;
 		
 		
-	}
+	}*/
 
 
-	@Override
+/*	@Override
 	public User addUser(User user) {
 		
 		return userRepo.save(user);
-	}
+	}*/
 
 
-	@Override
+	/*@Override
 	public Donation addspecificdonation(Donation donation, Long idEvent, Long idUser, float amount, float tx) {
 		Event event = eventRepo.findById(idEvent).orElse(null);
 		User user = userRepo.findById(idUser).orElse(null);
@@ -143,7 +143,7 @@ public class DonationServiceImpl implements DonationService {
 		donation.setAmount_forEvent(amount *(1-tx/100));
 		donation.setProfit_amount(amount*tx/100);
 		return donationRepo.save(donation);
-	}
+	}*/
 
 
 	@Override

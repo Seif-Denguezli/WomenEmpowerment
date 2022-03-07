@@ -38,11 +38,11 @@ public class DonationController {
 	public Donation addDonation_to_Event(@RequestBody Donation donation, @PathVariable("idEvent") Long idEvent, @PathVariable("idUser") Long idUser) {
 		return donationService.addDonation_to_Event(donation, idEvent, idUser);
 	}
-	@PostMapping("/addspecifiqueDonation/{idEvent}/{idUser}/{amount}/{tx}")
+	/*@PostMapping("/addspecifiqueDonation/{idEvent}/{idUser}/{amount}/{tx}")
 	@ResponseBody
 	public Donation addspcificdonation(@RequestBody Donation donation, @PathVariable("idEvent") Long idEvent, @PathVariable("idUser") Long idUser, @PathVariable("amount") float amount, @PathVariable("tx") float tx) {
 		return donationService.addspecificdonation(donation, idEvent, idUser, amount, tx);
-	}
+	}*/
 	@PostMapping("/add-Donation-EventandTransaction/{idEvent}/{idUser}{idTransaction}")
 	@ResponseBody
 	public Donation addDonation_to_Event(@RequestBody Donation donation, @PathVariable("idEvent") Long idEvent, @PathVariable("idUser") Long idUser, @PathVariable("idTransaction") Long idTransaction) {
@@ -76,11 +76,11 @@ public class DonationController {
 	
 }
 	
-	@PostMapping("/add-user")
+	/*@PostMapping("/add-user")
 	@ResponseBody
 	public void addEvent(@RequestBody User user) {
 		donationService.addUser(user);
-	}
+	}*/
 
 	@PostMapping("/calculdonbyuser/{idUser}")
 	@ResponseBody

@@ -1,6 +1,9 @@
 package tn.esprit.spring.controllers;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,15 +22,16 @@ public class TransactionController {
 	
 	@PostMapping("/add-Transaction")
 	@ResponseBody
-	public void addEvent(@RequestBody Transaction transaction) {
+	public void addTransaction(@RequestBody Transaction transaction) {
 		transactionService.addTransaction(transaction);
 	}
 	@PutMapping(path="/editTransaction")
-	public void editDonation(@RequestBody Transaction transaction) {
+	public void editTransaction(@RequestBody Transaction transaction) {
 		transactionService.editTransaction(transaction);
 
 	
 }
+	
 	
 	
 	

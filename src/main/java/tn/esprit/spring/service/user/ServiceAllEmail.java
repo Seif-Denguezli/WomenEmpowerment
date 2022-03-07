@@ -11,7 +11,7 @@ import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.springframework.mail.javamail.JavaMailSender;
+//import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.sun.mail.smtp.SMTPTransport;
@@ -20,7 +20,7 @@ import com.sun.mail.smtp.SMTPTransport;
 @Service
 public class ServiceAllEmail {
 	
-	private JavaMailSender javaMailSender;
+	//private JavaMailSender javaMailSender;
 	
     public void sendNewPasswordEmail(String firstName, String password, String email) throws MessagingException {
         Message message = createEmail(firstName, password, email);

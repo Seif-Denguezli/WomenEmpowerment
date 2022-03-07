@@ -84,7 +84,7 @@ public class EventServiceImpl implements EventService{
 
 	@Override
 	public void removeEvent(Long IdEvent) {
-		// TODO Auto-generated method stub
+		eventRepo.deleteById(IdEvent);
 		
 	}
 
