@@ -2,6 +2,7 @@ package tn.esprit.spring.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -45,9 +46,9 @@ public class Service implements Serializable {
 	
 	@Temporal(TemporalType.DATE)
 	Date endDate;
-	@JsonIgnore
+
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
-	Set<Appointment> appointments;
+	List<Appointment> appointments;
 	
 
 }

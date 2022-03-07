@@ -39,7 +39,7 @@ public class Interview implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	InterviewState interviewState;
-	@JsonIgnore
+
 	@OneToOne(mappedBy = "interview")
 	Candidacy candidacy;
 	

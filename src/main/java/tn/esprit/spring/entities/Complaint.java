@@ -7,8 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,6 +31,7 @@ import lombok.experimental.FieldDefaults;
 @ToString
 public class Complaint implements Serializable{
 	
+	@JsonIgnore
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long complaintId;
@@ -37,5 +42,8 @@ public class Complaint implements Serializable{
 	Date createdAt;
 	
 	String content;
+	@JsonIgnore
+	@ManyToOne
+	User user ;
 
 }

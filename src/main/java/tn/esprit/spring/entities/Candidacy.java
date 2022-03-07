@@ -39,13 +39,13 @@ public class Candidacy implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	CandidacyState candidacyState;
-	@JsonIgnore
+	
 	@ManyToOne
 	User candidate;
-	@JsonIgnore
+
 	@ManyToOne
 	Offer offer; 
-	@JsonIgnore
+	
 	@OneToOne
 	Interview interview;
 	public void setUser(User user) {

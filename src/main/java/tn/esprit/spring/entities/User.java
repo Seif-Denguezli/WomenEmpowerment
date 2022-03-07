@@ -97,7 +97,7 @@ public class User implements Serializable{
 	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-	Set<Appointment> appointments; // Booked appointments
+	List<Appointment> appointments; // Booked appointments
 	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
@@ -167,7 +167,7 @@ public class User implements Serializable{
 	int nbEventsCreated;
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
-	List<Event> createdEvents;
+	Set<Event> createdEvents;
 	
 	
 	//******************************************************************//

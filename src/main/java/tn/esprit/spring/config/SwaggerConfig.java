@@ -1,5 +1,6 @@
 package tn.esprit.spring.config;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
+import springfox.documentation.service.Contact;
 import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
@@ -36,24 +38,24 @@ public class SwaggerConfig {
 	@Bean
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2)
+				.apiInfo(apiInfo())
 			      .securityContexts(Arrays.asList(securityContext()))
 			      .securitySchemes(Arrays.asList(apiKey()))
-				.select()
-
-				//.apis(RequestHandlerSelectors.any()) //any: documenter toutes les classes dans tous les packages
-				.apis(RequestHandlerSelectors.basePackage("tn.esprit.spring.controllers")) // basePackage permet de demander à Swagger de ne rien documenter en dehors du package "com.esprit.examen".
-
-				.paths(PathSelectors.any())
-				//.paths(PathSelectors.regex("/SpringMVC/client.*")) // accepte seulement les URIs qui commençent par /client. 
-
-				.build().apiInfo(apiInfo());//Informations personnalisées
-				//.build();}
+			      .select()
+			      .apis(RequestHandlerSelectors.basePackage("tn.esprit.spring.controllers"))
+			      .paths(PathSelectors.any())
+			      .build();
 	}
+	
 	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder()
-				.title("Examen Blanc")
-				.description("\"Examen Blanc Swagger configuration\"")
-				.version("1.1.0")
-				.build();
+	    return new ApiInfo(
+	      "Women Empowerment REST API",
+	      "This API serves to test end points of the application",
+	      "1.0",
+	      "Terms of service",
+	      new Contact("Les Elites", "www.esprit.tn", "seifeddine.denguezli@esprit.com"),
+	      "License of API",
+	      "API license URL",
+	      Collections.emptyList());
 	}
 }

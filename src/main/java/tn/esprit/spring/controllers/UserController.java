@@ -4,6 +4,8 @@ package tn.esprit.spring.controllers;
 
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Notification;
+import tn.esprit.spring.entities.Subscription;
+import tn.esprit.spring.entities.User;
 import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.serviceInterface.user.UserService;
 
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,6 +58,27 @@ public class UserController
     		@PathVariable(name="endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
     	return userService.findCoursesBetweenDates(startDate, endDate);
     }
+    
+    @PostMapping("/subscription/save/{username}")
+    public Subscription addSubscription(@RequestBody Subscription s,@PathVariable(name="username") String username) {
+    	return userService.addSubscription(s, username);
+    }
+    
+    @PutMapping("/subscription/extend/{username}/{nbMonths}")
+    public void extendSubscription(@PathVariable(name="username") String username,@PathVariable(name="nbMonths") int nbMonths) {
+    	userService.extendSubscription(username, nbMonths);
+    }
+    
+    @DeleteMapping("/subscription/remove")
+    public void removeSubcription(String username) {
+    	userService.removeSubcription(username);
+    }
+    
+    @GetMapping("/subscribed/all")
+    public List<User> findSubscribedUsers() {
+    	return userService.findSubscribedUsers();
+    }
+
 
 
     

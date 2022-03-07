@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,6 +35,7 @@ public class Answer implements Serializable {
 	Long answerId;
 	String answerContent;
 	boolean isCorrect;
+	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL,mappedBy = "answers")
 	Set<User> users;
 
