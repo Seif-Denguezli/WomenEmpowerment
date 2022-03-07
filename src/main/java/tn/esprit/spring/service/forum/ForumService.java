@@ -340,4 +340,12 @@ public class ForumService {
 		PostComment p = postCommentRepo.findById(idComment).orElse(null);
 		return p.getPostComments();
 	}
+
+	public Post Give_Etoile_Post(Long idPost, int nb_etouile) {
+		Post post1 = postRepo.findById(idPost).orElseThrow(() -> new EntityNotFoundException("post not found"));
+		
+		post1.setNb_etoil(nb_etouile);
+		return postRepo.save(post1);
+		 
+	}
 }

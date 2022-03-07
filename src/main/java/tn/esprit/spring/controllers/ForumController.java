@@ -147,5 +147,10 @@ public class ForumController {
 	public  Set<PostComment> Get_comm_Comm( @PathVariable("idComment") Long idComment ){
 		return forumService.Get_comm_Comm (idComment);
 	}
+	
+	@PutMapping("/Give-post-etoile/{idPost}/{nb_etoile}")
+	public  Post Give_Etoile_Post(@PathVariable("idPost") Long idPost, @PathVariable("nb_etoile") int nb_etoile ){
+		return forumService.Give_Etoile_Post (idPost,nb_etoile);
+	}
 }
 
