@@ -1,11 +1,15 @@
 package tn.esprit.spring.service.forum;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.convert.JodaTimeConverters.DateToLocalDateConverter;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters.LocalDateConverter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -80,20 +84,20 @@ public class ForumService {
 		postLike.setPost(p);
 		return postLikeRepo.save(postLike);
 	}
-/*
-	public ResponseEntity<?> addDisLike_to_Post(PostDislike postDisLike, Long idPost, Long idUser) {
-		Post p = postRepo.findById(idPost).orElse(null);
-		User u = userRepo.findById(idUser).orElse(null);
 
-		Delete_Like(get_like_exist(idUser, idPost).getPostLikeId(), idUser);
-
-		postDisLike.setUser(u);
-		postDisLike.setPost(p);
-		postDislikeRepo.save(postDisLike);
-
-		return ResponseEntity.ok().body(get_like_exist(idUser, idPost).getPostLikeId());
-	}
-*/
+	/*
+	 * public ResponseEntity<?> addDisLike_to_Post(PostDislike postDisLike, Long
+	 * idPost, Long idUser) { Post p = postRepo.findById(idPost).orElse(null); User
+	 * u = userRepo.findById(idUser).orElse(null);
+	 * 
+	 * Delete_Like(get_like_exist(idUser, idPost).getPostLikeId(), idUser);
+	 * 
+	 * postDisLike.setUser(u); postDisLike.setPost(p);
+	 * postDislikeRepo.save(postDisLike);
+	 * 
+	 * return ResponseEntity.ok().body(get_like_exist(idUser,
+	 * idPost).getPostLikeId()); }
+	 */
 	public CommentLike addLike_to_Comment(CommentLike commentLike, Long idComment, Long idUser) {
 		User u = userRepo.findById(idUser).orElse(null);
 		PostComment p = postCommentRepo.findById(idComment).orElse(null);
@@ -215,23 +219,23 @@ public class ForumService {
 		Post post1 = postRepo.findById(idPost).orElseThrow(() -> new EntityNotFoundException("post not found"));
 		Set<PostLike> pp = post1.getPostLikes();
 		for (PostLike postLike : pp) {
-			if (postLike.getIsLiked()==false) {
-				pp.remove(postLike);}
+			if (postLike.getIsLiked() == false) {
+				pp.remove(postLike);
+			}
 		}
-		 return pp;
+		return pp;
 	}
 
 	public Set<PostLike> Get_post_DisLikes(Long idPost) {
 		Post post1 = postRepo.findById(idPost).orElseThrow(() -> new EntityNotFoundException("post not found"));
 		Set<PostLike> pp = post1.getPostLikes();
 		for (PostLike postLike : pp) {
-			if (postLike.getIsLiked()==true) {
-				pp.remove(postLike);}
+			if (postLike.getIsLiked() == true) {
+				pp.remove(postLike);
+			}
 		}
-		 return pp;
+		return pp;
 	}
-
-
 
 	public ResponseEntity<?> Delete_PostCom(Long idPostCom, Long idUser) {
 		if (postCommentRepo.existsById(idPostCom)) {
@@ -274,9 +278,74 @@ public class ForumService {
 
 	public ResponseEntity<?> Swap_like_dislike(Long idLike) {
 		PostLike p = postLikeRepo.findById(idLike).orElse(null);
-		p.setIsLiked(! p.getIsLiked());
+		p.setIsLiked(!p.getIsLiked());
 		postLikeRepo.saveAndFlush(p);
 		return ResponseEntity.ok().body(p);
 	}
 
+	public void delete_sujet_sans_Int() {
+		for (Post p : postRepo.findAll()) {
+			if (date_comp(p.getCreatedAt())) {
+				if (p.getPostLikes().size() == 0) {
+					Delete_post(p.getPostId(), p.getUser().getUserId());
+					
+				}
+			}
+		}
+
+	}
+
+	public boolean date_comp(Date d) {
+		if (LocalDate.now().getMonthValue() - d.getMonth() > 2) {
+			return true;
+		}
+		if (LocalDate.now().getMonthValue() - d.getMonth() > 1) {
+			if (LocalDate.now().getDayOfMonth() >= d.getDate()) {
+				return true;
+			}
+
+			else {
+				if (LocalDate.now().getDayOfMonth() - d.getDate() == 30) {
+					return true;
+				}
+			}
+
+		}
+		
+		return false;
+	}
+
+	public Post Get_best_Post() {
+		Post p1 = null;
+		int x =0;
+		for (Post p : postRepo.findAll()) {
+			if (postRepo.diffrence_entre_date(p.getCreatedAt())<=7) {
+				if (p.getPostLikes().size() > x) {p1 = p ; x =p.getPostLikes().size(); }
+				/*else if (p.getPostLikes().size() == x) {
+					if (postRepo.diffrence_entre_date(p.getCreatedAt())<postRepo.diffrence_entre_date(p1.getCreatedAt())) {
+						p1 = p;}
+					}*/
+				}
+	}
+		return p1;}
+
+	
+
+	public Set<PostComment> Get_post_Comm(Long idPost) {
+		Post p = postRepo.findById(idPost).orElse(null);
+		return  p.getPostComments();
+	}
+
+	public Set<PostComment> Get_comm_Comm(Long idComment) {
+		PostComment p = postCommentRepo.findById(idComment).orElse(null);
+		return p.getPostComments();
+	}
+
+	public Post Give_Etoile_Post(Long idPost, int nb_etouile) {
+		Post post1 = postRepo.findById(idPost).orElseThrow(() -> new EntityNotFoundException("post not found"));
+		
+		post1.setNb_etoil(nb_etouile);
+		return postRepo.save(post1);
+		 
+	}
 }
