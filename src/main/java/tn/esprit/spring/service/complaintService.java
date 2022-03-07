@@ -1,5 +1,7 @@
 package tn.esprit.spring.service;
 
+import java.util.List;
+
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,18 +18,13 @@ import tn.esprit.spring.repository.userRepo;
 
 @Slf4j
 @Service
-public class complaintService {
+public class complaintService implements IComplaint {
 @Autowired
 complaintRepo comprepo ;
 @Autowired
 userRepo userrepository;
 
-/*public void addreclamation(Complaint complaint, Long userId ){
-User user = userrepository.findById(userId).orElse(null);
-user.getComplaints().add(complaint);
-
-	comprepo.save(complaint);
-}*/
+@Override
 public ResponseEntity<?> addComplaint(Complaint complaint, Long userId) {
 
 	User u = userrepository.findById(userId).orElse(null);
@@ -40,10 +37,15 @@ public ResponseEntity<?> addComplaint(Complaint complaint, Long userId) {
 		return ResponseEntity.ok().body(complaint);
 	} 
 
+@Override
 public void updatereclamation(Complaint complaint,Long complaintId){
-	comprepo.saveAndFlush(complaint);
+	Complaint complaint1= comprepo.findById(complaintId).get();
+	complaint1.setComplaintTitle(complaint.getComplaintTitle());
+	complaint1.setContent(complaint.getContent());
+	comprepo.flush();
+	
 }
-
+@Override
 public void deletreclamation(Long idUser ,Long complaintId){
 	User usr = userrepository.findById(idUser).get();
 	Complaint comp= comprepo.findById(complaintId).get();
@@ -55,8 +57,9 @@ public void deletreclamation(Long idUser ,Long complaintId){
 	
 	
 }
-public void showclamation(Complaint complaint){
-	comprepo.findAll();
+@Override
+public List<Complaint> showclamation(){
+	return comprepo.findAll();
 }
 
 

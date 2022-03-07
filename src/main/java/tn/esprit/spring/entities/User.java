@@ -2,6 +2,7 @@ package tn.esprit.spring.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -68,7 +69,7 @@ public class User implements Serializable{
 	Set<Candidacy> candidacies; //Candidatures postulées;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-	Set<Appointment> appointments; // Booked appointments
+	List<Appointment> appointments; // Booked appointments
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Complaint> complaints; // Created complaints

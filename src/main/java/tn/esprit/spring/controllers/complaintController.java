@@ -1,5 +1,7 @@
 package tn.esprit.spring.controllers;
 
+import java.util.List;
+
 import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,21 +11,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 import tn.esprit.spring.entities.Complaint;
+import tn.esprit.spring.service.IComplaint;
 import tn.esprit.spring.service.complaintService;
 
 @RestController
 public class complaintController {
 @Autowired
-complaintService compservice;
+IComplaint compservice;
 
   @PostMapping("/addReclamation/{userId}")
 @ResponseBody
-public ResponseEntity<?> addComplaint(Complaint complaint, Long userId){
+public ResponseEntity<?> addComplaint(@RequestBody Complaint complaint, Long userId){
 	return compservice.addComplaint(complaint, userId);
 }
 
@@ -40,9 +44,9 @@ public void deletreclamation(@PathVariable Long idUser,@PathVariable Long compla
 	
 }
 @GetMapping("/affichReclamation")
-@ResponseBody
-public void showclamation(@RequestBody Complaint complaint){
-	compservice.showclamation(complaint);
+
+public List<Complaint> showclamation(){
+	return compservice.showclamation();
 }
 }
 
