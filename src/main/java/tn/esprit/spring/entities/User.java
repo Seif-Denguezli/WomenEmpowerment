@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,8 +16,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,6 +31,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import tn.esprit.spring.enumerations.Job;
+import tn.esprit.spring.enumerations.Role;
 
 @Getter
 @Setter
@@ -36,57 +40,87 @@ import tn.esprit.spring.enumerations.Job;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @ToString
+@Table(name = "users")
 public class User implements Serializable{
 	
 	// Basic attributes for all actors
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long userId;
-	
-	String name;
-	
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long userId;
+
+    @Column(name = "username", unique = true, nullable = false, length = 100)
+    String username;
+
+    @Column(name = "password", nullable = false)
+    String password;
+
+    @Column(name = "name", nullable = false)
+    String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    Role role;
+
 	String email;
 	
 	@Temporal(TemporalType.DATE)
 	Date birthDate;
+
+    @Transient
+    String accessToken;
+
+    @Transient
+    String refreshToken;
 	
-	String username;
-	
-	String password;
 	@JsonIgnore
 	@OneToOne
 	Media profilPicture;
+	
 	@JsonIgnore
 	@OneToOne
 	Subscription subscription;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	@JsonIgnore
-	@ManyToMany(cascade = CascadeType.ALL)
-	Set<Role> roles;
-	@JsonIgnore
+	Set<Notification> notifications;
+
+	
+
 	@OneToOne
 	User woman; // Reflexive association
+	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "candidate")
 	Set<Candidacy> candidacies; //Candidatures postulées;
+	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	Set<Appointment> appointments; // Booked appointments
+	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Complaint> complaints; // Created complaints
+	
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL)
 	Set<Event> joinedEvents; // Events that user joined
+	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "donor")
 	Set<Donation> donations;
+	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Advertising> advertising;
+	
+
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	Set<Certificate> obtainedCertificates; // Certificates obtained after joining courses
+	@ManyToMany(cascade = CascadeType.ALL)
+	Set<Answer> answers;
 
 
 	
@@ -95,7 +129,7 @@ public class User implements Serializable{
 	// Specefic Expert Attributes
 	
 	Long nbCasesSolved;
-	
+	@JsonIgnore
 	@Enumerated(EnumType.STRING)
 	Job job;
 	@JsonIgnore
@@ -118,7 +152,7 @@ public class User implements Serializable{
 	String activityDomain;
 	
 	String address;
-	
+	@JsonIgnore
 	@Temporal(TemporalType.DATE)
 	Date establishmentDate;
 	@JsonIgnore
@@ -157,7 +191,7 @@ public class User implements Serializable{
 	
 	
 	//******************************************************************//
-	
-	
 
-}
+
+	
+	}

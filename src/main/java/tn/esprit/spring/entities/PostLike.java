@@ -28,16 +28,20 @@ import tn.esprit.spring.enumerations.CandidacyState;
 @Entity
 @ToString
 public class PostLike implements Serializable {
-	
+	@JsonIgnore
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long postLikeId;
 	
 	Date likedAt;
-
+	
+	Boolean isLiked ;
+	
+	@JsonIgnore
 	@ManyToOne
 	User user; // The user who clicked Like
 	
+	@JsonIgnore
 	@ManyToOne
 	Post post; // The post to like
 	
