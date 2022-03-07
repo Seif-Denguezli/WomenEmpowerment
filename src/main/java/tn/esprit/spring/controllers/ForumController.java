@@ -1,6 +1,7 @@
 package tn.esprit.spring.controllers;
 
 
+
 import java.util.Set;
 
 
@@ -126,6 +127,25 @@ public class ForumController {
 	@DeleteMapping("/Delete-PostComment/{IdPostCom}/{IdUser}")
 	public ResponseEntity<?> Delete_PostCom( @PathVariable("IdPostCom") Long IdPostCom, @PathVariable("IdUser") Long IdUser) {
 		return forumService.Delete_PostCom(IdPostCom,IdUser);
+	}
+	
+	@DeleteMapping("/Delete-Post-Redandant")
+	public void Get_post_DisLi( ){
+		 forumService.delete_sujet_sans_Int();
+	}
+	@GetMapping("/Get-best-podt-week")
+	public Post Get_best_Post( ){
+		return forumService.Get_best_Post();
+	}
+	
+	@GetMapping("/Get-Post-Comments/{IdPost}")
+	public  Set<PostComment> Get_post_Comm( @PathVariable("IdPost") Long IdPost ){
+		return forumService.Get_post_Comm (IdPost);
+	}
+	
+	@GetMapping("/Get-Comment-Comments/{idComment}")
+	public  Set<PostComment> Get_comm_Comm( @PathVariable("idComment") Long idComment ){
+		return forumService.Get_comm_Comm (idComment);
 	}
 }
 
