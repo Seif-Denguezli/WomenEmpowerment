@@ -49,14 +49,14 @@ public class JwtRefreshTokenServiceImpl implements JwtRefreshTokenService
     @Override
     public User generateAccessTokenFromRefreshToken(String refreshTokenId)
     {
-        JwtRefreshToken jwtRefreshToken = jwtRefreshTokenRepository.findById(refreshTokenId).orElseThrow();
+        JwtRefreshToken jwtRefreshToken = jwtRefreshTokenRepository.findById(refreshTokenId).orElseThrow(null);
 
         if (jwtRefreshToken.getExpirationDate().isBefore(LocalDateTime.now()))
         {
             throw new RuntimeException("JWT refresh token is not valid.");
         }
 
-        User user = userRepository.findById(jwtRefreshToken.getUserId()).orElseThrow();
+        User user = userRepository.findById(jwtRefreshToken.getUserId()).orElseThrow(null);
 
         UserPrincipal userPrincipal = UserPrincipal.builder()
                 .id(user.getUserId())

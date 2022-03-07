@@ -10,4 +10,7 @@ public interface IOfferService {
 	    public Offer getOfferById(Long offerId);
 	    public void deleteOfferById(Long offerId);
 	    public Offer updateOffer(Offer offer);
+	    public List<Offer> listAll(String keyword);
+ 
 }
+

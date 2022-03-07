@@ -54,4 +54,12 @@ public class OfferServiceImpl implements IOfferService {
 		return offer;
 	}
 
+	 public List<Offer> listAll(String keyword) {
+	        if (keyword != null) {
+	            return OfferRepo.search(keyword);
+	        }
+	        return OfferRepo.findAll();
+	    }
+	 
+
 }

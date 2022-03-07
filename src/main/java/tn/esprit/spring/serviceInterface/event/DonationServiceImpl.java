@@ -9,7 +9,7 @@ import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.repository.DonationRepo;
 import tn.esprit.spring.repository.EventRepo;
-import tn.esprit.spring.repository.UserRepo;
+import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.service.event.DonationService;
 
 @Service
@@ -19,7 +19,7 @@ public class DonationServiceImpl implements DonationService {
 	DonationRepo donationRepo;
 	
 	@Autowired
-	UserRepo userRepo;
+	UserRepository userRepo;
 	
 	@Autowired
 	EventRepo eventRepo;
