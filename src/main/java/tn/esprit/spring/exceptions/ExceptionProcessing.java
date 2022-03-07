@@ -16,6 +16,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException.Forbidden;
 
 import javax.persistence.NoResultException;
 import java.io.IOException;
@@ -108,7 +109,7 @@ public class ExceptionProcessing implements ErrorController {
     }
 
     @ExceptionHandler(IOException.class)
-    public ResponseEntity<HTTPProtocolResponse> iOException(IOException exception) {
+    public ResponseEntity<HTTPProtocolResponse> iOException(IOException exception) { 
         LOGGER.error(exception.getMessage());
         return createHttpResponse(INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
     }
@@ -122,5 +123,6 @@ public class ExceptionProcessing implements ErrorController {
     public ResponseEntity<HTTPProtocolResponse> notFound404() {
         return createHttpResponse(NOT_FOUND, "There is no mapping for this URL");
     }
+ 
 
 }
