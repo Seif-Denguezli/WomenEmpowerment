@@ -88,6 +88,12 @@ public class EventServiceImpl implements EventService{
 		
 	}
 
+	@Override
+	public Long retrieveMaxEventTransactioned() {
+		
+		return eventRepo.retrieveMaxEventTransactioned();
+	}
+
 	
 
 	

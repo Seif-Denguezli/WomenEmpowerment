@@ -57,6 +57,11 @@ public class EventController {
 	public List<Event> Get_all_Event(){
 		return eventService.Get_all_Event();
 	}
+	
+	@GetMapping("/maxEventTransaction")
+	public Long GetMaxEventTransaction(){
+		return eventService.retrieveMaxEventTransactioned();
+	}
 	  
 	  
 	  

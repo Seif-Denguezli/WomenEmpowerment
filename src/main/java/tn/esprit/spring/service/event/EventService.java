@@ -16,6 +16,7 @@ public interface EventService  {
 	public Event deleteEvent(Long idUser, Long idEvent);
 	public List<Event> Get_all_Event();
 	//public Set<Event> Get_Event_by_User(Long idUser);
+	public Long retrieveMaxEventTransactioned();
 	
 	
 	

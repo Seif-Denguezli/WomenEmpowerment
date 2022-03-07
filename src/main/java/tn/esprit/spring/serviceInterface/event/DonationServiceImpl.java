@@ -149,7 +149,7 @@ public class DonationServiceImpl implements DonationService {
 	@Override
 	public float totaldonationsByUser(Long id) {
 		
-		return eventRepo.totaldonationsByUser(id);
+		return eventRepo.calcultotaldonationsByUser(id);
 	}
 	@Override
 	public float maxDonationByUser(Long id) {

@@ -32,12 +32,20 @@ public class TransactionServiceImpl implements TransactionService {
 		transactionRepo.delete(transaction);
 		
 	}
+	
 
 
 	@Override
 	public void getAllTransaction() {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public Long retrieveMaxEventTransactioned() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

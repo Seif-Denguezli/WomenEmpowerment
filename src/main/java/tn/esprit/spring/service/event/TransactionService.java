@@ -7,5 +7,7 @@ public interface TransactionService {
 	public Transaction editTransaction(Transaction transaction);
 	public void removeTransaction(Long IdTransaction);
 	public void getAllTransaction();
+	public Long retrieveMaxEventTransactioned();
+	
 	
 }
