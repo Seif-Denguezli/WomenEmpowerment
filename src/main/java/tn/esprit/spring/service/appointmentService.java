@@ -11,9 +11,10 @@ import org.springframework.stereotype.Service;
 import tn.esprit.spring.entities.Appointment;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.enumerations.Job;
+import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.repository.appointmentRepo;
 import tn.esprit.spring.repository.serviceRepo;
-import tn.esprit.spring.repository.userRepo;
+
 
 @Service
 public class appointmentService implements IAppointment {
@@ -22,7 +23,7 @@ appointmentRepo apprepo;
 @Autowired
 serviceRepo serrepo;
 @Autowired
-userRepo userrepo;
+UserRepository userrepo;
 @Override
 public void addRdv(Appointment apt, Long serviceId, Long userId) {
 	tn.esprit.spring.entities.Service serv= serrepo.findById(serviceId).orElse(null);

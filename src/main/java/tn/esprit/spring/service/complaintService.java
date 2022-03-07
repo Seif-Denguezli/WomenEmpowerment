@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import tn.esprit.spring.entities.Complaint;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.repository.complaintRepo;
-import tn.esprit.spring.repository.userRepo;
 
 
 @Slf4j
@@ -22,7 +22,7 @@ public class complaintService implements IComplaint {
 @Autowired
 complaintRepo comprepo ;
 @Autowired
-userRepo userrepository;
+UserRepository userrepository;
 
 @Override
 public ResponseEntity<?> addComplaint(Complaint complaint, Long userId) {

@@ -21,7 +21,7 @@ public class ForumService {
 	PostRepo postRepo;
 
 	@Autowired
-	UserRepo userRepo;
+	UserRepository userRepo;
 
 	@Autowired
 	PostCommentRepo postCommentRepo;

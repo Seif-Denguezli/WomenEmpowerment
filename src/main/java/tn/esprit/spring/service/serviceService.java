@@ -10,8 +10,8 @@ import com.sun.xml.bind.v2.runtime.reflect.Accessor.GetterSetterReflection;
 
 import net.bytebuddy.utility.privilege.GetSystemPropertyAction;
 import tn.esprit.spring.entities.*;
+import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.repository.serviceRepo;
-import tn.esprit.spring.repository.userRepo;
 
 
 @Service
@@ -19,7 +19,7 @@ public class serviceService implements IService {
 	@Autowired
 	serviceRepo servrepo;
 	@Autowired
-	userRepo userrepo;
+	UserRepository userrepo;
 
 	@Override
 	public void addService(tn.esprit.spring.entities.Service s , Long userId){
