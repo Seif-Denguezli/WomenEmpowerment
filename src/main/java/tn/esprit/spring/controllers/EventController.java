@@ -1,6 +1,7 @@
 package tn.esprit.spring.controllers;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +22,8 @@ import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
+
+
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.service.event.EventService;
@@ -32,8 +35,45 @@ public class EventController {
 	@Autowired
 	EventService eventService;
 	
+	@GetMapping("/export")
+	public void exprotToCsv(HttpServletResponse response) throws IOException {
 	
+		
+		try {
+			 
+	        response.setContentType("text/csv");
+	        response.setHeader("Content-Disposition", "attachment; filename=users.csv");
+			
+	        // write to csv file //
+	        
+	        ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(),CsvPreference.STANDARD_PREFERENCE);
+	                
+	 
+	        String[]  headings = {"eventId","createdAt","description " , "eventName ", "eventType ", "link " , "place"};
+	        
+	        String[] pojoclassPropertyName =  {"eventId" ,"createdAt","description" , "eventName" , "eventType" , "link" , "place"};
+	              
+	 
+	        csvWriter.writeHeader(headings);
+	        
+	        List<Event> EventList = eventService.Get_all_Event();
 
+	        
+	        if(null!=EventList && !EventList.isEmpty()){
+	            for (Event event : EventList) {
+	                csvWriter.write(event, pojoclassPropertyName);
+	              }
+	            }
+	        csvWriter.close();
+
+			}catch(Exception e) {
+				e.printStackTrace();
+
+			}
+        System.out.println("csv report downloaded successfully...........");
+    }
+		
+	
 	
 	
 	@PostMapping("/add-Event")
@@ -61,6 +101,10 @@ public class EventController {
 	@GetMapping("/maxEventTransaction")
 	public Long GetMaxEventTransaction(){
 		return eventService.retrieveMaxEventTransactioned();
+	}
+	@GetMapping("/userAllDonation/{userid}")
+	public Long getUSERDonationByID(@PathVariable("userid")Long userid){
+		return eventService.findUserDonationsById(userid);
 	}
 	  
 	  
