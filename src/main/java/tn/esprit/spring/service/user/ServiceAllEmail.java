@@ -11,7 +11,7 @@ import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.springframework.mail.javamail.JavaMailSender;
+//import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.sun.mail.smtp.SMTPTransport;
@@ -20,19 +20,19 @@ import com.sun.mail.smtp.SMTPTransport;
 @Service
 public class ServiceAllEmail {
 	
-	private JavaMailSender javaMailSender;
+	//private JavaMailSender javaMailSender;
 	
     public void sendNewPasswordEmail(String firstName, String password, String email) throws MessagingException {
         Message message = createEmail(firstName, password, email);
         SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport("smtps");
-        smtpTransport.connect("smtp.gmail.com", "helplinecharityapp@gmail.com", "Azerty123*azerty");
+        smtpTransport.connect("smtp.gmail.com", "womenempowermentapp@gmail.com", "womenempowerment1*");
         smtpTransport.sendMessage(message, message.getAllRecipients());
         smtpTransport.close();
     }
 
     private Message createEmail(String firstName, String password, String email) throws MessagingException {
         Message message = new MimeMessage(getEmailSession());
-        message.setFrom(new InternetAddress("helplinecharityapp@gmail.com"));
+        message.setFrom(new InternetAddress("womenempowermentapp@gmail.com"));
         message.setRecipients(TO, InternetAddress.parse(email, false));
         //message.setRecipients(CC, InternetAddress.parse("bdtcourse@gmail.com", false));
         message.setSubject("Women Empowerment - New Password");

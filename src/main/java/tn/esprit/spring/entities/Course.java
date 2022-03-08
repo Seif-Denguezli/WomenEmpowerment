@@ -52,8 +52,6 @@ public class Course implements Serializable {
 	
 	@Temporal(TemporalType.DATE)
 	Date endDate;
-
-
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course",fetch = FetchType.EAGER)
 	Set<Certificate> certificates;
@@ -66,5 +64,7 @@ public class Course implements Serializable {
 	@Enumerated(EnumType.STRING)
 	Domain domain;
 	
+	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
+	Set<FileInfo> files;
 
 }

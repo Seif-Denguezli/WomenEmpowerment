@@ -1,5 +1,6 @@
 package tn.esprit.spring.service.offer;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +33,9 @@ public class CandidacyServiceImpl implements ICandidacyService {
 
 		
 		Offer offer = OfferRepo.findById(offerId).orElse(null);
-		System.err.println(offer.getOfferId().toString());
+		//System.err.println(offer.getOfferId().toString());
 		User user= UserRepo.findById(userId).get();
-		System.err.println(user.getUserId());
+		//System.err.println(user.getUserId());
 		//log.info(user.getEmail());
 		candidacy.setOffer(offer);
 		candidacy.setCandidate(user);
@@ -45,7 +46,42 @@ public class CandidacyServiceImpl implements ICandidacyService {
 		CandidacyRepo.save(candidacy);
 	   
 	}
+
+	@Override
+	public void SetFavorite(Long candidacy_id,boolean is_bookmarked) {
+		// TODO Auto-generated method stub
+		Candidacy cc = CandidacyRepo.findById(candidacy_id).orElse(null);
+		cc.setBookmarked(is_bookmarked);
+		CandidacyRepo.save(cc);
+		
+		
+	}
+
+	@Override
+	public List<String> getMyCandidacy( String keyword) {
+		
+		 if (keyword != null) {
+	            return CandidacyRepo.search(keyword);}
+		 return null;	    }
+
+	@Override
+	public List<String> getMyFavoriteCandidacy(String keyword) {
+		// TODO Auto-generated method stub
+		if (keyword != null) {
+            return CandidacyRepo.searchFavorite(keyword);}
+	 return null;	    }
+
+	@Override
+	public void HoldCandidacy(Long candidacy_id) {
+		// TODO Auto-generated method stub
+		Candidacy cc = CandidacyRepo.findById(candidacy_id).orElse(null);
+		cc.setCandidacyState(CandidacyState.Onhold);
+		CandidacyRepo.saveAndFlush(cc);
+	}
+		
+	}
+	
+	
 	
 	
 
-}

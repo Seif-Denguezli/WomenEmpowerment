@@ -167,7 +167,7 @@ public class User implements Serializable{
 	int nbEventsCreated;
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
-	List<Event> createdEvents;
+	Set<Event> createdEvents;
 	
 	
 	//******************************************************************//
