@@ -37,4 +37,9 @@ public List<Appointment> affichRdv(){
 public void deleteAppoitment(@PathVariable Long appointmentId){
 	appserv.deleteAppoitment(appointmentId);
 }
+@GetMapping ("nbre")
+public int NombresCaseSolved() {
+	return appserv.NombresCaseSolved();
+}
+
 }

@@ -2,6 +2,7 @@ package tn.esprit.spring.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +35,7 @@ public void addRdv(Appointment apt, Long serviceId, Long userId) {
 
 	
 	if (serv.getStartDate().before(apt.getAppointmentDate())&&serv.getEndDate().after(apt.getAppointmentDate())){
-		serv.getAppointments().add(apt);
+		
 		
 		apprepo.save(apt);
 		
@@ -66,7 +67,12 @@ public void deleteAppoitment(Long appointmentId) {
 	apprepo.deleteById(appointmentId);
 	
 }
-
-
+@Override
+public int NombresCaseSolved() {
+int x = apprepo.NombresCaseSolved();
+	
+	return  x;
+} 
+	 
 
 }
