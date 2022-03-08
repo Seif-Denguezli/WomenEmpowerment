@@ -2,6 +2,8 @@ package tn.esprit.spring.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,6 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import tn.esprit.spring.enumerations.EventType;
 
 @Getter
 @Setter
@@ -28,31 +31,20 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @ToString
-public class Advertising implements Serializable {
-	
+public class Message implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long advertisingId;
+	Long MessageId;
 	
-	String Name;
-	String Canal;
-	
-	@Temporal(TemporalType.DATE)
-	Date StartDate;
+	String Body;
 	
 	@Temporal(TemporalType.DATE)
-	Date EndDate;
-	
-	int nbrIntialViews;
-	
-	int nbrFinalViews;
-	
-	float price;
-	
+	Date dateSend;
 	
 	@JsonIgnore
-	@ManyToOne 
-	User user;
-	
-
+	@ManyToOne
+	User Sender;
+	@JsonIgnore
+	@ManyToOne
+	User Rescever ;
 }

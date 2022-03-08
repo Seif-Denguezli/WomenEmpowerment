@@ -9,4 +9,5 @@ public interface IAppointment  {
 	public void updateRdv(Appointment apt ,Long serviceId,Long appointmentId);
 	public List<Appointment> affichRdv();
 	public void deleteAppoitment(Long appointmentId);
+	public int NombresCaseSolved();
 }

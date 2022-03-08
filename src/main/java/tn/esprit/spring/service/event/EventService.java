@@ -3,6 +3,7 @@ package tn.esprit.spring.service.event;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 
 import tn.esprit.spring.entities.Donation;
@@ -17,6 +18,7 @@ public interface EventService  {
 	public List<Event> Get_all_Event();
 	//public Set<Event> Get_Event_by_User(Long idUser);
 	public Long retrieveMaxEventTransactioned();
+	public Long findUserDonationsById(Long id);
 	
 	
 	

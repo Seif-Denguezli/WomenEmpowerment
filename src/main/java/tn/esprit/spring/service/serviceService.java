@@ -1,5 +1,7 @@
 package tn.esprit.spring.service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import com.sun.xml.bind.v2.runtime.reflect.Accessor.GetterSetterReflection;
 
 import net.bytebuddy.utility.privilege.GetSystemPropertyAction;
 import tn.esprit.spring.entities.*;
+import tn.esprit.spring.enumerations.Role;
 import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.repository.serviceRepo;
 
@@ -25,9 +28,12 @@ public class serviceService implements IService {
 	public void addService(tn.esprit.spring.entities.Service s , Long userId){
 		User u = userrepo.findById(userId).orElse(null);
 		
+		if( u.getRole() == Role.EXPERT) {
 	
-
+			
+			s.setJob(u.getJob());
 		servrepo.save(s);
+		}
 	}
 	@Override
 	public void updateService(tn.esprit.spring.entities.Service s,Long serviceId ){
@@ -55,6 +61,11 @@ public class serviceService implements IService {
 		return	servrepo.recherche(keyword);
 	}
 		return servrepo.findAll();
-	}
+	}/*
+	@Override
+	public List<tn.esprit.spring.entities.Service> getAllBetweenDates(Date start, Date end) {
+		
+		return servrepo.getAllBetweenDates(start, end) ;
+	}*/
 	}
 	
