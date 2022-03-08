@@ -86,7 +86,6 @@ public class User implements Serializable{
 	@JsonIgnore
 	Set<Notification> notifications;
 
-	
 
 	@OneToOne
 	User woman; // Reflexive association

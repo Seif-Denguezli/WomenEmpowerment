@@ -14,6 +14,7 @@ import tn.esprit.spring.entities.Subscription;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.enumerations.Role;
 import tn.esprit.spring.exceptions.EmailExist;
+import tn.esprit.spring.exceptions.FriendExist;
 import tn.esprit.spring.exceptions.UsernameExist;
 import tn.esprit.spring.exceptions.UsernameNotExist;
 
@@ -49,6 +50,10 @@ public interface UserService
     void extendSubscription(String username, int nbMonths);
     
     void removeSubcription(String username);
+
+	void saveFriend(String username1, String username2) throws FriendExist;
+
+	List<User> getMyFriends(User u);
 
 
     
