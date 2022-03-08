@@ -94,6 +94,12 @@ public class EventServiceImpl implements EventService{
 		return eventRepo.retrieveMaxEventTransactioned();
 	}
 
+	@Override
+	public Long findUserDonationsById(Long id) {
+		
+		return eventRepo.findUserDonationsById(id);
+	}
+
 	
 
 	
