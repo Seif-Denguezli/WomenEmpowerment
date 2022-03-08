@@ -2,10 +2,13 @@ package tn.esprit.spring.serviceInterface.offer;
 
 import java.util.List;
 
+import javax.mail.MessagingException;
+
 import tn.esprit.spring.entities.Candidacy;
-import tn.esprit.spring.entities.Offer;
 
 public interface ICandidacyService {
+	
+	public List<Candidacy> getAllCandidacies();
 	
 	public void postulerOffre (Candidacy candidacy,Long offerId,Long userId );
 	
@@ -15,5 +18,5 @@ public interface ICandidacyService {
     
     public List<String> getMyFavoriteCandidacy(String keyword);
 
-    public void HoldCandidacy(Long candidacy_id);
+    public void HoldCandidacy(Long candidacy_id) throws MessagingException;
 }
