@@ -27,18 +27,22 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import tn.esprit.spring.entities.Course;
+import tn.esprit.spring.entities.Friend;
 import tn.esprit.spring.entities.Notification;
 import tn.esprit.spring.entities.Subscription;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.enumerations.Role;
 import tn.esprit.spring.exceptions.EmailExist;
+import tn.esprit.spring.exceptions.FriendExist;
 import tn.esprit.spring.exceptions.PasswordValidException;
 import tn.esprit.spring.exceptions.UsernameExist;
 import tn.esprit.spring.exceptions.UsernameNotExist;
 import tn.esprit.spring.repository.CourseRepository;
+import tn.esprit.spring.repository.FriendRepository;
 import tn.esprit.spring.repository.NotificationRepository;
 import tn.esprit.spring.repository.SubscriptionRepository;
 import tn.esprit.spring.repository.UserRepository;
+import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.serviceInterface.user.UserService;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -74,6 +78,9 @@ public class UserServiceImpl implements UserService
     
     @Autowired
     ServiceAllEmail emailService;
+    
+    @Autowired
+    FriendRepository friendRepository;
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder)
     {
@@ -320,6 +327,41 @@ public class UserServiceImpl implements UserService
 	        }
 
 	    }
+	 
+	 
+	 @Override
+	 public void saveFriend(String username1, String username2) throws FriendExist{
+
+
+	        Friend friend = new Friend();
+	        User user1 = userRepository.findByUsername(username1).orElse(null);
+	        User user2 = userRepository.findByUsername(username2).orElse(null);
+	        User firstuser = user1;
+	        User seconduser = user2;
+	        if( !(friendRepository.existsBySenderAndReceiver(firstuser,seconduser)) && !(username1.equals(username2)) && (user2 != null) ){
+	            friend.setCreatedAt(new Date());
+	            friend.setSender(firstuser);
+	            friend.setReceiver(seconduser);
+	            friendRepository.save(friend);
+	        }
+	        else {
+	        	throw new FriendExist("Error processing friend request !");
+	        }
+	    }
+	 
+	@Override
+	 public List<User> getMyFriends(User u){
+		 List<Friend> allFriends = friendRepository.findAll();
+		 List<User> myFriends = new ArrayList<>();
+		 for (Friend f : allFriends) {
+			 if (f.getSender().getUserId() == u.getUserId() ) {
+				 myFriends.add(f.getReceiver());
+			 }
+		 }
+		 return myFriends;
+	 }
+	 
+	 
 
 
 }
