@@ -22,6 +22,7 @@ public interface DonationService {
 	public ResponseEntity<?> Delete_Donation(Long idDonation, Long idUser);
 	public Set<Donation> Get_Donation_by_User(Long idUser);
 	public Set<Donation> Get_all_Donation();
+	
 	//public User addUser(User user );
 	//SQL
 	//public List<Donation> getUserByAmount(Long idUser);
