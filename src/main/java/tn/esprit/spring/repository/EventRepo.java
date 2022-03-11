@@ -1,5 +1,7 @@
 package tn.esprit.spring.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +21,15 @@ public interface EventRepo  extends JpaRepository<Event , Long> {
 	public Long retrieveMaxEventTransactioned();
 	@Query(value="SELECT  joined_events_event_id from user_joined_events group by joined_events_event_id order by count(participants_user_id) desc limit 1", nativeQuery=true)
 	public Long retrieveMaxJoinedEvent();
+	
+	@Query(value="select u.user_id from users u where role = 'COMPANY'" ,nativeQuery=true)
+	public List<Long> GET_LIST_CAMPANY();
+	
+	
+	
+	@Query(value="SELECT  d.donor_user_id,sum(d.amount)	 FROM donation d join users on users.user_id = donor_user_id order by 2 desc limit 1",nativeQuery=true)
+	public List<Long> GET_ID_BEST_DONNER();
+	
 	}
+
+

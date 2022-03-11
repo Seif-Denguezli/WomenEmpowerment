@@ -31,4 +31,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.subscription is not null")
     public List<User> subscribedUsers();
     
+   
+    
 }
