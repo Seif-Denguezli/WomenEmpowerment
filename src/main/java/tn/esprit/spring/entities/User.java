@@ -63,7 +63,8 @@ public class User implements Serializable{
     @Column(name = "role", nullable = false)
     Role role;
     
-    String PhoneNumber ;
+    String PhoneNumber;
+    
 	String email;
 	
 	@Temporal(TemporalType.DATE)

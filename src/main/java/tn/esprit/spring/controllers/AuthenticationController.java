@@ -1,9 +1,14 @@
 package tn.esprit.spring.controllers;
 
+import tn.esprit.spring.entities.PasswordResetToken;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.exceptions.EmailExist;
+import tn.esprit.spring.exceptions.EmailNotExist;
+import tn.esprit.spring.exceptions.ResetPasswordException;
+import tn.esprit.spring.exceptions.ResetPasswordTokenException;
 import tn.esprit.spring.exceptions.UsernameExist;
 import tn.esprit.spring.exceptions.UsernameNotExist;
+import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.serviceInterface.user.AuthenticationService;
 import tn.esprit.spring.serviceInterface.user.JwtRefreshTokenService;
 import tn.esprit.spring.serviceInterface.user.UserService;
@@ -13,7 +18,11 @@ import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import net.bytebuddy.utility.RandomString;
+import springfox.documentation.annotations.ApiIgnore;
 
 
 @RestController
@@ -38,7 +47,7 @@ public class AuthenticationController
         }
         return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);*/
     	userService.saveUser(user);
-    	return new ResponseEntity<>(user, HttpStatus.OK);
+    	return new ResponseEntity<>(user, HttpStatus.CREATED);
 
     }
 
@@ -53,4 +62,15 @@ public class AuthenticationController
     {
         return ResponseEntity.ok(jwtRefreshTokenService.generateAccessTokenFromRefreshToken(token));
     }
+    
+    @PostMapping("/reset-password")
+    public PasswordResetToken generatePasswordResetToken(@RequestParam String email) throws EmailNotExist {
+    	return authenticationService.generatePasswordResetToken(email);
+    }
+    
+    @PostMapping("/reset-password/new")
+    public void updatePassword(@RequestParam String token, @RequestParam String newPassword) throws ResetPasswordException, ResetPasswordTokenException{
+    	authenticationService.updatePassword(token, newPassword);
+    }
+
 }
