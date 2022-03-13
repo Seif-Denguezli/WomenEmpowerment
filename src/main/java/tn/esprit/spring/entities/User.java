@@ -62,7 +62,8 @@ public class User implements Serializable{
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     Role role;
-
+    
+    String PhoneNumber ;
 	String email;
 	
 	@Temporal(TemporalType.DATE)
@@ -86,7 +87,6 @@ public class User implements Serializable{
 	@JsonIgnore
 	Set<Notification> notifications;
 
-	
 
 	@OneToOne
 	User woman; // Reflexive association
