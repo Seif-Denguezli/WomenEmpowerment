@@ -117,7 +117,7 @@ CertificateRepository certificateRepository;
 		Quiz quiz = quizzRepository.findById(idQuiz).get();
 		
 		List<String> userCorrectAnswers = quizzRepository.getUserScore(idUser);
-		System.out.println(userCorrectAnswers);
+		System.err.println(userCorrectAnswers);
 		for (String userAns : userCorrectAnswers) {
 			
 			String[] ans = userAns.split(",");
@@ -162,10 +162,12 @@ CertificateRepository certificateRepository;
 		mark= (nbr*70)/100;
 		if(userCourseScore(idUser,idCourse)>=mark) {
 			System.out.println("YOU PASSED THIS COURSE");
-			Certificate c = certificateRepository.findByCourse(idCourse);
+			Certificate c = certificateRepository.findByCourseAndByUserId(idCourse,idUser);
+			
 			c.setAquired(true);
 			c.setObtainingDate(date);
 			certificateRepository.flush();
+			
 		}
 		else  {
 			System.out.println("You failed the test");

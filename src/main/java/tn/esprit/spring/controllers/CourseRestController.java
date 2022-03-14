@@ -75,11 +75,11 @@ public List<User> getParticipants(@PathVariable("courseId")Long courseId){
 	quizService.participantPassed(courseId);
 	return courseService.getAllParticipants(courseId);
 }*/
-@GetMapping(path="getParticipant/{courseId}")
-public User getParticipant(@PathVariable("courseId")Long courseId){
-	return courseService.getParticipant(courseId);
+@GetMapping(path="getParticipant/{userId}")
+public User getParticipant(@PathVariable("userId")Long userId){
+	return courseService.getParticipant(userId);
 }
-@GetMapping(path="Verificator/{userId}/{courseId}")
+@GetMapping(path="verifyUserjoin/{userId}/{courseId}")
 public int verificate(@PathVariable("userId")Long userId,@PathVariable("courseId")Long courseId) {
 	return courseService.userjoinCourseVerificator(userId, courseId);
 }

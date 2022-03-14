@@ -1,19 +1,17 @@
 package tn.esprit.spring.entities;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -24,6 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import tn.esprit.spring.enumerations.Domain;
 import tn.esprit.spring.enumerations.Penality;
 
 @Getter
@@ -33,25 +32,13 @@ import tn.esprit.spring.enumerations.Penality;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @ToString
-public class Certificate implements Serializable {
-	
+public class SanctionLearnner {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long certificateId;
-	
-	@Temporal(TemporalType.DATE)
-	Date obtainingDate;
-	
-	boolean isAquired;
-
+	Long SanctionId;
+	@Enumerated(EnumType.STRING)
+	Penality penality;
 	@ManyToOne(cascade = CascadeType.ALL)
-
-	User user;
-	@JsonIgnore
-	@ManyToOne
-	Course course;
-	@OneToMany(mappedBy = "certificate")
-	Set<SanctionLearnner> sanctions;
-	
+	Certificate certificate;
 
 }

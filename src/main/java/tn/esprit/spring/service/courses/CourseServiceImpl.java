@@ -15,9 +15,11 @@ import org.springframework.stereotype.Service;
 
 import com.sun.xml.bind.v2.runtime.reflect.Lister.CollectionLister;
 
+import tn.esprit.spring.entities.Answer;
 import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Quiz;
+import tn.esprit.spring.entities.QuizQuestion;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.repository.CourseRepository;
 import tn.esprit.spring.repository.QuizzRepository;
@@ -101,11 +103,17 @@ QuizzRepository quizzRepository;
 		for (Certificate certificate : c) {
 			users.add(certificate.getUser());
 		}
+		if(users.size()==0) {
+			return null;
+		}
+		else
+		{
 		return users;
+		}
 	}
 	@Override
-	public User getParticipant(Long courseId) {
-		Long id = courseRepository.findUserById(courseId);
+	public User getParticipant(Long userId) {
+		Long id = courseRepository.findUserById(userId);
 		if(id==null) {
 			return null;
 		}
@@ -118,7 +126,7 @@ QuizzRepository quizzRepository;
 	}
 	
 	@Override
-	@Scheduled(cron= "0 0 0 * * *")
+	@Scheduled(cron= "0/10 * * * * *")
 	public void coursesStatus() {
 		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		  Date date = new Date(); 
@@ -135,7 +143,7 @@ QuizzRepository quizzRepository;
 		
 	}
 	@Override
-	@Scheduled(cron= "0 0 0 * * *")
+	@Scheduled(cron= "0/10 * * * * *")
 	public void coursesEnded() {
 		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		  Date date = new Date(); 
@@ -147,9 +155,16 @@ QuizzRepository quizzRepository;
 			if(course.getEndDate().toString().equals(formatter.format(date)) || course.getEndDate().before(date)) {
 				course.setOnGoing(false);
 				courseRepository.save(course);
+				
+				
 			}
 			
 		}
+		
+		
+		
+		
+		
 		
 
 	}
@@ -176,7 +191,7 @@ QuizzRepository quizzRepository;
 		
 		List<String> userJoinedCourses = courseRepository.getUserJoinedCourses(userId,c.getDomain().toString());
 		System.err.println(userJoinedCourses);
-		if(userJoinedCourses.isEmpty() || userJoinedCourses.size()<=2) {
+		if(userJoinedCourses.isEmpty() || userJoinedCourses.size()<2) {
 			return 100;
 		}
 		else {
