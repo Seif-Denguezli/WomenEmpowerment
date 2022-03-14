@@ -64,13 +64,14 @@ public class AuthenticationController
     }
     
     @PostMapping("/reset-password")
-    public PasswordResetToken generatePasswordResetToken(@RequestParam String email) throws EmailNotExist {
-    	return authenticationService.generatePasswordResetToken(email);
+    public ResponseEntity<?> generatePasswordResetToken(@RequestParam String email) throws EmailNotExist {
+    	return new ResponseEntity<>(authenticationService.generatePasswordResetToken(email), HttpStatus.OK);
     }
     
     @PostMapping("/reset-password/new")
-    public void updatePassword(@RequestParam String token, @RequestParam String newPassword) throws ResetPasswordException, ResetPasswordTokenException{
+    public ResponseEntity<?> updatePassword(@RequestParam String token, @RequestBody String newPassword) throws ResetPasswordException, ResetPasswordTokenException{
     	authenticationService.updatePassword(token, newPassword);
+    	return new ResponseEntity<>("Your password has been successfully updated !", HttpStatus.OK);
     }
 
 }
