@@ -14,6 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ import tn.esprit.spring.entities.SmsRequest;
 
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.repository.EventRepo;
+import tn.esprit.spring.repository.MediaRepo;
 import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.service.event.EventService;
 import tn.esprit.spring.service.event.SmsSender;
@@ -42,6 +46,8 @@ public class EventServiceImpl implements EventService{
 	
 	@Autowired
 	EventRepo eventRepo;
+	
+
 	
 	@Autowired
 	UserRepository userRepo;
@@ -119,13 +125,25 @@ public class EventServiceImpl implements EventService{
 		
 		return eventRepo.findUserDonationsById(id);
 	}
+	
+	
+	
+	
+	@Override
+	public void sendSms(SmsRequest smsRequest,String numberPhone,String msg) {
+		smsRequest.setPhoneNumber(numberPhone);
+		smsRequest.setMessage(msg);
+		smsSender.sendSms(smsRequest);
+		
+	}
 
 	@Override
 	public void Participer_event(Long userid, Long eventId) {
+		SmsRequest smsrequest = new SmsRequest(null, null);
 		User u = userRepo.findById(userid).orElse(null)		;
-		Event e = eventRepo.findById(eventId).orElse(null)		;
-		if (e.getParticipants().size() == e.getMaxPlace()) {
-			// evoie d un sms (nbr des places rt3abew)
+		Event event = eventRepo.findById(eventId).orElse(null)		;
+		if (event.getParticipants().size() == event.getMaxPlace()) {
+			sendSms(smsrequest, u.getPhoneNumber(), event.getEventName()  + " : il y a plus de place");
 			System.out.println("Place complets");
 			
 		}
@@ -134,16 +152,16 @@ public class EventServiceImpl implements EventService{
 		
 		
 		Set<Event> le = u.getJoinedEvents();
-		le.add(e);
+		le.add(event);
 		u.setJoinedEvents(le);
 		userRepo.save(u);
 		
-		Set<User> lu = e.getParticipants();
+		Set<User> lu = event.getParticipants();
 		lu.add(u);
-		e.setParticipants(lu);
+		event.setParticipants(lu);
 		eventRepo.save(null);
 		
-		
+		sendSms(smsrequest, u.getPhoneNumber(), event.getEventName()  + " : Participation avec succes");
 		// evoie d un sms (Participation avec succes)
 		System.out.println("Participation avec succes");
 	}}
@@ -165,7 +183,7 @@ public class EventServiceImpl implements EventService{
 	}
 	
 	
-	public   void invite_participants (Event event) throws MessagingException {
+	public void invite_participants (Event event) throws MessagingException {
 		SmsRequest smsrequest = new SmsRequest(null, null);
 		List<Long> CampanyList =  eventRepo.GET_LIST_CAMPANY();
 		System.out.println("user campany");
@@ -224,14 +242,19 @@ public class EventServiceImpl implements EventService{
 
 
 	
+
+
+
+
+
+
 	@Override
-	public void sendSms(SmsRequest smsRequest,String nb,String msg) {
-		smsRequest.setPhoneNumber(nb);
-		smsRequest.setMessage(msg);
-		smsSender.sendSms(smsRequest);
-		
+	public Page<Event> findEventWithPaginationAndSorting(int offset, int pageSize, String field) {
+		 Page<Event> events = eventRepo.findAll(PageRequest.of(offset, pageSize).withSort(Sort.by(field)));
+	        return  events;
 	}
 
+  
 
 
 
@@ -240,7 +263,7 @@ public class EventServiceImpl implements EventService{
 
 
 
-
+	
 
 
 

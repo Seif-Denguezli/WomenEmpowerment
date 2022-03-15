@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.stripe.exception.StripeException;
+
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
+import tn.esprit.spring.entities.Payment;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.service.event.DonationService;
 import tn.esprit.spring.service.event.EventService;
@@ -27,6 +30,9 @@ public class DonationController {
 	EventService eventService;
 	@Autowired
 	DonationService donationService;
+	
+	
+	
 	
 	/*@PostMapping("/add-Donation")
 	@ResponseBody
@@ -41,8 +47,8 @@ public class DonationController {
 	
 	@PostMapping("/add-Donation-Event/{idEvent}/{idUser}")
 	@ResponseBody
-	public Donation addDonation_to_Event(@RequestBody Donation donation, @PathVariable("idEvent") Long idEvent, @PathVariable("idUser") Long idUser) {
-		return donationService.addDonation_to_Event(donation, idEvent, idUser);
+	public Donation addDonation_to_Event(@RequestBody Payment payment ,@PathVariable("idEvent") Long idEvent, @PathVariable("idUser") Long idUser)  throws StripeException {
+		return donationService.addDonation_to_Event(idEvent, idUser,payment);
 	}
 	
 	@PutMapping(path="editDonation/{idEvent}")

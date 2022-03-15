@@ -12,9 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
+
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
-
+import tn.esprit.spring.entities.Payment;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.entities.WomenNeedDonation;
 import tn.esprit.spring.repository.DonationRepo;
@@ -43,6 +46,8 @@ public class DonationServiceImpl implements DonationService {
 	@Autowired
 	WomenNeedHelpRepo womanNeedHelpRepo;
 
+	@Autowired
+	PaymentService ps;
 	@Override
 	public Donation addDonation(Donation donation) {
 		donationRepo.save(donation);
@@ -52,18 +57,7 @@ public class DonationServiceImpl implements DonationService {
 	
 	
 	
-	/*Course course = courseRepository.findById(courseId).get();
 	
-	course.setCourseName(c.getCourseName());
-	course.setEndDate(c.getEndDate());
-	course.setNbHours(c.getNbHours());
-	course.setStartDate(c.getStartDate());
-	course.setOnGoing(c.isOnGoing());
-	course.setDomain(c.getDomain());
-	courseRepository.flush();
-	
-	return c;
-	*/
 
 	@Override
 	public Donation editDonation(Donation donation, Long idEvent) {
@@ -90,13 +84,16 @@ public class DonationServiceImpl implements DonationService {
 	}
 
 	@Override
-	public Donation addDonation_to_Event(Donation donation, Long idEvent, Long idUser) {
+	public Donation addDonation_to_Event( Long idEvent, Long idUser,Payment pi)   throws StripeException {
+		Donation donation = new Donation();
+		
 		Event event = eventRepo.findById(idEvent).orElse(null);
 		User user = userRepo.findById(idUser).orElse(null);
-
+		PaymentIntent p =ps.paymentIntent(pi);
 		donation.setEvent(event);
 		donation.setDonor(user);
-
+		donation.setAmount_forEvent(p.getAmount());
+		//ps.confirm(p.getId());
 		return donationRepo.save(donation);
 
 	}
