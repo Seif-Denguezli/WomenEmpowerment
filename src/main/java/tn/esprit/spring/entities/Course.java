@@ -13,6 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -55,7 +56,7 @@ public class Course implements Serializable {
 
 
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "course",fetch = FetchType.EAGER)
+	@OneToMany( mappedBy = "course",fetch = FetchType.EAGER)
 	Set<Certificate> certificates;
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
@@ -69,5 +70,7 @@ public class Course implements Serializable {
 	
 	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
 	Set<FileInfo> files;
+	@ManyToMany(fetch = FetchType.EAGER)
+	Set<User> buser;
 
 }

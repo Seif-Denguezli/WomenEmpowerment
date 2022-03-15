@@ -30,7 +30,7 @@ import tn.esprit.spring.enumerations.Penality;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
+@Entity(name = "sanction_learner")
 @ToString
 public class SanctionLearnner {
 	@Id
@@ -38,7 +38,7 @@ public class SanctionLearnner {
 	Long SanctionId;
 	@Enumerated(EnumType.STRING)
 	Penality penality;
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	Certificate certificate;
 
 }

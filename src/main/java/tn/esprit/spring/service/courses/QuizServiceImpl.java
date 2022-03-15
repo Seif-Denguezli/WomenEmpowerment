@@ -40,6 +40,8 @@ UserRepository userRepository;
 CourseRepository courseRepository;
 @Autowired
 CertificateRepository certificateRepository;
+@Autowired
+SanctionLearnerImpl sanctionLearnerImpl;
 	@Override
 	public void addQuestionToQuiz(QuizQuestion q, Long quizId) {
 		questionRepository.save(q);
@@ -141,6 +143,7 @@ CertificateRepository certificateRepository;
 			scoretot= scoretot + calculScore(idUser, quiz.getQuizId());
 			
 		}
+		
 		return scoretot;
 	}
 
@@ -159,6 +162,7 @@ CertificateRepository certificateRepository;
 			nbr= nbr + question.getScore();
 		}
 		}
+		
 		mark= (nbr*70)/100;
 		if(userCourseScore(idUser,idCourse)>=mark) {
 			System.out.println("YOU PASSED THIS COURSE");

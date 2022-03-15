@@ -44,9 +44,14 @@ CourseServiceImpl courseService;
 	@Override
 	public void leaveCourse(Long certificateId) {
 		Certificate c = certificateRepository.findById(certificateId).get();
+		c.getUser().getObtainedCertificates().remove(c);
+		c.getCourse().getCertificates().remove(c);
 		c.setCourse(null);
 		c.setUser(null);
+		
 		certificateRepository.delete(c);
+		certificateRepository.saveAndFlush(c);
+		
 
 		
 	}
