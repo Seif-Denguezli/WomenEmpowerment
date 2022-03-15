@@ -12,6 +12,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
@@ -41,6 +43,8 @@ public class Complaint implements Serializable{
 	@Temporal(TemporalType.DATE)
 	Date createdAt;
 	
+	@JsonIgnore
+	Boolean isTreated = false;
 	String content;
 	@JsonIgnore
 	@ManyToOne

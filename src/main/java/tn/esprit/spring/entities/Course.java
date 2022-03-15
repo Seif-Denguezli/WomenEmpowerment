@@ -53,8 +53,6 @@ public class Course implements Serializable {
 	
 	@Temporal(TemporalType.DATE)
 	Date endDate;
-
-
 	
 	@OneToMany( mappedBy = "course",fetch = FetchType.EAGER)
 	Set<Certificate> certificates;

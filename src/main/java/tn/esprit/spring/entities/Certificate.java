@@ -44,10 +44,10 @@ public class Certificate implements Serializable {
 	
 	boolean isAquired;
 
-	@ManyToOne(cascade = CascadeType.ALL)
 
+	@ManyToOne(cascade = CascadeType.ALL)
 	User user;
-	@JsonIgnore
+
 	@ManyToOne
 	Course course;
 	@OneToMany(mappedBy = "certificate")

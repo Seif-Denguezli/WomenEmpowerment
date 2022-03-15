@@ -28,6 +28,7 @@ public class BadWord implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long IdWord;
 	
+
 	String word;
 
 }

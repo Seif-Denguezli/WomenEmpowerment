@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import tn.esprit.spring.entities.Appointment;
+import tn.esprit.spring.entities.Complaint;
 import tn.esprit.spring.service.IAppointment;
 import tn.esprit.spring.service.appointmentService;
 
@@ -20,10 +21,10 @@ import tn.esprit.spring.service.appointmentService;
 public class appointementController {
 @Autowired
 IAppointment appserv;
-@PostMapping("/addrdv/{serviceId}/{userId}")
+@PostMapping("/addrdv/{serviceId}/{userId}/{exId}")
 @ResponseBody
-public void addRdv(@RequestBody Appointment apt ,@PathVariable Long serviceId,@PathVariable  Long userId){
-	appserv.addRdv(apt, serviceId, userId);
+public void addRdv(@RequestBody Appointment apt ,@PathVariable Long serviceId,@PathVariable  Long userId,@PathVariable  Long exId){
+	appserv.addRdv(apt, serviceId, userId,exId);
 }
 @PutMapping("/modifier/{serviceId}/{appointmentId}")
 public void updateRdv(@RequestBody Appointment apt ,@PathVariable Long serviceId,@PathVariable Long appointmentId){
@@ -37,4 +38,10 @@ public List<Appointment> affichRdv(){
 public void deleteAppoitment(@PathVariable Long appointmentId){
 	appserv.deleteAppoitment(appointmentId);
 }
+@PutMapping ("/nbre")
+public void NombresCaseSolved() {
+	 appserv.NombresCaseSolved();
+}
+
+
 }

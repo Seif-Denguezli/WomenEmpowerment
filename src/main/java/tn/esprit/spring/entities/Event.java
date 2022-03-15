@@ -53,10 +53,13 @@ public class Event implements Serializable {
 	
 	String link;
 	
+	int MaxPlace;
+	
+	float TargetDonation;
 	String place;
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "joinedEvents")
-	List<User> participants;
+	Set<User> participants;
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "event")
 	Set<Donation> donations;

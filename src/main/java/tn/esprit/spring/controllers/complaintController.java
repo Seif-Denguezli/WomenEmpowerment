@@ -48,5 +48,18 @@ public void deletreclamation(@PathVariable Long idUser,@PathVariable Long compla
 public List<Complaint> showclamation(){
 	return compservice.showclamation();
 }
+@GetMapping("/NBr-REc-Tr")
+public int nb_reclmation_traite(){
+	return compservice.nb_recl_trait();
 }
+
+@GetMapping("/TypeOfComplaint/{id}")
+public String nb_reclmation_traite(@PathVariable Long id){
+	return compservice.GetType(id);
+}
+@GetMapping("/PourcentageOfComplaint")
+public float statCoplaint(){
+return compservice.statCoplaint();
+
+}}
 

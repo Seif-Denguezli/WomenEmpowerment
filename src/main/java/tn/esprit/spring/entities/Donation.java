@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -37,6 +38,11 @@ public class Donation implements Serializable {
 	@Temporal(TemporalType.DATE)
 	Date donationDate;
 	
+    float amount_forEvent;
+    float profit_rate;
+    float profit_amount;
+    
+    
 	float amount;
 	@JsonIgnore
 	@ManyToOne
@@ -44,5 +50,8 @@ public class Donation implements Serializable {
 	@JsonIgnore
 	@ManyToOne
 	Event event;
+	@JsonIgnore
+	@OneToOne
+	Transaction transaction;
 
 }

@@ -11,16 +11,18 @@ import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.springframework.mail.javamail.JavaMailSender;
+//import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.sun.mail.smtp.SMTPTransport;
+
+import tn.esprit.spring.entities.User;
 
 
 @Service
 public class ServiceAllEmail {
 	
-	private JavaMailSender javaMailSender;
+	//private JavaMailSender javaMailSender;
 	
     public void sendNewPasswordEmail(String firstName, String password, String email) throws MessagingException {
         Message message = createEmail(firstName, password, email);
@@ -51,6 +53,38 @@ public class ServiceAllEmail {
         properties.put("mail.smtp.starttls.required", true);
         return Session.getInstance(properties, null);
     }
+    
+    
+    //-------------------EventDonation-------------------------------------------------
+    
+    private Message createEmailForEvent(String EventName, String email) throws MessagingException {
+        Message message = new MimeMessage(getEmailSession());
+        message.setFrom(new InternetAddress("womenempowermentapp@gmail.com"));
+        message.setRecipients(TO, InternetAddress.parse(email, false));
+        //message.setRecipients(CC, InternetAddress.parse("bdtcourse@gmail.com", false));
+        message.setSubject("Women Empowerment - Event");
+        message.setText(  " EventName: " + EventName + "\n \n The Support Team"+"\n From Les Elites Dev Team");
+        message.setSentDate(new Date());
+        message.saveChanges();
+        return message;
+    }
+
+    public void sendNewEventCreatedByUser(String EventName, String email) throws MessagingException {
+        Message message = createEmailForEvent(EventName, email);
+        SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport("smtps");
+        smtpTransport.connect("smtp.gmail.com", "womenempowermentapp@gmail.com", "womenempowerment1*");
+        smtpTransport.sendMessage(message, message.getAllRecipients());
+        smtpTransport.close();
+    }
+    
+    
+    
+    
+    
+    
+    //-----------------------------------------------------------------------------------
+    
+    
 
 
 

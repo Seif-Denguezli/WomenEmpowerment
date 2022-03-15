@@ -2,6 +2,7 @@ package tn.esprit.spring.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -25,16 +26,17 @@ serviceRepo serrepo;
 @Autowired
 UserRepository userrepo;
 @Override
-public void addRdv(Appointment apt, Long serviceId, Long userId) {
+public void addRdv(Appointment apt, Long serviceId, Long userId, Long expert_id) {
 	tn.esprit.spring.entities.Service serv= serrepo.findById(serviceId).orElse(null);
 	User user = userrepo.findById(userId).orElse(null);
-   // apt.setService(serv);
-    apt.setUser(user);
+	User expert = userrepo.findById(expert_id).orElse(null);
+  apt.setUser(user);
+  apt.setExpert(expert);
     
 
 	
 	if (serv.getStartDate().before(apt.getAppointmentDate())&&serv.getEndDate().after(apt.getAppointmentDate())){
-		serv.getAppointments().add(apt);
+		
 		
 		apprepo.save(apt);
 		
@@ -66,7 +68,21 @@ public void deleteAppoitment(Long appointmentId) {
 	apprepo.deleteById(appointmentId);
 	
 }
-
-
+@Override
+public void NombresCaseSolved() {
+	for (User u : userrepo.findAll()) {
+		u.setNbCasesSolved( (long) 0);
+		
+	}
+	for (Appointment a : apprepo.findAll()) {
+		if (a.getCaseSolved()==true) {
+			
+		a.getExpert().setNbCasesSolved(a.getExpert().getNbCasesSolved()+1);
+		userrepo.save(a.getExpert());
+		}
+		
+	}
+} 
+	 
 
 }

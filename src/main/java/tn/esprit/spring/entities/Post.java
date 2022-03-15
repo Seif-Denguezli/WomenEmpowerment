@@ -43,6 +43,11 @@ public class Post implements Serializable {
 	String body;
 
 	
+	int nb_Signal;
+	
+	int nb_etoil;
+	
+
 	@JsonIgnore
 	@ManyToOne 
 	User user;

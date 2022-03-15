@@ -2,16 +2,16 @@ package tn.esprit.spring.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,31 +28,19 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @ToString
-public class Advertising implements Serializable {
+public class Friend implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long advertisingId;
-	
-	String Name;
-	String Canal;
+	Long friendId;
 	
 	@Temporal(TemporalType.DATE)
-	Date StartDate;
+	Date createdAt;
 	
-	@Temporal(TemporalType.DATE)
-	Date EndDate;
+	@OneToOne(cascade = CascadeType.ALL)
+	User sender;
 	
-	int nbrIntialViews;
-	
-	int nbrFinalViews;
-	
-	float price;
-	
-	
-	@JsonIgnore
-	@ManyToOne 
-	User user;
-	
+	@OneToOne(cascade = CascadeType.ALL)
+	User receiver;
 
 }
