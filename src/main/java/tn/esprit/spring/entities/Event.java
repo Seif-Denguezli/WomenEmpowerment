@@ -46,6 +46,9 @@ public class Event implements Serializable {
 	@Temporal(TemporalType.DATE)
 	Date createdAt;
 	
+	@Temporal(TemporalType.DATE)
+	Date endAt;
+	
 	String description;
 	
 	@Enumerated(EnumType.STRING)

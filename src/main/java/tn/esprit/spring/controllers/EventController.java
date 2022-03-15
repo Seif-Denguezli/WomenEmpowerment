@@ -38,10 +38,7 @@ public class EventController {
 	@Autowired
 	EventService eventService;
 	
-	 @PostMapping("sms")
-	    public void sendSms(@Valid @RequestBody SmsRequest smsRequest) {
-		 eventService.sendSms(smsRequest);
-	    }
+	
 	
 	
 	
@@ -92,10 +89,7 @@ public class EventController {
 		eventService.addEvent(event);
 	}
 	
-	@DeleteMapping(path="deleteEvent/{idUser}/{idEvent}")
-	public void deletEvent(@PathVariable("idUser")Long idUser,@PathVariable("idEvent")Long idEvent) {
-		eventService.deleteEvent(idUser, idEvent);
-	}
+
 	  
 	@PostMapping(path = "joinEvent/{userid}/{idEvent}")
 	public void joinEvent(@PathVariable("userid")Long userid,@PathVariable("idEvent")Long idEvent) {
@@ -114,10 +108,7 @@ public class EventController {
 		return eventService.Get_all_Event();
 	}
 	
-	@GetMapping("/maxEventTransaction")
-	public Long GetMaxEventTransaction(){
-		return eventService.retrieveMaxEventTransactioned();
-	}
+	
 	@GetMapping("/userAllDonation/{userid}")
 	public Long getUSERDonationByID(@PathVariable("userid")Long userid){
 		return eventService.findUserDonationsById(userid);

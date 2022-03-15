@@ -56,7 +56,7 @@ public class TwilioConfiguration {
 
 
 	public String getTrialNumber() {
-		return "+17577810152";
+		return trialNumber;
 	}
 
 

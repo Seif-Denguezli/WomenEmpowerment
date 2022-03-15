@@ -27,7 +27,7 @@ import tn.esprit.spring.config.TwilioConfiguration;
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.SmsRequest;
-import tn.esprit.spring.entities.Transaction;
+
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.repository.EventRepo;
 import tn.esprit.spring.repository.UserRepository;
@@ -70,7 +70,18 @@ public class EventServiceImpl implements EventService{
 		return event;
 	}
 
+	@Override
+	public void removeEvent(Long IdEvent) {
+		eventRepo.deleteById(IdEvent);
+		
+	}
 	
+	
+	@Override
+	public List<Event> Get_all_Event() {
+		return  eventRepo.findAll();
+
+	}
 
 	@Override
 	public void joinEvent(Long idUser, Long idEvent) {
@@ -95,32 +106,13 @@ public class EventServiceImpl implements EventService{
 	}
 	
 
-	@Override
-	public Event deleteEvent(Long idUser, Long idEvent) {
-		  User user = userRepo.findById(idUser).get();
-			Event event = eventRepo.findById(idEvent).orElse(null);
-			user.getJoinedEvents().remove(event);
-			eventRepo.delete(event);
-			return event ;
-	}
 
-	@Override
-	public List<Event> Get_all_Event() {
-		return  eventRepo.findAll();
 
-	}
 
-	@Override
-	public void removeEvent(Long IdEvent) {
-		eventRepo.deleteById(IdEvent);
-		
-	}
 
-	@Override
-	public Long retrieveMaxEventTransactioned() {
-		
-		return eventRepo.retrieveMaxEventTransactioned();
-	}
+
+
+	
 
 	@Override
 	public Long findUserDonationsById(Long id) {
@@ -161,7 +153,7 @@ public class EventServiceImpl implements EventService{
 		Event e = eventRepo.findById(eventId).orElse(null)		;
 		
 		for (Donation d : e.getDonations()) {
-			s=s+d.getAmount();
+			s=s+d.getAmount_forEvent();
 						
 		}
 		if (s >= e.getTargetDonation())
@@ -193,12 +185,6 @@ public class EventServiceImpl implements EventService{
 		}
 		
 	}
-	
-	/*public void Give_Avie(String av ) {
-		
-		avie.add(av);
-		
-	}*/
 	
 	public Event affecte_place_event_byavie(Long id_event) {
 		List<String > avie =new  ArrayList();
@@ -250,11 +236,17 @@ public class EventServiceImpl implements EventService{
 
 
 
-	@Override
-	public void sendSms(SmsRequest smsRequest) {
-		// TODO Auto-generated method stub
-		
-	}
+
+
+
+
+
+
+
+
+
+
+
 
 
 	
