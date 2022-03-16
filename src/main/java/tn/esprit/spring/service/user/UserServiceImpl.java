@@ -338,7 +338,7 @@ public class UserServiceImpl implements UserService
 	        User user2 = userRepository.findByUsername(username2).orElse(null);
 	        User firstuser = user1;
 	        User seconduser = user2;
-	        if( !(friendRepository.existsBySenderAndReceiver(firstuser,seconduser)) && !(username1.equals(username2)) && (user2 != null) ){
+	        if( !(friendRepository.existsBySenderAndReceiver(firstuser,seconduser)) && (user1.getUserId() != user2.getUserId()) && (user2 != null) ){
 	            friend.setCreatedAt(new Date());
 	            friend.setSender(firstuser);
 	            friend.setReceiver(seconduser);
