@@ -22,8 +22,13 @@ CertificateRepository certificateRepository;
 CourseServiceImpl courseService;
 	@Override
 	public void joinCourse(Long idUser, Long idCourse) {
+		
 		if(courseService.userjoinCourseVerificator(idUser, idCourse)>=0 && courseService.userjoinCourseVerificator(idUser, idCourse)<6) {
 			System.err.println("you can't join more than 2 courses in a semester");
+		}
+		if(certificateRepository.findByCourseAndByUserId(idCourse, idUser)!=null){
+			System.err.println("You allready joined this course");
+			
 		}
 		else {
 		User us = userRepository.findById(idUser).get();
@@ -39,9 +44,14 @@ CourseServiceImpl courseService;
 	@Override
 	public void leaveCourse(Long certificateId) {
 		Certificate c = certificateRepository.findById(certificateId).get();
+		c.getUser().getObtainedCertificates().remove(c);
+		c.getCourse().getCertificates().remove(c);
 		c.setCourse(null);
 		c.setUser(null);
+		
 		certificateRepository.delete(c);
+		certificateRepository.saveAndFlush(c);
+		
 
 		
 	}

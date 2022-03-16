@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.stripe.exception.StripeException;
 
+import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
+import tn.esprit.spring.entities.Payment;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.service.event.DonationService;
 import tn.esprit.spring.service.event.EventService;
@@ -28,33 +31,41 @@ public class DonationController {
 	@Autowired
 	DonationService donationService;
 	
+	
+	
+	
 	/*@PostMapping("/add-Donation")
 	@ResponseBody
 	public void addEvent(@RequestBody Donation donation) {
 		donationService.addDonation(donation);
 	}*/
+	
+	
+	
+	
+	
+	
 	@PostMapping("/add-Donation-Event/{idEvent}/{idUser}")
 	@ResponseBody
-	public Donation addDonation_to_Event(@RequestBody Donation donation, @PathVariable("idEvent") Long idEvent, @PathVariable("idUser") Long idUser) {
-		return donationService.addDonation_to_Event(donation, idEvent, idUser);
+	public Donation addDonation_to_Event(@RequestBody Payment payment ,@PathVariable("idEvent") Long idEvent, @PathVariable("idUser") Long idUser)  throws StripeException {
+		return donationService.addDonation_to_Event(idEvent, idUser,payment);
 	}
-	/*@PostMapping("/addspecifiqueDonation/{idEvent}/{idUser}/{amount}/{tx}")
+	
+	@PutMapping(path="editDonation/{idEvent}")
+	public Donation editDonation(@RequestBody Donation donation,@PathVariable("idEvent")Long idEvent) {
+		
+return donationService.editDonation(donation,idEvent);
+	}
+
+	
+	@DeleteMapping("delete/{idDonation}")
 	@ResponseBody
-	public Donation addspcificdonation(@RequestBody Donation donation, @PathVariable("idEvent") Long idEvent, @PathVariable("idUser") Long idUser, @PathVariable("amount") float amount, @PathVariable("tx") float tx) {
-		return donationService.addspecificdonation(donation, idEvent, idUser, amount, tx);
-	}*/
-	@PostMapping("/add-Donation-EventandTransaction/{idEvent}/{idUser}{idTransaction}")
-	@ResponseBody
-	public Donation addDonation_to_Event(@RequestBody Donation donation, @PathVariable("idEvent") Long idEvent, @PathVariable("idUser") Long idUser, @PathVariable("idTransaction") Long idTransaction) {
-		return donationService.addDonation_to_EventAndTransaction(donation, idEvent, idUser, idTransaction);
+	public void deleteDonation(@PathVariable Long idDonation ){
+		donationService.removeDonation(idDonation);
 	}
 	
 	
 	
-	@DeleteMapping("/Delete-Donation/{idDonation}/{idUser}")
-	public ResponseEntity<?> Delete_Donation( @PathVariable("idDonation") Long idDonation, @PathVariable("idUser") Long IdUser) {
-		return donationService.Delete_Donation(idDonation, IdUser);
-	}
 	
 	
 	
@@ -69,18 +80,8 @@ public class DonationController {
 		return donationService.Get_all_Donation();
 	}
 	
-	@PutMapping(path="/editDonation")
-	public void editDonation(@RequestBody Donation don) {
-		donationService.editDonation(don);
 
-	
-}
-	
-	/*@PostMapping("/add-user")
-	@ResponseBody
-	public void addEvent(@RequestBody User user) {
-		donationService.addUser(user);
-	}*/
+
 
 	@PostMapping("/calculdonbyuser/{idUser}")
 	@ResponseBody
@@ -95,6 +96,11 @@ public class DonationController {
 		return donationService.maxDonationByUser(idUser);
 	}
 	
+	@PutMapping("/Donne-Many-towaman/{idEvent}")
+	@ResponseBody
+	public void Donne_Many( @PathVariable("idEvent") Long idEvent) {
+		 donationService.NeedDonnation(idEvent);
+	}
 	
 	
 }

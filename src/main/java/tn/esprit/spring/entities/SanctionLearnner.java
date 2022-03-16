@@ -1,16 +1,17 @@
 package tn.esprit.spring.entities;
 
-import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -21,33 +22,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import tn.esprit.spring.enumerations.Domain;
+import tn.esprit.spring.enumerations.Penality;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
+@Entity(name = "sanction_learner")
 @ToString
-public class Donation implements Serializable {
-	
+public class SanctionLearnner {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long donationId;
-	
-	@Temporal(TemporalType.DATE)
-	Date donationDate;
-	
-    float amount_forEvent;
-	
-    
-    
-    @JsonIgnore
+	Long SanctionId;
+	@Enumerated(EnumType.STRING)
+	Penality penality;
 	@ManyToOne
-	User donor;
-	@JsonIgnore
-	@ManyToOne
-	Event event;
-	
+	Certificate certificate;
 
 }

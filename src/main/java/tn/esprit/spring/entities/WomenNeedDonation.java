@@ -1,16 +1,15 @@
 package tn.esprit.spring.entities;
 
-import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -21,6 +20,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import tn.esprit.spring.enumerations.Job;
+import tn.esprit.spring.enumerations.Role;
 
 @Getter
 @Setter
@@ -29,25 +30,23 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @ToString
-public class Donation implements Serializable {
+@Table(name = "WomenNeedDonation")
+public class WomenNeedDonation {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long donationId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long idWNDonation;
 	
-	@Temporal(TemporalType.DATE)
-	Date donationDate;
+	private String TypeHelp;
+	private int priority;
 	
-    float amount_forEvent;
+	@OneToOne
+	private User user;
 	
-    
-    
-    @JsonIgnore
-	@ManyToOne
-	User donor;
-	@JsonIgnore
-	@ManyToOne
-	Event event;
+	Boolean GetHelp;
+	
+	Float montantRecu;
+	
 	
 
 }

@@ -26,11 +26,12 @@ serviceRepo serrepo;
 @Autowired
 UserRepository userrepo;
 @Override
-public void addRdv(Appointment apt, Long serviceId, Long userId) {
+public void addRdv(Appointment apt, Long serviceId, Long userId, Long expert_id) {
 	tn.esprit.spring.entities.Service serv= serrepo.findById(serviceId).orElse(null);
 	User user = userrepo.findById(userId).orElse(null);
-   // apt.setService(serv);
-    apt.setUser(user);
+	User expert = userrepo.findById(expert_id).orElse(null);
+  apt.setUser(user);
+  apt.setExpert(expert);
     
 
 	
@@ -68,10 +69,19 @@ public void deleteAppoitment(Long appointmentId) {
 	
 }
 @Override
-public int NombresCaseSolved() {
-int x = apprepo.NombresCaseSolved();
-	
-	return  x;
+public void NombresCaseSolved() {
+	for (User u : userrepo.findAll()) {
+		u.setNbCasesSolved( (long) 0);
+		
+	}
+	for (Appointment a : apprepo.findAll()) {
+		if (a.getCaseSolved()==true) {
+			
+		a.getExpert().setNbCasesSolved(a.getExpert().getNbCasesSolved()+1);
+		userrepo.save(a.getExpert());
+		}
+		
+	}
 } 
 	 
 

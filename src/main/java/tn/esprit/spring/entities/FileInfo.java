@@ -8,6 +8,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "files")
 public class FileInfo {
@@ -17,6 +19,7 @@ public class FileInfo {
   private String id;
   private String name;
   private String type;
+  @JsonIgnore
   @Lob
   private byte[] data;
   public FileInfo() {
