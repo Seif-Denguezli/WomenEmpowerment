@@ -85,6 +85,7 @@ public class User implements Serializable{
 	@OneToOne
 	Subscription subscription;
 	
+	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	@JsonIgnore
 	Set<Notification> notifications;
@@ -146,6 +147,7 @@ public class User implements Serializable{
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Course> createdCourses; // Courses created By the former
 	@ManyToMany(mappedBy = "buser",fetch = FetchType.EAGER)
+	@JsonIgnore
 	Set<Course> bcourses;
 	
 	//******************************************************************//
