@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import tn.esprit.spring.entities.Course;
@@ -42,7 +43,6 @@ import tn.esprit.spring.repository.FriendRepository;
 import tn.esprit.spring.repository.NotificationRepository;
 import tn.esprit.spring.repository.SubscriptionRepository;
 import tn.esprit.spring.repository.UserRepository;
-import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.serviceInterface.user.UserService;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -64,6 +64,7 @@ import javax.mail.MessagingException;
 @Service
 public class UserServiceImpl implements UserService
 {
+	
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     
@@ -343,13 +344,19 @@ public class UserServiceImpl implements UserService
 	            friend.setSender(firstuser);
 	            friend.setReceiver(seconduser);
 	            friendRepository.save(friend);
+	            Notification notif = new Notification();
+	            notif.setCreatedAt(new Date());
+	            notif.setMessage(firstuser.getName() +  " Started following you !");
+	            notif.setRead(false);
+	            notif.setUser(seconduser);
+	            notificationRepository.save(notif);
 	        }
 	        else {
 	        	throw new FriendExist("Error processing friend request !");
 	        }
 	    }
 	 
-	@Override
+	 @Override
 	 public List<User> getMyFriends(User u){
 		 List<Friend> allFriends = friendRepository.findAll();
 		 List<User> myFriends = new ArrayList<>();

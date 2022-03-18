@@ -1,5 +1,6 @@
 package tn.esprit.spring.controllers;
 
+import tn.esprit.spring.entities.Media;
 import tn.esprit.spring.entities.PasswordResetToken;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.exceptions.EmailExist;
@@ -8,18 +9,27 @@ import tn.esprit.spring.exceptions.ResetPasswordException;
 import tn.esprit.spring.exceptions.ResetPasswordTokenException;
 import tn.esprit.spring.exceptions.UsernameExist;
 import tn.esprit.spring.exceptions.UsernameNotExist;
+import tn.esprit.spring.repository.MediaRepo;
 import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.serviceInterface.user.AuthenticationService;
 import tn.esprit.spring.serviceInterface.user.JwtRefreshTokenService;
 import tn.esprit.spring.serviceInterface.user.UserService;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.bytebuddy.utility.RandomString;
 import springfox.documentation.annotations.ApiIgnore;
@@ -29,25 +39,43 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("api/authentication")//pre-path
 public class AuthenticationController
 {
+	public static String uploadDirectory = System.getProperty("user.dir")+"/uploads/";
+	
+	ObjectMapper objectMapper = new ObjectMapper();
+
     @Autowired
     private AuthenticationService authenticationService;
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    MediaRepo mediaRepository;
 
     @Autowired
     private JwtRefreshTokenService jwtRefreshTokenService;
 
-    @PostMapping("sign-up")//api/authentication/sign-up
-    public ResponseEntity<User> signUp(@RequestBody User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException
+    @PostMapping(value="sign-up", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})//api/authentication/sign-up
+    public ResponseEntity<User> signUp(@RequestPart("user") String user, @RequestPart("file") MultipartFile file) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException, IOException
     {
-        /*if (userService.findByUsername(user.getUsername()).isPresent())
-        {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);*/
-    	userService.saveUser(user);
-    	return new ResponseEntity<>(user, HttpStatus.CREATED);
+    	//upload file
+    	
+    	File convertFile = new File(uploadDirectory+file.getOriginalFilename());
+    	convertFile.createNewFile();
+    	FileOutputStream fout = new FileOutputStream(convertFile);
+    	fout.write(file.getBytes());
+    	fout.close();
+    	Media profilPicture = new Media();
+    	profilPicture.setImagenUrl(uploadDirectory+file.getOriginalFilename());
+    	profilPicture = mediaRepository.save(profilPicture);
+    	User userData = objectMapper.readValue(user, User.class);
+    	userData.setProfilPicture(profilPicture);
+    	
+    	
+    	//////
+    	
+    	userService.saveUser(userData);
+    	return new ResponseEntity<>(userData, HttpStatus.CREATED);
 
     }
 
