@@ -37,5 +37,6 @@ public interface CandidacyRepository extends JpaRepository<Candidacy, Long> {
 	//Jointure Pour récuperer le titre d'offre a partir d'une candidature
 		@Query (nativeQuery=true,value="select o.title FROM offer o  Join candidacy c on offer_id=offer_offer_id where candidacy_id=:param")
 		public String getOfferTitle(@Param("param") Long candidacy_id);
-	
+		
+		
 }	

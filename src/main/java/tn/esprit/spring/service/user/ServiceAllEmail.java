@@ -67,7 +67,7 @@ public class ServiceAllEmail {
         message.setRecipients(TO, InternetAddress.parse(email, false));
         //message.setRecipients(CC, InternetAddress.parse("bdtcourse@gmail.com", false));
         message.setSubject("Women Empowerment - Candidacy ");
-        message.setText("Hello " + firstName + ", \n \n Your Candidacy for the offer : " + title + "is: "+candidacyState+"\n \n The Support Team"+"\n From Les Elites Dev Team");
+        message.setText("Hello " + firstName + ", \n \n  We want to inform you that your Candidacy for the offer " + title + " is "+candidacyState+"."+"\n \n The Support Team"+"\n From Les Elites Dev Team");
         message.setSentDate(new Date());
         message.saveChanges();
         return message;

@@ -19,4 +19,6 @@ public interface ICandidacyService {
     public List<String> getMyFavoriteCandidacy(String keyword);
 
     public void HoldCandidacy(Long candidacy_id) throws MessagingException;
+    
+    public void RestrainCandidacy(Long candidacy_id) throws MessagingException;
 }

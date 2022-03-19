@@ -102,6 +102,21 @@ public class CandidacyServiceImpl implements ICandidacyService {
 		
 	}
 
+	@Override
+	public void RestrainCandidacy(Long candidacy_id) throws MessagingException {
+		// TODO Auto-generated method stub
+		Candidacy cc = CandidacyRepo.findById(candidacy_id).orElse(null);
+		String firstName=CandidacyRepo.getCandidateName(candidacy_id);
+		String email=CandidacyRepo.getCandidateEmail(candidacy_id);
+		String title=CandidacyRepo.getOfferTitle(candidacy_id);
+		String candidacyState="Is Denied";
+		log.error(firstName+email+title);
+		emailservice.sendCandidacyEmail(firstName, title, email, candidacyState);		
+		CandidacyRepo.deleteById(candidacy_id);;
+		
+	}
+	
+
 	
 		
 	}

@@ -113,4 +113,13 @@ public class OfferRestContrller {
 	public void HoldCandidacy ( @PathVariable(value="id") Long candidacy_id) throws MessagingException {
 		CandidacyService.HoldCandidacy(candidacy_id);
 	}
+	
+	@DeleteMapping ("/Restrain-Cnadidacy/{id}")
+	@ResponseBody
+	public void RestrainCandidacy ( @PathVariable(value="id") Long candidacy_id) throws MessagingException {
+		CandidacyService.RestrainCandidacy(candidacy_id);
+	}
+	
+	
+	
 }
