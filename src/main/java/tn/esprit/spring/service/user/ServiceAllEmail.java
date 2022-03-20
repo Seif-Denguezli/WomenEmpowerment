@@ -1,4 +1,4 @@
-package tn.esprit.spring.service.user;
+ package tn.esprit.spring.service.user;
 
 import static javax.mail.Message.RecipientType.TO;
 import static javax.mail.Message.RecipientType.CC;

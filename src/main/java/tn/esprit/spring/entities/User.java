@@ -70,6 +70,10 @@ public class User implements Serializable{
 	
 	@Temporal(TemporalType.DATE)
 	Date birthDate;
+	
+	boolean isLocked;
+	
+	int loginAttempts;
 
     @Transient
     String accessToken;

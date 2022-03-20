@@ -24,6 +24,7 @@ import tn.esprit.spring.serviceInterface.offer.ICandidacyService;
 import tn.esprit.spring.serviceInterface.offer.IOfferService;
 
 @RestController
+@RequestMapping("/offer")
 public class OfferRestContrller {
 	@Autowired
 	IOfferService OfferService;

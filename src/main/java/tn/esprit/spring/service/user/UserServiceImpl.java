@@ -97,6 +97,8 @@ public class UserServiceImpl implements UserService
         user.setRole(Role.USER);
         emailService.sendNewPasswordEmail(user.getName(), user.getPassword(), user.getEmail());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setLocked(false);
+        user.setLoginAttempts(0);
         return userRepository.save(user);
     }
 
@@ -130,6 +132,14 @@ public class UserServiceImpl implements UserService
 	public void makeAdmin(String username) {
 		userRepository.makeAdmin(username);
 		
+	}
+	
+	@Override
+	public void unlockUser(String username) {
+		User u = userRepository.findByUsername(username).get();
+		u.setLoginAttempts(0);
+		u.setLocked(false);
+		userRepository.save(u);
 	}
 
 	@Override
@@ -204,11 +214,12 @@ public class UserServiceImpl implements UserService
 		subscriptionRepository.delete(s);
 	}
 	
-	@Scheduled(cron = "*/30 * * * * *")
-	public void nbreUnreadNotifications() {
-		int x = notificationRepository.userNotification(3L).size();
-		log.info("Unread notifs : " + x);
-	}
+	
+	//@Scheduled(cron = "*/30 * * * * *")
+	//public void nbreUnreadNotifications() {
+	//	int x = notificationRepository.userNotification(3L).size();
+	//	log.info("Unread notifs : " + x);
+	//}
 	
 	
 	 private User isvalidUsernameAndEmail(String currentUsername, String newUsername, String newEmail) 

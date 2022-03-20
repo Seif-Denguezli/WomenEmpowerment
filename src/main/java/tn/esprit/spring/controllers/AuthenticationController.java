@@ -10,6 +10,7 @@ import tn.esprit.spring.exceptions.ResetPasswordTokenException;
 import tn.esprit.spring.exceptions.UsernameExist;
 import tn.esprit.spring.exceptions.UsernameNotExist;
 import tn.esprit.spring.repository.MediaRepo;
+import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.serviceInterface.user.AuthenticationService;
 import tn.esprit.spring.serviceInterface.user.JwtRefreshTokenService;
@@ -20,12 +21,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.mail.MessagingException;
+import javax.security.auth.login.AccountLockedException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,6 +54,12 @@ public class AuthenticationController
     
     @Autowired
     MediaRepo mediaRepository;
+    
+    @Autowired
+    UserRepository userRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private JwtRefreshTokenService jwtRefreshTokenService;
@@ -80,9 +89,42 @@ public class AuthenticationController
     }
 
     @PostMapping("sign-in")//api/authentication/sign-in
-    public ResponseEntity<?> signIn(@RequestBody User user)
+    public ResponseEntity<?> signIn(@RequestBody User user) throws tn.esprit.spring.exceptions.AccountLockedException
     {
-        return new ResponseEntity<>(authenticationService.signInAndReturnJWT(user), HttpStatus.OK);
+    	User u = userRepository.findByUsername(user.getUsername()).orElse(null);
+    	if (u != null) {
+    		if (!u.isLocked()) {
+        		if (u.getLoginAttempts() != 4 && !passwordEncoder.matches(user.getPassword(), u.getPassword())){
+        			u.setLoginAttempts(u.getLoginAttempts() + 1);
+        			userRepository.save(u);
+        			if (u.getLoginAttempts()==4) {
+        				u.setLocked(true);
+        				userRepository.save(u);
+        				throw new tn.esprit.spring.exceptions.AccountLockedException("Your account has been locked, please contact the administration !");
+        			}
+        			else {
+            			return new ResponseEntity<>(authenticationService.signInAndReturnJWT(user), HttpStatus.OK);
+        			}
+
+        		}
+        		else if (u.getLoginAttempts() != 4 && passwordEncoder.matches(user.getPassword(), u.getPassword())){
+        			u.setLoginAttempts(0);
+        			userRepository.save(u);
+        			return new ResponseEntity<>(authenticationService.signInAndReturnJWT(user), HttpStatus.OK);
+        		}
+        		else {
+        			throw new tn.esprit.spring.exceptions.AccountLockedException("Your account has been locked, please contact the administration !");
+        		}
+    		}
+    		else {
+    			throw new tn.esprit.spring.exceptions.AccountLockedException("Your account has been locked, please contact the administration !");
+    		}
+
+    	}
+    	else {
+    		return new ResponseEntity<>(authenticationService.signInAndReturnJWT(user), HttpStatus.OK);
+    	}
+        
     }
 
     @PostMapping("refresh-token")//api/authentication/refresh-token?token=
