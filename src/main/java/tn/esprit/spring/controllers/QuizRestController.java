@@ -1,5 +1,6 @@
 package tn.esprit.spring.controllers;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.http.HttpResponse;
+import java.util.Base64;
+import java.util.Base64.Decoder;
 import java.util.Set;
 
 import javax.mail.MessagingException;
@@ -14,6 +17,8 @@ import javax.mail.Multipart;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.stax2.ri.typed.StringBase64Decoder;
+import org.cryptacular.codec.Base64Decoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
@@ -103,22 +108,22 @@ public class QuizRestController {
 	int userPassed(@PathVariable("idUser")Long idUser,@PathVariable("idCourse") Long idCourse) {
 		return quizService.userPassed(idUser, idCourse);
 	}
-	@Autowired
+	/*@Autowired
 	ServletContext context;
 	@PostMapping(path="genCertificateQR",produces = MediaType.IMAGE_PNG_VALUE)
 	@ResponseBody
-	public byte[] userAnswerQuestion(HttpServletResponse response) throws IOException, InterruptedException  {
+	public HttpResponse<String> userAnswerQuestion(HttpServletResponse response) throws IOException, InterruptedException  {
 		response.setContentType("image/png");
+
+		 HttpResponse<String> responsse = quizService.createCertificateQr(null);
+		return responsse; 
+	
 		
-		 byte[] qr =  quizService.createCertificateQr(null);
 		 
 		
-		 return qr;
-		 
 		
 		
-		
-	}
+	}*/
 
 	
 	
