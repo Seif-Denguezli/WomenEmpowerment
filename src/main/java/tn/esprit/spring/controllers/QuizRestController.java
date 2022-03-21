@@ -1,8 +1,25 @@
 package tn.esprit.spring.controllers;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.http.HttpResponse;
 import java.util.Set;
 
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +34,7 @@ import io.swagger.annotations.Api;
 import tn.esprit.spring.entities.Answer;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.QuizQuestion;
+import tn.esprit.spring.repository.CertificateRepository;
 import tn.esprit.spring.service.courses.CourseServiceImpl;
 import tn.esprit.spring.service.courses.QuizServiceImpl;
 import tn.esprit.spring.serviceInterface.courses.UserCourseService;
@@ -85,8 +103,41 @@ public class QuizRestController {
 	int userPassed(@PathVariable("idUser")Long idUser,@PathVariable("idCourse") Long idCourse) {
 		return quizService.userPassed(idUser, idCourse);
 	}
-	
-	
+	@Autowired
+	ServletContext context;
+	@PostMapping(path="genCertificateQR",produces = MediaType.IMAGE_PNG_VALUE)
+	@ResponseBody
+	public byte[] userAnswerQuestion(HttpServletResponse response) throws IOException, InterruptedException  {
+		response.setContentType("image/png");
+		
+		 byte[] qr =  quizService.createCertificateQr(null);
+		 
+		 OutputStream strem = response.getOutputStream();
+		 strem.write(qr);
+		 
+		String absolutePath=  context.getRealPath("resources/images");
+		 Resource file = loadFileResource("abcd",absolutePath);
+	     
+		 return qr;
+		 
+		
+		
+		
+	}
+	public Resource loadFileResource(String filename, String filePath) {
+	     try {        
+	        filePath = filePath + filename;
+	        File file = new File(filePath);
+	        if (file.exists()) {
+	          InputStream in = new FileInputStream(file);           
+	           return new InputStreamResource(in);
+	      }
+
+	   } catch (FileNotFoundException e) {             
+	      e.printStackTrace();
+	   }
+	  return null;
+	 }
 	
 	
 	
