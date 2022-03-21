@@ -1,18 +1,14 @@
 package tn.esprit.spring.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.Table;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,25 +25,20 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @ToString
-public class Donation implements Serializable {
+@Table(name = "password_reset_token")
+public class PasswordResetToken implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long donationId;
+    @Column(name = "token_id", nullable = false)
+	Long passwordResetTokenId;
 	
-	@Temporal(TemporalType.DATE)
-	Date donationDate;
+	String token;
 	
-    float amount_forEvent;
+	Long userId;;
 	
-    
-    
-    @JsonIgnore
-	@ManyToOne
-	User donor;
-	@JsonIgnore
-	@ManyToOne
-	Event event;
+	LocalDateTime createDate;
 	
+	LocalDateTime exprirationDate;
 
 }

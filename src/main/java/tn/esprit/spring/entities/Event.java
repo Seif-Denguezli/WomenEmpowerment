@@ -46,6 +46,9 @@ public class Event implements Serializable {
 	@Temporal(TemporalType.DATE)
 	Date createdAt;
 	
+	@Temporal(TemporalType.DATE)
+	Date endAt;
+	
 	String description;
 	
 	@Enumerated(EnumType.STRING)
@@ -63,7 +66,9 @@ public class Event implements Serializable {
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "event")
 	Set<Donation> donations;
-	
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "event")
+	Set<Media> medias;
 	
 
 }
