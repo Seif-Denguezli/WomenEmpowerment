@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAspectJAutoProxy
 @EnableScheduling
 @SpringBootApplication
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class, XADataSourceAutoConfiguration.class})
 public class WomenEmpowermentApplication {
 	
 
