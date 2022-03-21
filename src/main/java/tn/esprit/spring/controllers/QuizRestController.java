@@ -112,34 +112,14 @@ public class QuizRestController {
 		
 		 byte[] qr =  quizService.createCertificateQr(null);
 		 
-		 OutputStream strem = response.getOutputStream();
-		 strem.write(qr);
-		 
-		String absolutePath=  context.getRealPath("resources/images");
-		 Resource file = loadFileResource("abcd",absolutePath);
-	     
+		
 		 return qr;
 		 
 		
 		
 		
 	}
-	public Resource loadFileResource(String filename, String filePath) {
-	     try {        
-	        filePath = filePath + filename;
-	        File file = new File(filePath);
-	        if (file.exists()) {
-	          InputStream in = new FileInputStream(file);           
-	           return new InputStreamResource(in);
-	      }
 
-	   } catch (FileNotFoundException e) {             
-	      e.printStackTrace();
-	   }
-	  return null;
-	 }
-	
-	
 	
 	
 
