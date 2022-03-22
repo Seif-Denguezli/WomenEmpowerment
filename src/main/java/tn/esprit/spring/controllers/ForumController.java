@@ -2,6 +2,7 @@ package tn.esprit.spring.controllers;
 
 
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -33,6 +34,12 @@ public class ForumController {
 	@ResponseBody
 	public ResponseEntity<?> addPost_affectedto_User(@RequestBody Post post, @PathVariable("IdUser") Long IdUser) {
 		return forumService.addPost(post,IdUser);
+	}
+	
+	@PostMapping("/add-Advertising/{IdUser}")
+	@ResponseBody
+	public ResponseEntity<?> addAdvertising_affectedto_User(@RequestBody Advertising a, @PathVariable("IdUser") Long IdUser) {
+		return forumService.addAdvertising(a,IdUser);
 	}
 	
 	@PostMapping("/add-Com-to-Com/{IdCom}/{IdUser}")
@@ -76,6 +83,12 @@ public class ForumController {
 		return forumService.Update_post(post,IdPost,IdUser);
 	}
 	
+	@PutMapping("/Update-Adversting/{IdPost}/{IdUser}")
+	@ResponseBody
+	public ResponseEntity<?> Update_Adversting(@RequestBody Advertising a, @PathVariable("IdPost") Long IdPost) {
+		return forumService.Update_Adversting(a,IdPost);
+	}
+	
 	
 	@PutMapping("/Update-Comment/{IdPostCom}/{IdUser}")
 	@ResponseBody
@@ -92,7 +105,7 @@ public class ForumController {
 	 
 	
 	@GetMapping("/Get-all-Post")
-	public Set<Post> Get_all_post(){
+	public List<Post> Get_all_post(){
 		return forumService.Get_all_post();
 	}
 	
@@ -124,13 +137,18 @@ public class ForumController {
 		return forumService.Delete_post(IdPost,IdUser);
 	}
 	
+	@DeleteMapping("/Delete-Adversting/{IdAdv}")
+	public ResponseEntity<?> Delete_Adversting( @PathVariable("IdAdv") Long IdPost) {
+		return forumService.Delete_Adversting(IdPost);
+	}
+	
 	@DeleteMapping("/Delete-PostComment/{IdPostCom}/{IdUser}")
 	public ResponseEntity<?> Delete_PostCom( @PathVariable("IdPostCom") Long IdPostCom, @PathVariable("IdUser") Long IdUser) {
 		return forumService.Delete_PostCom(IdPostCom,IdUser);
 	}
 	
 	@DeleteMapping("/Delete-Post-Redandant")
-	public void Get_post_DisLi( ){
+	public void Delete_post_Redendant( ){
 		 forumService.delete_sujet_sans_Int();
 	}
 	@GetMapping("/Get-best-podt-week")
@@ -151,6 +169,33 @@ public class ForumController {
 	@PutMapping("/Give-post-etoile/{idPost}/{nb_etoile}")
 	public  Post Give_Etoile_Post(@PathVariable("idPost") Long idPost, @PathVariable("nb_etoile") int nb_etoile ){
 		return forumService.Give_Etoile_Post (idPost,nb_etoile);
+	}
+	
+	@PutMapping("/Report-Post/{idPost}")
+	public  Post Report_User(@PathVariable("idPost") Long idPost ){
+		return forumService.Report_User (idPost);
+	}
+	
+	@DeleteMapping("/Delete-reported-Post")
+	public  void Delete_reported_post(){
+		 forumService.delete_reported_post();
+	}
+	
+	@GetMapping("/Get-More-Likers-User")
+	public  Set<Object> Get_more_likers_user(){
+		 return forumService.Get_more_likers_user();
+	}
+	
+	@PostMapping("/Send-Message/{IdSender}/{IdRecever}")
+	@ResponseBody
+	public Message send_Message( @RequestBody Message m,@PathVariable("IdSender") Long IdSender, @PathVariable("IdRecever") Long IdRecever) {
+		return forumService.SendMessage(m,IdSender,IdRecever);
+	}
+	
+	@GetMapping("/Get-Conversation/{IdSender}/{IdRecever}")
+	@ResponseBody
+	public List<Message> send_Message( @PathVariable("IdSender") Long IdSender, @PathVariable("IdRecever") Long IdRecever) {
+		return forumService.get_conversation(IdSender,IdRecever);
 	}
 }
 

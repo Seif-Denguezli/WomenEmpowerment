@@ -7,8 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -31,18 +34,25 @@ public class Advertising implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long advertisingId;
 	
-	String title;
+	String Name;
+	String Canal;
 	
 	@Temporal(TemporalType.DATE)
-	Date createdAt;
+	Date StartDate;
 	
 	@Temporal(TemporalType.DATE)
-	Date expiresAt;
+	Date EndDate;
 	
-	int nbrViews;
+	int nbrIntialViews;
+	
+	int nbrFinalViews;
 	
 	float price;
 	
+	
+	@JsonIgnore
+	@ManyToOne 
+	User user;
 	
 
 }

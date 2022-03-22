@@ -71,7 +71,21 @@ public class ExceptionProcessing implements ErrorController {
     public ResponseEntity<HTTPProtocolResponse> emailExistException(EmailExist exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
+    
+    @ExceptionHandler(FriendExist.class)
+    public ResponseEntity<HTTPProtocolResponse> friendRequestExistException(FriendExist exception) {
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
 
+    @ExceptionHandler(ResetPasswordException.class)
+    public ResponseEntity<HTTPProtocolResponse> resetPasswordException(ResetPasswordException exception) {
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+    
+    @ExceptionHandler(ResetPasswordTokenException.class)
+    public ResponseEntity<HTTPProtocolResponse> resetPasswordTokenException(ResetPasswordTokenException exception) {
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
    @ExceptionHandler(UsernameExist.class)
     public ResponseEntity<HTTPProtocolResponse> usernameExistException(UsernameExist exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());

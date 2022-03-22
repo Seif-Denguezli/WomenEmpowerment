@@ -7,6 +7,8 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,11 +36,12 @@ import tn.esprit.spring.enumerations.Job;
 @Entity
 @ToString
 public class Service implements Serializable {
-	
+	@JsonIgnore
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long serviceId;
-	
+	@JsonIgnore
+	@Enumerated(EnumType.STRING)
 	Job job;
 	
 	@Temporal(TemporalType.DATE)

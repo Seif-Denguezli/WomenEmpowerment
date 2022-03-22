@@ -40,9 +40,15 @@ public class Appointment implements Serializable {
 	@Temporal(TemporalType.DATE)
 	Date bookedAt;
 	@JsonIgnore
+	Boolean caseSolved;
+	@JsonIgnore
 	
 	@ManyToOne
 	User user;
+	
+	@ManyToOne
+	User Expert;
+	
 	@JsonIgnore
 	@ManyToOne
 	Service service;

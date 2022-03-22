@@ -1,5 +1,14 @@
 package tn.esprit.spring.service.courses;
 
+import java.awt.Image;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,6 +20,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import tn.esprit.spring.entities.Answer;
@@ -40,6 +51,8 @@ UserRepository userRepository;
 CourseRepository courseRepository;
 @Autowired
 CertificateRepository certificateRepository;
+@Autowired
+SanctionLearnerImpl sanctionLearnerImpl;
 	@Override
 	public void addQuestionToQuiz(QuizQuestion q, Long quizId) {
 		questionRepository.save(q);
@@ -117,7 +130,7 @@ CertificateRepository certificateRepository;
 		Quiz quiz = quizzRepository.findById(idQuiz).get();
 		
 		List<String> userCorrectAnswers = quizzRepository.getUserScore(idUser);
-		System.out.println(userCorrectAnswers);
+		System.err.println(userCorrectAnswers);
 		for (String userAns : userCorrectAnswers) {
 			
 			String[] ans = userAns.split(",");
@@ -141,6 +154,7 @@ CertificateRepository certificateRepository;
 			scoretot= scoretot + calculScore(idUser, quiz.getQuizId());
 			
 		}
+		
 		return scoretot;
 	}
 
@@ -159,19 +173,41 @@ CertificateRepository certificateRepository;
 			nbr= nbr + question.getScore();
 		}
 		}
+		
 		mark= (nbr*70)/100;
 		if(userCourseScore(idUser,idCourse)>=mark) {
 			System.out.println("YOU PASSED THIS COURSE");
-			Certificate c = certificateRepository.findByCourse(idCourse);
+			Certificate c = certificateRepository.findByCourseAndByUserId(idCourse,idUser);
+			
 			c.setAquired(true);
 			c.setObtainingDate(date);
 			certificateRepository.flush();
+			
 		}
 		else  {
 			System.out.println("You failed the test");
 		}
 		
 		return nbr;
+	}
+	
+	public byte[] createCertificateQr(Long certificateId) throws IOException, InterruptedException {
+		Certificate c = certificateRepository.findById(1L).get();
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create("https://qrcode3.p.rapidapi.com/qrcode/text"))
+				.header("content-type", "application/json")
+				.header("x-rapidapi-host", "qrcode3.p.rapidapi.com")
+				.header("x-rapidapi-key", "79cdf7e6eamsh61c3485c380509ap1476ddjsn52b879c4370a")
+				.method("POST", HttpRequest.BodyPublishers.ofString("{\r\n    \"data\": \"https://linqr.app\",\r\n    \"image\": {\r\n        \"uri\": \"icon://appstore\",\r\n        \"modules\": true\r\n    },\r\n    \"style\": {\r\n        \"module\": {\r\n            \"color\": \"black\",\r\n            \"shape\": \"default\"\r\n        },\r\n        \"inner_eye\": {\r\n            \"shape\": \"default\"\r\n        },\r\n        \"outer_eye\": {\r\n            \"shape\": \"default\"\r\n        },\r\n        \"background\": {}\r\n    },\r\n    \"size\": {\r\n        \"width\": 200,\r\n        \"quiet_zone\": 4,\r\n        \"error_correction\": \"M\"\r\n    },\r\n    \"output\": {\r\n        \"filename\": \"qrcode\",\r\n        \"format\": \"png\"\r\n    }\r\n}"))
+				.build();
+		HttpResponse<byte[]> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofByteArray());
+		System.out.println(response.body());
+	
+       System.out.println(response.headers()) ;
+		return response.body();
+		/******************/
+	
+
 	}
 	
 	
