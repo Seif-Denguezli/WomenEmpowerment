@@ -64,7 +64,7 @@ public class Course implements Serializable {
 	boolean onGoing;
 	@Enumerated(EnumType.STRING)
 	Domain domain;
-	
+	String channelId;
 	
 	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
 	Set<FileInfo> files;

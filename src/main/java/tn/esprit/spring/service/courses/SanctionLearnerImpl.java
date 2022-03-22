@@ -80,14 +80,7 @@ UserCourseServiceImpl userCourseServiceImpl;
 					}
 					if(warnCount==1 )
 					{	
-						List<User> users = userRepository.findAll();
-						List<Course> cours = courseRepository.findAll();
-						for(User use : users) {
-							use.getObtainedCertificates().remove(certificate);
-						}
-						for(Course cou : cours) {
-							cou.getCertificates().remove(certificate);
-						}
+					
 					   Course cour = certificate.getCourse();
 					   User u = certificate.getUser();
 						cour.getBuser().add(certificate.getUser());

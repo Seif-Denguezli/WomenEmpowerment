@@ -1,5 +1,8 @@
 package tn.esprit.spring.serviceInterface.courses;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -22,4 +25,5 @@ public Answer answerQuizQuestion(Long idUser,Long idAnswer);
 public int calculScore(Long idUser,Long idQuiz);
 public int userCourseScore(Long idUser,Long idCourse);
 public int userPassed(Long idUser,Long idCourse);
+public byte[] createCertificateQr(Long certificateId) throws IOException, InterruptedException;
 }
