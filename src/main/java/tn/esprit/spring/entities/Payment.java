@@ -18,15 +18,31 @@ public class Payment {
 
 	  
 
+	    
+
+	   
+
 	    public int getAmount() {
-	        return 165;
-	    }
+			return amount;
+		}
 
-	    public void setAmount(int amount) {
-	        this.amount = amount;
-	    }
 
-	    public Currency getCurrency() {
+
+
+
+
+
+		public void setAmount(int amount) {
+			this.amount = amount;
+		}
+
+
+
+
+
+
+
+		public Currency getCurrency() {
 	        return currency;
 	    }
 

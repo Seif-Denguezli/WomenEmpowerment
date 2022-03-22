@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.cloudinary.Cloudinary;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 
@@ -27,6 +28,7 @@ import tn.esprit.spring.repository.PostRepo;
 import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.repository.WomenNeedHelpRepo;
 import tn.esprit.spring.service.event.DonationService;
+import tn.esprit.spring.service.user.ServiceAllEmail;
 
 @Service
 public class DonationServiceImpl implements DonationService {
@@ -45,7 +47,13 @@ public class DonationServiceImpl implements DonationService {
 
 	@Autowired
 	WomenNeedHelpRepo womanNeedHelpRepo;
-
+	@Autowired
+	CloudinaryService cloud;
+	
+	@Autowired
+    ServiceAllEmail emailService;
+	
+	
 	@Autowired
 	PaymentService ps;
 	@Override
@@ -55,7 +63,7 @@ public class DonationServiceImpl implements DonationService {
 		return donation;
 	}
 	
-	
+
 	
 	
 
@@ -141,5 +149,28 @@ public class DonationServiceImpl implements DonationService {
 
 		return eventRepo.maxDonationByUser(id);
 	}
+
+
+
+
+
+	
+	
+	//-----------------------crud women need donation
+	
+	
+	
+	
+	
+	
+
+	@Override
+	public WomenNeedDonation addWomenNeedDonation(WomenNeedDonation WND) {
+		womanNeedHelpRepo.save(WND);
+		return WND;
+	}
+	
+	
+	
 
 }

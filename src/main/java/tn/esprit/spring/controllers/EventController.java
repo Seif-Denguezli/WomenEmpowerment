@@ -3,6 +3,7 @@ package tn.esprit.spring.controllers;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -37,6 +39,8 @@ import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.Media;
 import tn.esprit.spring.entities.SmsRequest;
+import tn.esprit.spring.enumerations.EventType;
+import tn.esprit.spring.repository.EventRepo;
 import tn.esprit.spring.repository.MediaRepo;
 import tn.esprit.spring.service.event.EventService;
 import tn.esprit.spring.serviceInterface.event.CloudinaryService;
@@ -54,30 +58,52 @@ public class EventController {
 	
 	@Autowired
 	MediaService mediaService;
+	@Autowired
+	EventRepo eventRepo;
 	
-	
-	
-	
-	@PostMapping("/add-Event")
-	@ResponseBody
-	public void addEvent(@RequestBody Event event) {
-		eventService.addEvent(event);
+	@GetMapping("/TargetDonationattindre/{idEvent}")
+	public String getTargetDonationattinreParEvent(@PathVariable("idEvent")Long idEvent){
+		return eventService.TargetAtrbut(idEvent);
 	}
+	
 	
 
+	@PutMapping(path="editEventCreatedByUser/{IdEvent}")
+	public void editCourse(@RequestBody Event c,@PathVariable("IdEvent")Long IdEvent) {
+		eventService.EditEventCreateByUser(c, IdEvent);
+
+	}
+	
+	@PutMapping("updateImagesForEventCreateByUser")
+	public ResponseEntity<?>  UpdateImageforEventCreateByUser(@RequestParam Long idmedia,@RequestParam MultipartFile multipartFile) throws IOException{
+		 return eventService.updateImageForEvent(idmedia, multipartFile);
+	}
+
 	  
-	@PostMapping(path = "joinEvent/{userid}/{idEvent}")
-	public void joinEvent(@PathVariable("userid")Long userid,@PathVariable("idEvent")Long idEvent) {
+
+	@PostMapping(path = "createEventByUser")
+	public void createEventByUser(@RequestParam Long userid,@RequestParam MultipartFile multipartFile
+			,@RequestParam String EventName
+			,@RequestParam String Description
+			,@RequestParam  (name ="createAt") @DateTimeFormat(pattern = "dd-MM-yyyy")  Date createAt
+			,@RequestParam  (name ="endAt") @DateTimeFormat(pattern = "dd-MM-yyyy")  Date endAt
+			,@RequestParam EventType typeEvent
+			,@RequestParam  int maxPlace
+			,@RequestParam  float targetDonation
+			,@RequestParam   String place) throws MessagingException, IOException {
+		eventService.createEventbyUser(userid, multipartFile, EventName, Description,createAt, endAt, typeEvent, maxPlace, targetDonation, place);
 		
-		eventService.joinEvent(userid, idEvent);
 		
 	}
-	@PostMapping(path = "createEventByUser/{userid}")
-	public void createEventByUser(@PathVariable("userid")Long userid,@RequestBody Event event) throws MessagingException {
-		eventService.createEventbyUser(userid, event);
-		
-		
-	}
+	   @DeleteMapping("/deleteImage/{id}")
+	    public ResponseEntity<?> delete(@PathVariable("id") Long id)throws IOException {
+	         
+		   eventService.deleteImageForEvent(id);
+	        return new ResponseEntity("imagen eliminada", HttpStatus.OK);
+	    }
+	   
+	   
+	   
 	@GetMapping("/Get-all-Event")
 	public List<Event> Get_all_Event(){
 		return eventService.Get_all_Event();
@@ -88,6 +114,7 @@ public class EventController {
 	public Long getUSERDonationByID(@PathVariable("userid")Long userid){
 		return eventService.findUserDonationsById(userid);
 	}
+	
 	  
 	  
 	  
@@ -95,11 +122,11 @@ public class EventController {
 	public void getUSERDonationByID(@PathVariable("userid")Long userid,@PathVariable("eventId")Long eventId){
 		 eventService.Participer_event(userid,eventId);
 	}
+	 @DeleteMapping("/cancelParticiopation/{iduser}/{idEvent}")
+	public void cancelparticipation(@PathVariable("iduser")Long iduser,@PathVariable("idEvent")Long idEvent) {
+		 eventService.cancelparticipation(iduser, idEvent);
+	 }
 	
-	@GetMapping("/object_status/{eventId}")
-	public String objectif_status(@PathVariable("eventId")Long eventId){
-		return eventService.TargetAtrbut(eventId);
-	}
 	
 	@PutMapping("/affecte-par-avie/{eventId}")
 	public Event affect_par_avie(@PathVariable("eventId")Long eventId){
@@ -108,47 +135,19 @@ public class EventController {
 	
 	//----------pagination------//
     @GetMapping("/paginationAndSort/{offset}/{pageSize}/{field}")
-    private APIResponse<Page<Event>> getProductsWithPaginationAndSort(@PathVariable int offset, @PathVariable int pageSize,@PathVariable String field) {
+    private APIResponse<Page<Event>> geteventWithPaginationAndSort(@PathVariable int offset, @PathVariable int pageSize,@PathVariable String field) {
         Page<Event> productsWithPagination = eventService.findEventWithPaginationAndSorting(offset, pageSize, field);
         return new APIResponse<>(productsWithPagination.getSize(), productsWithPagination);
     }
 	
 	
 	
-	//---------------media-------------//
-	
-	
-	
-	
-	@PostMapping("/upload")
-	    public ResponseEntity<?> upload(@RequestParam MultipartFile multipartFile)throws IOException {
-	        BufferedImage bi = ImageIO.read(multipartFile.getInputStream());
-	        if(bi == null){
-	            return new ResponseEntity("invalid image", HttpStatus.BAD_REQUEST);
-	        }
-	        Map result = cloudinaryService.upload(multipartFile);
-	        Media media =
-	                new Media((String)result.get("original_filename"),
-	                        (String)result.get("url"),
-	                        (String)result.get("imagencode"));
-	        mediaService.save(media);
-			return  new ResponseEntity("uploaded image", HttpStatus.OK);
-	        
-	    }
 
-	 
-	 
-	    @DeleteMapping("/deleteImage/{id}")
-	    public ResponseEntity<?> delete(@PathVariable("id") Long id)throws IOException {
-	        if(!mediaService.exists(id))
-	            return new ResponseEntity("does not exist", HttpStatus.NOT_FOUND);
-	        Media media = mediaService.getOne(id).get();
-	        Map result = cloudinaryService.delete(media.getImagencode());
-	        mediaService.delete(id);
-	        return new ResponseEntity("imagen eliminada", HttpStatus.OK);
-	    }
 	
 	
+	
+	
+
 	
 	
 	

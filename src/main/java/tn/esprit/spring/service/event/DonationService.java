@@ -12,6 +12,7 @@ import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.Payment;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.entities.WomenNeedDonation;
 
 public interface DonationService {
 	public Donation addDonation(Donation donation);
@@ -23,6 +24,10 @@ public interface DonationService {
 	
 	public Set<Donation> Get_Donation_by_User(Long idUser);
 	public Set<Donation> Get_all_Donation();
+	
+	
+	//--------------------womenNeedDonation
+	public WomenNeedDonation addWomenNeedDonation(WomenNeedDonation WND) ;
 	public void NeedDonnation(Long idEvent);
 	
 	

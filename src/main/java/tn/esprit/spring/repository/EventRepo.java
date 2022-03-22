@@ -27,7 +27,7 @@ public interface EventRepo  extends JpaRepository<Event , Long> {
 	
 	
 	
-	@Query(value="SELECT  d.donor_user_id,sum(d.amount)	 FROM donation d join users on users.user_id = donor_user_id order by 2 desc limit 1",nativeQuery=true)
+	@Query(value="SELECT  d.donor_user_id,sum(d.amount_for_event)	 FROM donation d join users on users.user_id = donor_user_id order by 2 desc limit 1",nativeQuery=true)
 	public List<Long> GET_ID_BEST_DONNER();
 	
 	}
