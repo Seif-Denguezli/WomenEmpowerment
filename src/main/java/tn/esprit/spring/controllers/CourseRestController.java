@@ -1,24 +1,32 @@
 package tn.esprit.spring.controllers;
 
+
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.*;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
-import tn.esprit.spring.entities.Answer;
 import tn.esprit.spring.entities.Course;
+import tn.esprit.spring.entities.FileInfo;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.QuizQuestion;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.service.courses.CourseServiceImpl;
+import tn.esprit.spring.service.courses.FileStorageServiceImpl;
 import tn.esprit.spring.service.courses.QuizServiceImpl;
 import tn.esprit.spring.serviceInterface.courses.UserCourseService;
 
@@ -83,6 +91,22 @@ public User getParticipant(@PathVariable("userId")Long userId){
 public int verificate(@PathVariable("userId")Long userId,@PathVariable("courseId")Long courseId) {
 	return courseService.userjoinCourseVerificator(userId, courseId);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

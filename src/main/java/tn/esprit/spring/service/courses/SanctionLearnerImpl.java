@@ -52,7 +52,8 @@ UserCourseServiceImpl userCourseServiceImpl;
 				{
 					int warnCount=0;
 					List<SanctionLearnner> sl = sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
-					
+					Course cour = certificate.getCourse();
+					   User u = certificate.getUser();
 					for (SanctionLearnner sanctionLearner : sl)
 					{
 						if(sanctionLearner.getPenality().equals(Penality.KICK))
@@ -60,10 +61,15 @@ UserCourseServiceImpl userCourseServiceImpl;
 							
 							List<SanctionLearnner> sanctions =sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
 							sanctionLearnerRepository.deleteAll(sanctions);
-							Course c = certificate.getCourse();
-							c.getBuser().add(certificate.getUser());
-							courseRepository.saveAndFlush(c);
-						    userCourseServiceImpl.leaveCourse(certificate.getCertificateId());
+							 u.getObtainedCertificates().remove(certificate);
+							cour.getBuser().add(u);			
+						    cour.getCertificates().remove(certificate);
+						    userRepository.flush();
+							courseRepository.flush();
+							certificate.setCourse(null);
+							certificate.setUser(null);
+							certificateRepository.deleteById(certificate.getCertificateId());
+						    certificateRepository.flush();
 							
 							}
 						if(sanctionLearner.getPenality().equals(Penality.WARNING))
@@ -77,29 +83,42 @@ UserCourseServiceImpl userCourseServiceImpl;
 						
 						
 						
-					}
-					if(warnCount==1 )
+						
+				}
+					if(warnCount==3 )
 					{	
-					
-					   Course cour = certificate.getCourse();
-					   User u = certificate.getUser();
-						cour.getBuser().add(certificate.getUser());
-					    u.getObtainedCertificates().remove(certificate);					
-					    cour.getCertificates().remove(certificate);
-					    userRepository.save(u);
-						courseRepository.save(cour);
-					    certificateRepository.save(certificate);
 						List<SanctionLearnner> sanctions =sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
 						sanctionLearnerRepository.deleteAll(sanctions);
-						
-						
-					 
-				
+						 u.getObtainedCertificates().remove(certificate);
+						cour.getBuser().add(u);			
+					    cour.getCertificates().remove(certificate);
+					    userRepository.flush();
+						courseRepository.flush();
+						certificate.setCourse(null);
+						certificate.setUser(null);
+						certificateRepository.deleteById(certificate.getCertificateId());
+					    certificateRepository.flush();
 						
 					}
 					
 					
 				}		
 		}
+	@Override
+	public int userSanctionsByCourse(long userId,long courseId) {
+		int pen = 0;
+		User user = userRepository.findById(userId).get();
+		Set<Certificate> certificates = user.getObtainedCertificates();
+		for (Certificate certificate : certificates) {
+			List<SanctionLearnner> sl = sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
+			
+			for (SanctionLearnner sanction : sl) {
+				if(sanction.getCertificate().getCourse().getCourseId()==courseId && sanction.getPenality().equals(Penality.SANCTION)) {
+					pen = pen + 1;
+				}
+			}
+		}
+		return pen;
+	}
 	}
 	

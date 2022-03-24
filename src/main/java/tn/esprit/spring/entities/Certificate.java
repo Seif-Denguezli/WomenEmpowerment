@@ -48,7 +48,7 @@ public class Certificate implements Serializable {
 	@Nullable
     String certificateQR;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	User user;
 
 	@ManyToOne
