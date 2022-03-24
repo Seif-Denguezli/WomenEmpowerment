@@ -161,7 +161,7 @@ public class User implements Serializable{
 	String activityDomain;
 	
 	String address;
-	@JsonIgnore
+
 	@Temporal(TemporalType.DATE)
 	Date establishmentDate;
 	@JsonIgnore

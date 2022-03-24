@@ -32,6 +32,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.bytebuddy.utility.RandomString;
@@ -44,7 +45,7 @@ public class AuthenticationController
 {
 	public static String uploadDirectory = System.getProperty("user.dir")+"/uploads/";
 	
-	ObjectMapper objectMapper = new ObjectMapper();
+	ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -87,6 +88,13 @@ public class AuthenticationController
     	return new ResponseEntity<>(userData, HttpStatus.CREATED);
 
     }
+    
+   /* @PostMapping("sign-up")
+    public ResponseEntity<User> signUp(@RequestBody User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException{
+    	userService.saveUser(user);
+    	return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }*/
+    
 
     @PostMapping("sign-in")//api/authentication/sign-in
     public ResponseEntity<?> signIn(@RequestBody User user) throws tn.esprit.spring.exceptions.AccountLockedException

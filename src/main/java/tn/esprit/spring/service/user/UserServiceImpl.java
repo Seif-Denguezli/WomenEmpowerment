@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService
     {
     	isvalidUsernameAndEmail(EMPTY, user.getUsername(), user.getEmail());
     	isValid(user.getPassword());
-        user.setRole(Role.USER);
+        //user.setRole(Role.USER);
         emailService.sendNewPasswordEmail(user.getName(), user.getPassword(), user.getEmail());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setLocked(false);
