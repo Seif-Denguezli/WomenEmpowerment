@@ -3,6 +3,8 @@ package tn.esprit.spring.controllers;
 
 import java.util.List;
 
+import javax.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.*;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.FileInfo;
 import tn.esprit.spring.entities.Quiz;
@@ -31,6 +34,7 @@ import tn.esprit.spring.service.courses.QuizServiceImpl;
 import tn.esprit.spring.serviceInterface.courses.UserCourseService;
 
 @RestController
+@EnableSwagger2
 @Api(tags = "Courses Management")
 @RequestMapping("/course")
 public class CourseRestController {
