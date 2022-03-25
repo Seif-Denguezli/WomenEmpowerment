@@ -7,6 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Base64;
 import java.util.Base64.Decoder;
@@ -23,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,6 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import springfox.documentation.annotations.ApiIgnore;
 import tn.esprit.spring.entities.Answer;
+import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.QuizQuestion;
 import tn.esprit.spring.exceptions.CourseOwnerShip;
@@ -58,6 +63,8 @@ public class QuizRestController {
 	UserCourseService userCourseService;
 	@Autowired
 	QuizServiceImpl quizService;
+	@Autowired
+	CertificateRepository certificateRepository;
 	@PostMapping(path = "createQuiz/{courseId}")
 	public void createQuiz(@RequestBody Quiz q,@PathVariable("courseId")Long courseId,@ApiIgnore @AuthenticationPrincipal UserPrincipal u ) throws CourseOwnerShip {
 		Long iduser = u.getId();
@@ -111,5 +118,22 @@ public class QuizRestController {
 	@GetMapping(path="didUserPass/{idUser}/{idCourse}")
 	String userPassed(@PathVariable("idUser")Long idUser,@PathVariable("idCourse") Long idCourse) {
 		return quizService.userPassed(idUser, idCourse);
+	}
+	@PostMapping(path="certif/{certificate}")
+	public ResponseEntity<byte[]> certif(Long certificateid) throws IOException, InterruptedException{
+		Certificate certif = certificateRepository.findById(certificateid).get();
+	HttpRequest request = HttpRequest.newBuilder()
+			.uri(URI.create("https://yakpdf.p.rapidapi.com/pdf"))
+			.header("content-type", "application/json")
+			.header("X-RapidAPI-Host", "yakpdf.p.rapidapi.com")
+			.header("X-RapidAPI-Key", "b648c42070msh2f1e24111397e42p1155f4jsn864d7705eee5")
+			.method("POST", HttpRequest.BodyPublishers.ofString("{\r\n    \"pdf\": {\r\n        \"format\": \"A4\",\r\n        \"printBackground\": true,\r\n        \"scale\": 1\r\n    },\r\n    \"source\": {\r\n        \"html\": \"<!DOCTYPE html><html lang=\\\"en\\\"><head><meta charset=\\\"UTF-8\\\"><meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1.0\\\"></head><body><div><center><h2>course certificate name</h2></center></br><center><h4>"+certif.getUser().getName()+" has earned this certificate</h4><h5>while completing the training course entitled "+certif.getCourse().getCourseName()+"</h5></center><h6>Courses area departement</h6><h6 >Courses management awarding team</h6><h6>Aquired "+certif.getObtainingDate()+"</h6><img src=\\\""+certif.getCertificateQR()+"\\\"></body></html>\"\r\n    },\r\n    \"wait\": {\r\n        \"for\": \"navigation\",\r\n        \"timeout\": 250,\r\n        \"waitUntil\": \"load\"\r\n    }\r\n}"))
+			.build();
+	 HttpResponse<byte[]> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofByteArray());
+	 byte[] res = response.body();
+	 return ResponseEntity.ok()
+             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ordeesr.pdf") 
+             .contentType(MediaType.APPLICATION_PDF).body(res)
+           ;
 	}
 }
