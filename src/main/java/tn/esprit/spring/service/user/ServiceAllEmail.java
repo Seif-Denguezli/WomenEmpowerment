@@ -71,7 +71,7 @@ public class ServiceAllEmail {
 
     public void sendNewEventCreatedByUser(String EventName, String email) throws MessagingException {
         Message message = createEmailForEvent(EventName, email);
-
+    }
     public void sendCandidacyEmail(String firstName, String title, String email, String candidacyState) throws MessagingException {
         Message message = createCandidacyEmail( firstName,  title,  email,  candidacyState);
 

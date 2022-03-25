@@ -115,6 +115,7 @@ UserCourseServiceImpl userCourseServiceImpl;
 			for (SanctionLearnner sanction : sl) {
 				if(sanction.getCertificate().getCourse().getCourseId()==courseId && sanction.getPenality().equals(Penality.SANCTION)) {
 					pen = pen + 1;
+					System.out.println(pen);
 				}
 			}
 		}
