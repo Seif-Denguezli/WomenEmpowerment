@@ -28,6 +28,9 @@ import tn.esprit.spring.entities.FileInfo;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.QuizQuestion;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.exceptions.CourseNotExist;
+import tn.esprit.spring.exceptions.CourseOwnerShip;
+import tn.esprit.spring.exceptions.CoursesLimitReached;
 import tn.esprit.spring.service.courses.CourseServiceImpl;
 import tn.esprit.spring.service.courses.FileStorageServiceImpl;
 import tn.esprit.spring.service.courses.QuizServiceImpl;
@@ -44,21 +47,22 @@ CourseServiceImpl courseService;
 UserCourseService userCourseService;
 @Autowired
 QuizServiceImpl quizService;
-/*******************COURSE*********************/
+/*******************COURSE
+ * @throws CoursesLimitReached *********************/
 @PostMapping(path = "addCourse/{userid}")
-public Course addCourse(@RequestBody Course c,@PathVariable("userid")Long userId) {
+public Course addCourse(@RequestBody Course c,@PathVariable("userid")Long userId) throws CoursesLimitReached {
 	
 	courseService.affectCourseToUser(userId, c);
 	return c;
 }
 @DeleteMapping(path="removeCourse/{userId}/{courseId}")
-public void deleteCourse(@PathVariable("userId")Long userId,@PathVariable("courseId")Long courseId) {
+public void deleteCourse(@PathVariable("userId")Long userId,@PathVariable("courseId")Long courseId) throws CourseNotExist, CourseOwnerShip {
 	courseService.deleteCourse(userId,courseId);
 	
 }
 
 @PutMapping(path="editCourse/{courseId}")
-public void editCourse(@RequestBody Course c,@PathVariable("courseId")Long courseId) {
+public void editCourse(@RequestBody Course c,@PathVariable("courseId")Long courseId) throws CourseNotExist {
 	courseService.editCourse(c,courseId);
 
 }
@@ -70,9 +74,10 @@ public List<Course> getAllCourses(){
 public Course getCourse(@PathVariable("courseId")Long courseId){
 	return courseService.displayCourse(courseId);
 }
-/***************************** USER JOIN COURSE**********************/
+/***************************** USER JOIN COURSE
+ * @throws CoursesLimitReached **********************/
 @PostMapping(path = "joinCourse/{userid}/{courseid}")
-public void joinCourse(@PathVariable("userid")Long userId,@PathVariable("courseid")Long courseId) {
+public void joinCourse(@PathVariable("userid")Long userId,@PathVariable("courseid")Long courseId) throws CoursesLimitReached {
 	
 	userCourseService.joinCourse(userId, courseId);
 	

@@ -9,13 +9,16 @@ import org.springframework.stereotype.Service;
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.exceptions.CourseNotExist;
+import tn.esprit.spring.exceptions.CourseOwnerShip;
+import tn.esprit.spring.exceptions.CoursesLimitReached;
 @Service
 public interface CourseService {
 public Course addCourse(Course c);
-public void affectCourseToUser(Long idUser,Course c);
-public Course deleteCourse(Long idUser,Long idCourse);
-public Course editCourse(Course c,Long courseId);
-public void createQuizz(Quiz Q, Long idCourse);
+public void affectCourseToUser(Long idUser,Course c) throws CoursesLimitReached;
+public Course deleteCourse(Long idUser,Long idCourse) throws CourseNotExist, CourseOwnerShip;
+public Course editCourse(Course c,Long courseId) throws CourseNotExist;
+public void createQuizz(Quiz Q, Long idCourse,Long idUser) throws CourseOwnerShip;
 public List<Course> displayAllCourses();
 public Course displayCourse(Long courseId);
 public List<User> getAllParticipants(Long courseId);

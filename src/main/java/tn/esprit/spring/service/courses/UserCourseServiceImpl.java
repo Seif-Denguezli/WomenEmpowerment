@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.exceptions.CoursesLimitReached;
 import tn.esprit.spring.repository.CertificateRepository;
 import tn.esprit.spring.repository.CourseRepository;
 import tn.esprit.spring.repository.UserRepository;
@@ -21,13 +22,13 @@ CertificateRepository certificateRepository;
 @Autowired
 CourseServiceImpl courseService;
 	@Override
-	public void joinCourse(Long idUser, Long idCourse) {
+	public void joinCourse(Long idUser, Long idCourse) throws CoursesLimitReached {
 		
 		if(courseService.userjoinCourseVerificator(idUser, idCourse)>=0 && courseService.userjoinCourseVerificator(idUser, idCourse)<6) {
-			System.err.println("you can't join more than 2 courses in a semester");
+			throw new CoursesLimitReached("You can not join 2 courses with same field in a semester");
 		}
 		if(certificateRepository.findByCourseAndByUserId(idCourse, idUser)!=null){
-			System.err.println("You allready joined this course");
+			throw new CoursesLimitReached("You allready joined this course");
 			
 		}
 		else {
