@@ -148,7 +148,7 @@ SanctionLearnerImpl sanctionLearnerImpl;
 	@Override
 	public int userCourseScore(Long idUser, Long idCourse) {
 		Course course = courseRepository.findById(idCourse).get();
-		int scoretot=0-sanctionLearnerImpl.userSanctionsByCourse(idUser, idCourse);
+		int scoretot=0;
 		Set<Quiz> quizes = course.getQuiz();
 		for (Quiz quiz : quizes) {
 			
@@ -193,10 +193,12 @@ SanctionLearnerImpl sanctionLearnerImpl;
 	}
 	@Scheduled(cron = "0/10 * * * * *")
 	public void createCertificateQr() throws IOException, InterruptedException {
+		System.err.println("TEST");
 		List<Certificate> c = certificateRepository.findAll();
 		for (Certificate certificate : c) {
 			if(certificate.isAquired()==true && certificate.getCertificateQR()==null) {
 				String text=certificate.getCourse().getCourseName()+certificate.getUser().getUsername()+"'mail'"+certificate.getUser().getEmail();
+				
 				HttpRequest request = HttpRequest.newBuilder()
 						.uri(URI.create("https://codzz-qr-cods.p.rapidapi.com/getQrcode?type=text&value="+text+""))
 						.header("x-rapidapi-host", "codzz-qr-cods.p.rapidapi.com")
@@ -204,6 +206,7 @@ SanctionLearnerImpl sanctionLearnerImpl;
 						.method("GET", HttpRequest.BodyPublishers.noBody())
 						.build();
 				HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+				System.err.println(response.body());
 				certificate.setCertificateQR(response.body().substring(8, 61));
 				certificateRepository.saveAndFlush(certificate);
 				
