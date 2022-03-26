@@ -1,7 +1,10 @@
 package tn.esprit.spring.service.offer;
 
+
 import java.util.List;
 import java.util.Set;
+
+import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,7 @@ import tn.esprit.spring.enumerations.CandidacyState;
 import tn.esprit.spring.repository.CandidacyRepository;
 import tn.esprit.spring.repository.IOfferRepository;
 import tn.esprit.spring.repository.UserRepository;
+import tn.esprit.spring.service.user.ServiceAllEmail;
 import tn.esprit.spring.serviceInterface.offer.ICandidacyService;
 
 @Service
@@ -26,6 +30,17 @@ public class CandidacyServiceImpl implements ICandidacyService {
 	UserRepository UserRepo;
 	@Autowired
 	IOfferRepository OfferRepo;
+	@Autowired 
+	ServiceAllEmail emailservice;
+	
+	
+	
+	@Override
+	public List<Candidacy> getAllCandidacies() {
+		// TODO Auto-generated method stub
+		CandidacyRepo.findAll();
+		return null;
+	}
 	
 	@Override
 	public void postulerOffre( Candidacy candidacy,Long offerId, Long userId) {
@@ -72,12 +87,37 @@ public class CandidacyServiceImpl implements ICandidacyService {
 	 return null;	    }
 
 	@Override
-	public void HoldCandidacy(Long candidacy_id) {
+	public void HoldCandidacy(Long candidacy_id) throws MessagingException {
 		// TODO Auto-generated method stub
 		Candidacy cc = CandidacyRepo.findById(candidacy_id).orElse(null);
 		cc.setCandidacyState(CandidacyState.Onhold);
+		String firstName=CandidacyRepo.getCandidateName(candidacy_id);
+		String email=CandidacyRepo.getCandidateEmail(candidacy_id);
+		String title=CandidacyRepo.getOfferTitle(candidacy_id);
+		String candidacyState="On Hold";
+		log.error(firstName+email+title);
+		emailservice.sendCandidacyEmail(firstName, title, email, candidacyState);		
 		CandidacyRepo.saveAndFlush(cc);
+		
+		
 	}
+
+	@Override
+	public void RestrainCandidacy(Long candidacy_id) throws MessagingException {
+		// TODO Auto-generated method stub
+		Candidacy cc = CandidacyRepo.findById(candidacy_id).orElse(null);
+		String firstName=CandidacyRepo.getCandidateName(candidacy_id);
+		String email=CandidacyRepo.getCandidateEmail(candidacy_id);
+		String title=CandidacyRepo.getOfferTitle(candidacy_id);
+		String candidacyState="Is Denied";
+		log.error(firstName+email+title);
+		emailservice.sendCandidacyEmail(firstName, title, email, candidacyState);		
+		CandidacyRepo.deleteById(candidacy_id);;
+		
+	}
+	
+
+	
 		
 	}
 	

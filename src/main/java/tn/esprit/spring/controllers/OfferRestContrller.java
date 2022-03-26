@@ -2,6 +2,8 @@ package tn.esprit.spring.controllers;
 
 import java.util.List;
 
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.ui.Model;
@@ -72,9 +74,14 @@ public class OfferRestContrller {
         
     }*/
 	
-	@GetMapping("/")
+	@GetMapping("/FilterOffer")
     public List <Offer> FilterSearch( @Param("keyword") String keyword) {
         return OfferService.listAll(keyword);
+      
+    }
+	@GetMapping("/get-ALL-Candidacies")
+    public List <Candidacy> getAllCandidacies( ) {
+        return CandidacyService.getAllCandidacies();
       
     }
 	
@@ -103,7 +110,16 @@ public class OfferRestContrller {
 	
 	@PutMapping ("/Hold-Cnadidacy/{id}")
 	@ResponseBody
-	public void HoldCandidacy ( @PathVariable(value="id") Long candidacy_id) {
+	public void HoldCandidacy ( @PathVariable(value="id") Long candidacy_id) throws MessagingException {
 		CandidacyService.HoldCandidacy(candidacy_id);
 	}
+	
+	@DeleteMapping ("/Restrain-Cnadidacy/{id}")
+	@ResponseBody
+	public void RestrainCandidacy ( @PathVariable(value="id") Long candidacy_id) throws MessagingException {
+		CandidacyService.RestrainCandidacy(candidacy_id);
+	}
+	
+	
+	
 }

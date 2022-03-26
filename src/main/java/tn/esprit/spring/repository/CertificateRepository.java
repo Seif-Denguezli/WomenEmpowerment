@@ -10,4 +10,6 @@ import tn.esprit.spring.entities.Certificate;
 public interface CertificateRepository extends JpaRepository<Certificate, Long> {
 	@Query(nativeQuery = true,value="SELECT * FROM `certificate` WHERE certificate.course_course_id=:param")
 public Certificate findByCourse(@Param("param") Long courseId);
+@Query(nativeQuery = true,value="SELECT * FROM certificate WHERE certificate.user_user_id=:user AND certificate.course_course_id=:course")
+	public Certificate findByCourseAndByUserId(@Param("course")Long idCourse,@Param("user") Long idUser);
 }
