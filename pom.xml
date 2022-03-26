@@ -148,6 +148,41 @@
 			    <artifactId>spring-boot-starter-mail</artifactId>
 			    <version>2.6.4</version>
 			</dependency>
+<!-- sabri -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+    <version>2.5.5</version>
+</dependency>
+<dependency>
+    <groupId>org.webjars</groupId>
+    <artifactId>webjars-locator-core</artifactId>
+    <version>0.50</version>
+</dependency>
+<dependency>
+    <groupId>org.webjars</groupId>
+    <artifactId>bootstrap</artifactId>
+    <version>3.3.7</version>
+</dependency>
+<dependency>
+    <groupId>org.webjars</groupId>
+    <artifactId>jquery</artifactId>
+    <version>3.1.1-1</version>
+</dependency>
+<dependency>
+    <groupId>org.webjars</groupId>
+    <artifactId>sockjs-client</artifactId>
+    <version>1.0.2</version>
+</dependency>
+<dependency>
+    <groupId>org.webjars</groupId>
+    <artifactId>stomp-websocket</artifactId>
+    <version>2.3.3</version>
+</dependency>
+	<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
 
 
 			
