@@ -38,7 +38,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		
+		<dependency>
+  <groupId>com.nylas.sdk</groupId>
+  <artifactId>nylas-java-sdk</artifactId>
+  <version>1.6.0</version>
+</dependency>
 		
 		
 		

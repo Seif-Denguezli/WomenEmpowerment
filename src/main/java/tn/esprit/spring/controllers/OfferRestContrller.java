@@ -1,5 +1,6 @@
 package tn.esprit.spring.controllers;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.mail.MessagingException;
@@ -17,11 +18,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nylas.RequestFailedException;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import tn.esprit.spring.entities.Candidacy;
 import tn.esprit.spring.entities.Offer;
 import tn.esprit.spring.repository.IOfferRepository;
+import tn.esprit.spring.service.offer.CalendarServiceImpl;
 import tn.esprit.spring.serviceInterface.offer.ICandidacyService;
 import tn.esprit.spring.serviceInterface.offer.IOfferService;
 
@@ -33,7 +37,8 @@ public class OfferRestContrller {
 	IOfferRepository OfferRepo ;
 	@Autowired
 	ICandidacyService CandidacyService;
-	
+	@Autowired
+	CalendarServiceImpl userAccount;
 	@ApiOperation(value = "Récupérer la liste des Offres")
 	@GetMapping("/retrieve-all-Offers")
 	@ResponseBody
@@ -139,5 +144,15 @@ public class OfferRestContrller {
 	@ResponseBody
 	public void RestrainCandidacy ( @PathVariable(value="id") Long candidacy_id) throws MessagingException {
 		CandidacyService.RestrainCandidacy(candidacy_id);
+	}
+	@PostMapping("/add-eve")
+	@ResponseBody
+	public  void even() throws IOException, RequestFailedException {
+		userAccount.postEventExample();
+	}
+	@PostMapping("/add-even")
+	@ResponseBody
+	public  String createcal() throws IOException, RequestFailedException {
+		return userAccount.createCal();
 	}
 }
