@@ -1,4 +1,9 @@
 package tn.esprit.spring.service.courses;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -223,8 +228,6 @@ QuizzRepository quizzRepository;
 	            LocalDate.parse(date1).withDayOfMonth(1),
 	            LocalDate.parse(date2).withDayOfMonth(1));
 	}
-	
-	
 	
 	
 	

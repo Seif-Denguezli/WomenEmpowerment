@@ -25,5 +25,5 @@ public Answer answerQuizQuestion(Long idUser,Long idAnswer);
 public int calculScore(Long idUser,Long idQuiz);
 public int userCourseScore(Long idUser,Long idCourse);
 public int userPassed(Long idUser,Long idCourse);
-public byte[] createCertificateQr(Long certificateId) throws IOException, InterruptedException;
+public void createCertificateQr() throws IOException, InterruptedException;
 }

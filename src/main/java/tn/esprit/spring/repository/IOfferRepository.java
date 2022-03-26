@@ -12,9 +12,10 @@ import tn.esprit.spring.entities.Offer;
 public interface IOfferRepository extends JpaRepository<Offer, Long> {
 	  
 	@Query(  "SELECT p FROM Offer p WHERE p.title LIKE %?1%"
-		            + " OR p.description LIKE %?1%"
-		            + " OR p.location LIKE %?1%"		     )
-	    public List<Offer> search(String keyword);
-	  
+            + " OR p.description LIKE %?1%"
+            + " OR p.location LIKE %?1%"		     )
+public List<Offer> search(String keyword);
+
+
 	 
 }

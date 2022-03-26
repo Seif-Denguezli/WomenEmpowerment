@@ -1,6 +1,5 @@
 package tn.esprit.spring.service.offer;
 
-
 import java.util.List;
 import java.util.Set;
 
@@ -30,8 +29,9 @@ public class CandidacyServiceImpl implements ICandidacyService {
 	UserRepository UserRepo;
 	@Autowired
 	IOfferRepository OfferRepo;
-	@Autowired 
+	@Autowired
 	ServiceAllEmail emailservice;
+	
 	
 	
 	
@@ -98,8 +98,6 @@ public class CandidacyServiceImpl implements ICandidacyService {
 		log.error(firstName+email+title);
 		emailservice.sendCandidacyEmail(firstName, title, email, candidacyState);		
 		CandidacyRepo.saveAndFlush(cc);
-		
-		
 	}
 
 	@Override
@@ -112,13 +110,9 @@ public class CandidacyServiceImpl implements ICandidacyService {
 		String candidacyState="Is Denied";
 		log.error(firstName+email+title);
 		emailservice.sendCandidacyEmail(firstName, title, email, candidacyState);		
-		CandidacyRepo.deleteById(candidacy_id);;
+		CandidacyRepo.deleteById(candidacy_id);
 		
 	}
-	
-
-	
-		
 	}
 	
 	
