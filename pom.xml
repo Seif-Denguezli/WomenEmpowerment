@@ -38,11 +38,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		
+
+		<!-- https://mvnrepository.com/artifact/com.google.api-client/google-api-client -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		    <groupId>com.google.api-client</groupId>
+		    <artifactId>google-api-client</artifactId>
+		    <version>1.33.2</version>
 		</dependency>
+
 		
 		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 		<dependency>

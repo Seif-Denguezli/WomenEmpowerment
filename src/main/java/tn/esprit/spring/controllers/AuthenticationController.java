@@ -1,7 +1,7 @@
 package tn.esprit.spring.controllers;
 
 import tn.esprit.spring.entities.Media;
-import tn.esprit.spring.entities.PasswordResetToken;
+import tn.esprit.spring.entities.TokenDto;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.exceptions.EmailExist;
 import tn.esprit.spring.exceptions.EmailNotExist;
@@ -11,7 +11,6 @@ import tn.esprit.spring.exceptions.UsernameExist;
 import tn.esprit.spring.exceptions.UsernameNotExist;
 import tn.esprit.spring.repository.MediaRepo;
 import tn.esprit.spring.repository.UserRepository;
-import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.serviceInterface.user.AuthenticationService;
 import tn.esprit.spring.serviceInterface.user.JwtRefreshTokenService;
 import tn.esprit.spring.serviceInterface.user.UserService;
@@ -19,24 +18,25 @@ import tn.esprit.spring.serviceInterface.user.UserService;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 
 import javax.mail.MessagingException;
-import javax.security.auth.login.AccountLockedException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import net.bytebuddy.utility.RandomString;
-import springfox.documentation.annotations.ApiIgnore;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 
 
 @RestController
@@ -46,6 +46,9 @@ public class AuthenticationController
 	public static String uploadDirectory = System.getProperty("user.dir")+"/uploads/";
 	
 	ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	
+	@Value("${google.clientId}")
+	String googleClientId;
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -150,6 +153,17 @@ public class AuthenticationController
     public ResponseEntity<?> updatePassword(@RequestParam String token, @RequestBody String newPassword) throws ResetPasswordException, ResetPasswordTokenException{
     	authenticationService.updatePassword(token, newPassword);
     	return new ResponseEntity<>("Your password has been successfully updated !", HttpStatus.OK);
+    }
+    
+    @PostMapping("/google")
+    public ResponseEntity<?> loginWithGoogle(@RequestBody TokenDto tokenDto) throws IOException{
+    	final NetHttpTransport transport = new NetHttpTransport();
+    	final GsonFactory jacksonFactory = GsonFactory.getDefaultInstance();
+    	GoogleIdTokenVerifier.Builder verifier = new GoogleIdTokenVerifier.Builder(transport, jacksonFactory)
+    			.setAudience(Collections.singletonList(googleClientId));
+    	final GoogleIdToken googleIdToken = GoogleIdToken.parse(verifier.getJsonFactory(), tokenDto.getValue());
+    	final GoogleIdToken.Payload payload = googleIdToken.getPayload();
+    	return new ResponseEntity(payload, HttpStatus.OK);
     }
 
 }

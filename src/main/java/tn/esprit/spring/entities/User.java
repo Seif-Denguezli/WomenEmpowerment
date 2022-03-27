@@ -93,10 +93,6 @@ public class User implements Serializable{
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	@JsonIgnore
 	Set<Notification> notifications;
-
-
-	@OneToOne
-	User woman; // Reflexive association
 	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "candidate")
@@ -127,6 +123,7 @@ public class User implements Serializable{
 	@OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
 	Set<Certificate> obtainedCertificates; // Certificates obtained after joining courses
 	@ManyToMany(cascade = CascadeType.ALL)
+	@JsonIgnore
 	Set<Answer> answers;
 
 
