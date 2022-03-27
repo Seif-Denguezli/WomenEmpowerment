@@ -1,4 +1,4 @@
-package tn.esprit.spring.serviceInterface.event;
+package tn.esprit.spring.service.event;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ import com.twilio.type.PhoneNumber;
 
 import tn.esprit.spring.config.TwilioConfiguration;
 import tn.esprit.spring.entities.SmsRequest;
-import tn.esprit.spring.service.event.SmsSender;
+import tn.esprit.spring.serviceInterface.SmsSender;
 @Service("twilio")
 public class TwilioSmsSender implements SmsSender {
 	 private static final Logger LOGGER = LoggerFactory.getLogger(TwilioSmsSender.class);

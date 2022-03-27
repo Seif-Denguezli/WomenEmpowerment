@@ -2,14 +2,13 @@ package tn.esprit.spring.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -22,7 +21,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import tn.esprit.spring.enumerations.EventType;
 
 @Getter
 @Setter
@@ -32,19 +30,24 @@ import tn.esprit.spring.enumerations.EventType;
 @Entity
 @ToString
 public class Message implements Serializable{
+	
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long MessageId;
+	Long messageId;
 	
-	String Body;
 	
-	@Temporal(TemporalType.DATE)
-	Date dateSend;
-	
-	@JsonIgnore
-	@ManyToOne
-	User Sender;
-	@JsonIgnore
-	@ManyToOne
-	User Rescever ;
+    private String messageContent;
+    
+    @JsonIgnore
+    @ManyToOne
+    User sender;
+    @JsonIgnore
+    @ManyToOne
+    User reciver;
+    
+    @Temporal(TemporalType.DATE)
+    Date dateEnvoie;
+
+
 }

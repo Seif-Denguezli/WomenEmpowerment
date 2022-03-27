@@ -42,7 +42,7 @@ public class SwaggerConfig {
 			      .securityContexts(Arrays.asList(securityContext()))
 			      .securitySchemes(Arrays.asList(apiKey()))
 			      .select()
-			      .apis(RequestHandlerSelectors.basePackage("tn.esprit.spring.controllers"))
+			      .apis(RequestHandlerSelectors.basePackage("tn.esprit.spring"))
 			      .paths(PathSelectors.any())
 			      .build();
 	}

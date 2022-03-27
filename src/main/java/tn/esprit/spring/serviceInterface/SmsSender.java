@@ -1,4 +1,4 @@
-package tn.esprit.spring.service.event;
+package tn.esprit.spring.serviceInterface;
 
 import tn.esprit.spring.entities.SmsRequest;
 

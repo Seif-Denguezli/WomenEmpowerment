@@ -1,5 +1,14 @@
 package tn.esprit.spring.service.courses;
 
+import java.awt.Image;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,6 +20,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import tn.esprit.spring.entities.Answer;
@@ -40,6 +52,8 @@ UserRepository userRepository;
 CourseRepository courseRepository;
 @Autowired
 CertificateRepository certificateRepository;
+@Autowired
+SanctionLearnerImpl sanctionLearnerImpl;
 	@Override
 	public void addQuestionToQuiz(QuizQuestion q, Long quizId) {
 		questionRepository.save(q);
@@ -117,15 +131,13 @@ CertificateRepository certificateRepository;
 		Quiz quiz = quizzRepository.findById(idQuiz).get();
 		
 		List<String> userCorrectAnswers = quizzRepository.getUserScore(idUser);
-		System.out.println(userCorrectAnswers);
+		System.err.println(userCorrectAnswers);
 		for (String userAns : userCorrectAnswers) {
 			
 			String[] ans = userAns.split(",");
 			if(ans[0].equals(usercred) && ans[4].equals(quizcred)){
-				score = score + Integer.parseInt(ans[3]);
-				
+				score = score + Integer.parseInt(ans[3]);	
 			}
-			
 			
 		}
 		return score;
@@ -141,11 +153,12 @@ CertificateRepository certificateRepository;
 			scoretot= scoretot + calculScore(idUser, quiz.getQuizId());
 			
 		}
+		
 		return scoretot;
 	}
 
 	@Override
-	public int userPassed(Long idUser, Long idCourse) {
+	public String userPassed(Long idUser, Long idCourse) {
 		
 	    Date date = new Date();  
 		int nbr=0;
@@ -159,22 +172,27 @@ CertificateRepository certificateRepository;
 			nbr= nbr + question.getScore();
 		}
 		}
+		
 		mark= (nbr*70)/100;
 		if(userCourseScore(idUser,idCourse)>=mark) {
-			System.out.println("YOU PASSED THIS COURSE");
-			Certificate c = certificateRepository.findByCourse(idCourse);
+			Certificate c = certificateRepository.findByCourseAndByUserId(idCourse,idUser);
 			c.setAquired(true);
 			c.setObtainingDate(date);
 			certificateRepository.flush();
+			return "User:"+u.getUsername()+"\t Passed the "+cours.getCourseName()+"\t with a mark of "+userCourseScore(idUser,idCourse)+"/"+nbr; 
+			
 		}
 		else  {
-			System.out.println("You failed the test");
+			return "User:"+u.getUsername()+"\t failed the "+cours.getCourseName()+"\t with a mark of "+userCourseScore(idUser,idCourse)+"/"+nbr;
 		}
 		
-		return nbr;
 	}
-	
+
 	
 	
 
-}
+	}
+
+
+	
+	

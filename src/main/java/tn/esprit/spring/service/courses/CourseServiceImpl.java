@@ -1,4 +1,9 @@
 package tn.esprit.spring.service.courses;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -13,12 +18,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.nylas.RequestFailedException;
 import com.sun.xml.bind.v2.runtime.reflect.Lister.CollectionLister;
 
+import tn.esprit.spring.entities.Answer;
 import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Quiz;
+import tn.esprit.spring.entities.QuizQuestion;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.exceptions.CourseNotExist;
+import tn.esprit.spring.exceptions.CourseOwnerShip;
+import tn.esprit.spring.exceptions.CoursesLimitReached;
 import tn.esprit.spring.repository.CourseRepository;
 import tn.esprit.spring.repository.QuizzRepository;
 import tn.esprit.spring.repository.UserRepository;
@@ -31,14 +42,21 @@ CourseRepository courseRepository;
 UserRepository userRepository;
 @Autowired
 QuizzRepository quizzRepository; 
+@Autowired
+CourseCalendarServiceImpl courseCalendarServiceImpl;
 	@Override
 	public Course addCourse(Course c) {
 		return courseRepository.save(c);
 	}
 	@Override
-	public Course editCourse(Course c,Long courseId) {
-		Course course = courseRepository.findById(courseId).get();
+	public Course editCourse(Course c,Long courseId) throws CourseNotExist {
 		
+		Course course = courseRepository.findById(courseId).orElse(null);
+		if(course==null) {
+			throw new CourseNotExist("This course does not exist");
+			
+		}
+		else {
 		course.setCourseName(c.getCourseName());
 		course.setEndDate(c.getEndDate());
 		course.setNbHours(c.getNbHours());
@@ -46,37 +64,56 @@ QuizzRepository quizzRepository;
 		course.setOnGoing(c.isOnGoing());
 		course.setDomain(c.getDomain());
 		courseRepository.flush();
-		
 		return c;
+		}
+		
 	}
 
 	@Override
-	public void affectCourseToUser(Long idUser, Course c) {
+	public void affectCourseToUser(Long idUser, Course c) throws CoursesLimitReached {
 		if(courseVerificator(idUser)==true) {
-		courseRepository.save(c);
+		
 		User usr = userRepository.findById(idUser).get();
-		Set<Course> course = new HashSet<>();
-		course.add(c);
-		usr.setCreatedCourses(course);
-		userRepository.flush();
+		Set<Course> courses = usr.getCreatedCourses();
+		courses.add(c);
+		userRepository.save(usr);
+		
 		}
 		else {
-		System.out.println("cant create course 2 courses allready created");
+		throw new CoursesLimitReached("Limit reached : The maximum ongoing courses is 2 ");
 	}
 	}
-
+	@Scheduled(cron= "0/10 * * * * *")
+ public void verifyCourseCalendar() throws IOException, RequestFailedException {
+	 List<Course> courses = courseRepository.findAll();
+	 for (Course course : courses) {
+		if(course.getCalendarId()==null) {
+			courseCalendarServiceImpl.createCal(course.getCourseId());
+		}
+	}
+ }
 	@Override
-	public Course deleteCourse(Long idUser, Long idCourse) {
+	public Course deleteCourse(Long idUser, Long idCourse) throws CourseNotExist, CourseOwnerShip {
 		    User usr = userRepository.findById(idUser).get();
 			Course c = courseRepository.findById(idCourse).orElse(null);
+			if(c==null) {
+				throw new CourseNotExist("This course does not exist");
+			}
+			if(usr.getCreatedCourses().contains(c)==false) {
+				throw new CourseOwnerShip("You aren't the owner of this course");
+			}
 			usr.getCreatedCourses().remove(c);
 			courseRepository.delete(c);
 			return c ;
 		
 	}
 	@Override
-	public void createQuizz(Quiz Q, Long idCourse) {
+	public void createQuizz(Quiz Q, Long idCourse,Long idUser) throws CourseOwnerShip {
 		Course c = courseRepository.findById(idCourse).get();
+		User usr = userRepository.findById(idUser).get();
+		if(usr.getCreatedCourses().contains(c)==false) {
+			throw new CourseOwnerShip("You aren't the owner of this course");
+		}
 		Set<Quiz> quiz = new HashSet<>();
 		quiz.add(Q);
 		c.getQuiz().add(Q);
@@ -101,11 +138,17 @@ QuizzRepository quizzRepository;
 		for (Certificate certificate : c) {
 			users.add(certificate.getUser());
 		}
+		if(users.size()==0) {
+			return null;
+		}
+		else
+		{
 		return users;
+		}
 	}
 	@Override
-	public User getParticipant(Long courseId) {
-		Long id = courseRepository.findUserById(courseId);
+	public User getParticipant(Long userId) {
+		Long id = courseRepository.findUserById(userId);
 		if(id==null) {
 			return null;
 		}
@@ -118,7 +161,7 @@ QuizzRepository quizzRepository;
 	}
 	
 	@Override
-	@Scheduled(cron= "0 0 0 * * *")
+	@Scheduled(cron= "0/10 * * * * *")
 	public void coursesStatus() {
 		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		  Date date = new Date(); 
@@ -135,7 +178,7 @@ QuizzRepository quizzRepository;
 		
 	}
 	@Override
-	@Scheduled(cron= "0 0 0 * * *")
+	@Scheduled(cron= "0/10 * * * * *")
 	public void coursesEnded() {
 		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		  Date date = new Date(); 
@@ -147,9 +190,16 @@ QuizzRepository quizzRepository;
 			if(course.getEndDate().toString().equals(formatter.format(date)) || course.getEndDate().before(date)) {
 				course.setOnGoing(false);
 				courseRepository.save(course);
+				
+				
 			}
 			
 		}
+		
+		
+		
+		
+		
 		
 
 	}
@@ -173,10 +223,9 @@ QuizzRepository quizzRepository;
 		String date ="";
 		Course c = courseRepository.findById(courseId).get();
 		List<String> bothdates = new ArrayList<String>() ;
-		
 		List<String> userJoinedCourses = courseRepository.getUserJoinedCourses(userId,c.getDomain().toString());
 		System.err.println(userJoinedCourses);
-		if(userJoinedCourses.isEmpty() || userJoinedCourses.size()<=2) {
+		if(userJoinedCourses.isEmpty() || userJoinedCourses.size()<2) {
 			return 100;
 		}
 		else {
@@ -185,7 +234,6 @@ QuizzRepository quizzRepository;
 			date= dato[3];
 			bothdates.add(date);
 			System.err.println(date);
-			
 		}
 		System.err.println(bothdates);
 		  Period diff = diffCalculator(bothdates.get(0), bothdates.get(1));
@@ -208,8 +256,6 @@ QuizzRepository quizzRepository;
 	            LocalDate.parse(date1).withDayOfMonth(1),
 	            LocalDate.parse(date2).withDayOfMonth(1));
 	}
-	
-	
 	
 	
 	

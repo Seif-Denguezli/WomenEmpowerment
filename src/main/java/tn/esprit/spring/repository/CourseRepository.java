@@ -11,7 +11,7 @@ import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.User;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
-	@Query(nativeQuery = true,value = "SELECT u.user_id from user u INNER JOIN certificate ON u.user_id = certificate.user_user_id INNER JOIN course ON certificate.course_course_id = course.course_id WHERE course_id=:param")
+	@Query(nativeQuery = true,value = "SELECT u.user_id from users u INNER JOIN certificate ON u.user_id = certificate.user_user_id INNER JOIN course ON certificate.course_course_id = course.course_id WHERE course_id=:param")
 	public Long findUserById(@Param("param") Long courseId);
 	@Query(nativeQuery=true,value="SELECT certificate_id,course_id,user_user_id,start_date,domain FROM certificate c INNER JOIN course ON course.course_id=c.course_course_id WHERE user_user_id=:param AND course.domain=:domain")
 	public List<String> getUserJoinedCourses(@Param("param")Long idUser,@Param("domain")String domain);
