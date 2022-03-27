@@ -1,15 +1,12 @@
 package tn.esprit.spring.entities;
 
-import java.io.Serializable;
-import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,36 +25,18 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @ToString
-public class Advertising implements Serializable {
+public class UserDataLoad {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long advertisingId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long userDataLoad;
 	
-	String Name;
 	
-	@JsonIgnore
+	String CategorieData;
 	
+	int nbrsRequet;
 	
 	@ManyToOne
-	CategoryAdve categoryadv;
-	
-	@Temporal(TemporalType.DATE)
-	Date StartDate;
-	
-	@Temporal(TemporalType.DATE)
-	Date EndDate;
-	
-	int nbrIntialViews;
-	
-	int nbrFinalViews;
-	
-	float price;
-	
-	
-	@JsonIgnore
-	@ManyToOne 
 	User user;
-	
 
 }

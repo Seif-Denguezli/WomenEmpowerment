@@ -1,7 +1,9 @@
 package tn.esprit.spring.service.forum;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -17,10 +19,20 @@ import org.springframework.stereotype.Service;
 import tn.esprit.spring.entities.*;
 
 import tn.esprit.spring.repository.*;
+import tn.esprit.spring.serviceInterface.user.UserService;
 
 @Service
 public class ForumService {
-
+	@Autowired
+	CategoryAdverRepo categoryAdvrepo;
+	
+	@Autowired
+	CategoryAdverRepo categoryAdverRepo; 
+	@Autowired
+	UserDataLoadRepo userDataLoadRepo;
+	
+	@Autowired
+	UserService userService;
 	
 	@Autowired
 	AdvertisingRepo advertisingRepo;
@@ -59,10 +71,10 @@ public class ForumService {
 			return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");
 	}
 	
-	public ResponseEntity<?> addAdvertising(Advertising a, Long IdUser) {
-
-		User u = userRepo.findById(IdUser).orElse(null);
-
+	public ResponseEntity<?> addAdvertising(Advertising a, Long IdUser,Long idCategory) {
+		CategoryAdve c =  categoryAdvrepo.findById(idCategory).orElse(null);
+				User u = userRepo.findById(IdUser).orElse(null);
+a.setCategoryadv(c);
 		if (Filtrage_bad_word(a.getName()) == 0) {
 			a.setUser(u);
 			
@@ -148,7 +160,7 @@ public class ForumService {
 			
 
 				a1.setName(a.getName());
-				a1.setCanal(a.getCanal());
+				//a1.setCanal(a.getCanal());
 				a1.setPrice(a.getPrice());
 				a1.setEndDate(a.getEndDate());
 				a1.setStartDate(a.getStartDate());
@@ -169,7 +181,7 @@ public class ForumService {
 			//if (postCom1.getUser().equals(user)) {
 
 				postCom1.setCommentBody(postComment.getCommentBody());
-
+				postCommentRepo.save(postCom1);
 				return ResponseEntity.ok().body(postCom1);
 			//} else {
 			//	return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("No permission to delete this post ");
@@ -433,5 +445,92 @@ public class ForumService {
 	public List<Message> get_conversation(Long idSender, Long idRecever) {
 		
 		return null;
+	}
+	
+	
+	public ResponseEntity<?> addCategoryAdv(CategoryAdve a) {
+
+		categoryAdverRepo.save(a);
+			return ResponseEntity.ok().body(a);
+		
+			
+	}
+	
+	
+	public Set<Post> get_Frinds_post(Long id) {
+		User u = userRepo.findById(id).orElse(null);
+		Set<Post> friendsPost = null;
+		for (User friends : userService.getMyFriends(u)) {
+			for (Post post : friends.getPosts()) {
+				friendsPost.add(post);
+				
+			}
+			
+		}
+		
+		return friendsPost;
+		
+	}
+	// detection des champ por ajouter dataUseradv
+	public Boolean existDataForUser(String ch,Long IdUser) {
+		Boolean x = false;
+		for (UserDataLoad userDataLoad : userDataLoadRepo.findAll()) {
+			if (userDataLoad.getCategorieData().equals(ch) && userDataLoad.getUser().getUserId() == IdUser) {
+				 x = true;
+			}
+		} return x;
+	}
+	public UserDataLoad getData(String ch,Long IdUser) {
+		UserDataLoad x = null;
+		for (UserDataLoad userDataLoad : userDataLoadRepo.findAll()) {
+			if (userDataLoad.getCategorieData().equals(ch) && userDataLoad.getUser().getUserId() == IdUser) {
+				 x = userDataLoad;
+			}
+		} return x;
+	}
+	public void DetctaDataLoad (String ch , Long idUser) {
+
+		List<UserDataLoad> ul = userDataLoadRepo.findAll();
+		User u = userRepo.findById(idUser).orElse(null);
+		for (CategoryAdve string : categoryAdverRepo.findAll()) {
+			if (ch.contains(string.getNameCategory())) {
+				if (existDataForUser(string.getNameCategory(),idUser) == true) {
+					UserDataLoad l = getData(string.getNameCategory(),idUser);
+					l.setNbrsRequet(l.getNbrsRequet()+1);
+					userDataLoadRepo.save(l);
+				}
+				else {
+					UserDataLoad l1 = new UserDataLoad();
+					l1.setCategorieData(string.getNameCategory());
+					l1.setUser(u);
+					l1.setNbrsRequet(1);
+					userDataLoadRepo.save(l1);
+					
+				}
+			}
+		}
+	}
+	
+	
+	public List<Advertising> getAdverByUserData(Long idUser){
+		UserDataLoad dataus = new UserDataLoad();
+		List<Advertising> ll = new ArrayList<>();
+		int x = 0 ;
+		for (UserDataLoad data : userDataLoadRepo.findAll()) {
+			
+			if (data.getUser().getUserId() == idUser) {
+				if (data.getNbrsRequet()>=x) {
+					x= data.getNbrsRequet();
+					dataus = data;
+			}}}
+		List<Advertising> aa = advertisingRepo.findAll();
+	for (Advertising advertising : aa) {
+		if(advertising.getCategoryadv().getNameCategory().equals(dataus.getCategorieData()))
+			ll.add(advertising);
+	}	
+		return ll;
+		
+		
+	
 	}
 }

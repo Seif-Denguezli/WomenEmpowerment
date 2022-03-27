@@ -45,8 +45,8 @@ public class ForumController {
 	
 	@PostMapping("/add-Advertising/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> addAdvertising_affectedto_User(@RequestBody Advertising a,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-		return forumService.addAdvertising(a,u.getId());
+	public ResponseEntity<?> addAdvertising_affectedto_User(@RequestBody Advertising a,@ApiIgnore @AuthenticationPrincipal UserPrincipal u,Long idCategory) {
+		return forumService.addAdvertising(a,u.getId(),idCategory);
 	}
 	
 	@PostMapping("/add-Com-to-Com/{IdCom}/{IdUser}")
@@ -121,9 +121,9 @@ public class ForumController {
 		return forumService.Get_post_by_User(IdUser);
 	}
 	
-	@DeleteMapping("/Delete-Like/{IdLike}/{IdUser}")
-	public ResponseEntity<?> Delete_Like( @PathVariable("IdLike") Long IdLike, @PathVariable("IdUser") Long IdUser) {
-		return forumService.Delete_Like(IdLike,IdUser);
+	@DeleteMapping("/Delete-Like/{IdLike}")
+	public ResponseEntity<?> Delete_Like( @PathVariable("IdLike") Long IdLike, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.Delete_Like(IdLike,u.getId());
 	}
 	
 	
@@ -139,9 +139,9 @@ public class ForumController {
 	}
 	
 	
-	@DeleteMapping("/Delete-Post/{IdPost}/{IdUser}")
-	public ResponseEntity<?> Delete_Post( @PathVariable("IdPost") Long IdPost, @PathVariable("IdUser") Long IdUser) {
-		return forumService.Delete_post(IdPost,IdUser);
+	@DeleteMapping("/Delete-Post/{IdPost}")
+	public ResponseEntity<?> Delete_Post( @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.Delete_post(IdPost,u.getId());
 	}
 	
 	@DeleteMapping("/Delete-Adversting/{IdAdv}")
@@ -193,6 +193,23 @@ public class ForumController {
 		 return forumService.Get_more_likers_user();
 	}
 	
-
+	@PostMapping("/add-categor-adv")
+	public  ResponseEntity<?> addCategorAdv(@RequestBody CategoryAdve a ){
+		 return forumService.addCategoryAdv(a);
+	}
+	
+	
+	@PutMapping("/test-Data")
+	public  void aa(@ApiIgnore @AuthenticationPrincipal UserPrincipal u){
+		forumService.DetctaDataLoad("sabri krima",u.getId());
+	}
+	
+	
+	@GetMapping("/Adversting-By-Loaddata")
+	public  List<Advertising> adversting_bydata(@ApiIgnore @AuthenticationPrincipal UserPrincipal u){
+		return forumService.getAdverByUserData(u.getId());
+	}
+	
+	
 }
 
