@@ -21,36 +21,44 @@ import tn.esprit.spring.entities.SmsRequest;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.enumerations.EventType;
 
-public interface EventService  {
+public interface EventService {
 
-	
 	public void removeEvent(Long IdEvent);
+
 	public List<Event> Get_all_Event();
+
 	public Long findUserDonationsById(Long id);
+
 	public void Participer_event(Long userid, Long eventId);
+
 	public void cancelparticipation(Long userid, Long eventId);
 
 	public String TargetAtrbut(Long eventId);
+
 	public Event affecte_place_event_byavie(Long id_event);
-	public  void invite_participants (Event t) throws MessagingException;
-	
-	  void sendSms(SmsRequest smsRequest, String nb, String msg);
-	
-	  public List<Long> GET_ID_BEST_DONNER();
-	
-	  public  ResponseEntity<?> createEventbyUser(Long idUser, MultipartFile multipartFile, String EventName,
-			String description,Date createAt, Date endAt, EventType typeEvent, int maxPlace, float targetDonation, String address)  throws MessagingException,IOException;
-	  public Event affecterEventToAddress(Long idEvent , String address);
-	  public Event EditEventCreateByUser(Event event , Long idEvent);
-	  public ResponseEntity<?> updateImageForEvent(Long idmedia, MultipartFile multipartFile) throws IOException ;
-	  public ResponseEntity<?> deleteImageForEvent(@PathVariable("idMedia") Long id)throws IOException;
-	  public ResponseEntity<?> addImageForDocumentOfEvent(Long idEvent,Set<MultipartFile> multipartFile) throws IOException;
-	
-	//---------------pagination-------------//
-	 public Page<Event> findEventWithPaginationAndSorting(int offset,int pageSize,String field);
-	       
-	   
-	
-	
-	
+
+	public void invite_participants(Event t) throws MessagingException;
+
+	void sendSms(SmsRequest smsRequest, String nb, String msg);
+
+	public List<Long> GET_ID_BEST_DONNER();
+
+	public ResponseEntity<?> createEventbyUser(Long idUser, MultipartFile multipartFile, String EventName,
+			String description, Date createAt, Date endAt, EventType typeEvent, int maxPlace, float targetDonation,
+			String address) throws MessagingException, IOException;
+
+	public Event affecterEventToAddress(Long idEvent, String address);
+
+	public Event EditEventCreateByUser(Event event, Long idEvent);
+
+	public ResponseEntity<?> updateImageForEvent(Long idmedia, MultipartFile multipartFile) throws IOException;
+
+	public ResponseEntity<?> deleteImageForEvent(@PathVariable("idMedia") Long id) throws IOException;
+
+	public ResponseEntity<?> addImageForDocumentOfEvent(Long idEvent, Set<MultipartFile> multipartFile)
+			throws IOException;
+
+	// ---------------pagination-------------//
+	public Page<Event> findEventWithPaginationAndSorting(int offset, int pageSize, String field);
+
 }

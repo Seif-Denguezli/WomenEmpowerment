@@ -23,17 +23,7 @@ public interface DonationService {
 	public Donation editDonation(Donation donation,Long idEvent);
 	public void removeDonation(Long idDonation);
 	public Donation addDonation_to_Event( Long idEvent, Long idUser, Payment pi)  throws StripeException;
-	public float totaldonationsByUser(Long id);
-	public float maxDonationByUser(Long id);
-	 public void FacturePdfDonation(HttpServletResponse response , Long idUser) throws IOException;
-	public List<Donation> Get_Donation_by_User(Long idUser);
-	public List<Donation> Get_all_Donation();
-	
-	
-
-	
-	
-	
+    public List<Donation> Get_all_Donation();
 	public WomenNeedDonation addWomanNeedDonation(WomenNeedDonation wommenNeedDonation);
 	public void NeedDonnation(Long idEvent);
 

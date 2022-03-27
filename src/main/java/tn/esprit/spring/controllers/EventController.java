@@ -50,6 +50,7 @@ import tn.esprit.spring.service.event.CloudinaryService;
 import tn.esprit.spring.service.event.MediaService;
 import tn.esprit.spring.serviceInterface.EventService;
 
+
 @CrossOrigin
 @RestController
 @RequestMapping("/Event")
@@ -127,7 +128,7 @@ public class EventController {
 		return eventService.findUserDonationsById(userid);
 	}
 	
-	@GetMapping("donationasba")
+	@GetMapping("donation")
 	public List<Long>  getbestdonation(){
 		return eventService.GET_ID_BEST_DONNER();
 	}

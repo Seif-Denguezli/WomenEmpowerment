@@ -85,10 +85,7 @@ return donationService.editDonation(donation,idEvent);
 	
 	
 	
-	@GetMapping("/Get-Donation-By-user/{IdUser}")
-	public List<Donation> Get_Donation_by_User( @PathVariable("IdUser") Long IdUser){
-		return donationService.Get_Donation_by_User(IdUser);
-	}
+	
 
 	
 	@GetMapping("/Get-all-Donation")
@@ -99,19 +96,9 @@ return donationService.editDonation(donation,idEvent);
 
 
 
-	@PostMapping("/calculdonbyuser/{idUser}")
-	@ResponseBody
-	public float CalculDonationByUser( @PathVariable("idUser") Long idUser) {
-		return donationService.totaldonationsByUser(idUser);
-	}
+
 	
-	
-	@PostMapping("/maxDonationByUser/{idUser}")
-	@ResponseBody
-	public float maxDonationByUser( @PathVariable("idUser") Long idUser) {
-		return donationService.maxDonationByUser(idUser);
-	}
-	
+
 	@PutMapping("/Donne-Many-towaman/{idEvent}")
 	@ResponseBody
 	public void Donne_Many( @PathVariable("idEvent") Long idEvent) {

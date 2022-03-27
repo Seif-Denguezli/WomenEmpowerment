@@ -59,34 +59,48 @@ public class DonationServiceImpl implements DonationService {
 	WomenNeedHelpRepo womanNeedHelpRepo;
 	@Autowired
 	CloudinaryService cloud;
-	
+
 	@Autowired
-    ServiceAllEmail emailService;
-	
-	
+	ServiceAllEmail emailService;
+
 	@Autowired
 	PaymentService ps;
+
 	@Override
 	public Donation addDonation(Donation donation) {
 		donationRepo.save(donation);
 
 		return donation;
 	}
-	
 
-	
-	
+	@Override
+	public Donation addDonation_to_Event(Long idEvent, Long idUser, Payment pi) throws StripeException {
+		Donation donation = new Donation();
+
+		Event event = eventRepo.findById(idEvent).orElse(null);
+		User user = userRepo.findById(idUser).orElse(null);
+		PaymentIntent p = ps.paymentIntent(pi);
+		donation.setEvent(event);
+		donation.setDonor(user);
+		donation.setAmount_forEvent(p.getAmount());
+		donation.setCodePayement(p.getId());
+		// donation.setDonationDate(p.GET);
+
+		// ps.confirm(p.getId());
+		return donationRepo.save(donation);
+
+	}
 
 	@Override
 	public Donation editDonation(Donation donation, Long idEvent) {
 		donation.setAmount_forEvent(donation.getAmount_forEvent());
-		
+
 		Event event = eventRepo.findById(idEvent).orElse(null);
 		donation.setEvent(event);
-		
+
 		donationRepo.flush();
 		return donation;
-		
+
 	}
 
 	@Override
@@ -96,30 +110,10 @@ public class DonationServiceImpl implements DonationService {
 
 	}
 
-
-
 	@Override
-	public Donation addDonation_to_Event( Long idEvent, Long idUser,Payment pi)   throws StripeException {
-		Donation donation = new Donation();
-		
-		Event event = eventRepo.findById(idEvent).orElse(null);
-		User user = userRepo.findById(idUser).orElse(null);
-		PaymentIntent p =ps.paymentIntent(pi);
-		donation.setEvent(event);
-		donation.setDonor(user);
-		donation.setAmount_forEvent(p.getAmount());
-		donation.setCodePayement(p.getId());
-		//donation.setDonationDate(p.GET);
-		
-		//ps.confirm(p.getId());
-		return donationRepo.save(donation);
+	public List<Donation> Get_all_Donation() {
 
-	}
-
-	@Override
-	public List<Donation> Get_Donation_by_User(Long idUser) {
-		User user = userRepo.findById(idUser).orElseThrow(() -> new EntityNotFoundException("User not found"));
-		return user.getDonations();
+		return donationRepo.findAll();
 	}
 
 	@Override
@@ -132,121 +126,31 @@ public class DonationServiceImpl implements DonationService {
 			}
 
 		}
-		
-			for (WomenNeedDonation w : womanNeedHelpRepo.findAll()) {
-				if (w.getPriority() == 1) { 
-					w.setGetHelp(true);
-					w.setMontantRecu(montant);
-					w.setMontant_needed(w.getMontant_needed()-montant);
-				
-				}
-				womanNeedHelpRepo.saveAll(womanNeedHelpRepo.findAll());
-			
-			
+
+		for (WomenNeedDonation w : womanNeedHelpRepo.findAll()) {
+			if (w.getPriority() == 1) {
+				w.setGetHelp(true);
+				w.setMontantRecu(montant);
+				w.setMontant_needed(w.getMontant_needed() - montant);
+
+			}
+			womanNeedHelpRepo.saveAll(womanNeedHelpRepo.findAll());
 
 		}
-		
-		
-		
-		
-	}
-	
-    public void womenNeedDonation(Long iduser , WomenNeedDonation wnd) {
-    	womanNeedHelpRepo.save(wnd);
-    	User user = userRepo.findById(iduser).orElse(null);
-    	wnd.setUser(user);
-    	womanNeedHelpRepo.saveAndFlush(wnd);
-    }
-    
-    public void affectDonationforWoman(float mt , Long idWomenNeedDonation) {
-    	
-    	
-    	
-    }
 
-
-	@Override
-	public float maxDonationByUser(Long id) {
-
-		return eventRepo.maxDonationByUser(id);
 	}
 
-
-
-
-
-	
-	
-	//-----------------------crud women need donation
-	
-	
-	
-	
-	
-	
-
-
-
-
-
-
-
-	@Override
-	public List<Donation> Get_all_Donation() {
-		
-		return donationRepo.findAll();
+	public void womenNeedDonation(Long iduser, WomenNeedDonation wnd) {
+		womanNeedHelpRepo.save(wnd);
+		User user = userRepo.findById(iduser).orElse(null);
+		wnd.setUser(user);
+		womanNeedHelpRepo.saveAndFlush(wnd);
 	}
-
-
-
-
-
-	@Override
-	public float totaldonationsByUser(Long id) {
-		return eventRepo.calcultotaldonationsByUser(id);
-	}
-
-
-
-
-
-	@Override
-	public void FacturePdfDonation(HttpServletResponse response, Long idUser) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
-
 
 	@Override
 	public WomenNeedDonation addWomanNeedDonation(WomenNeedDonation wommenNeedDonation) {
-	
+
 		return womanNeedHelpRepo.save(wommenNeedDonation);
 	}
 
-
-
-
-
-
-
-
-
-
-
-	
-	
-	
-	
-		
-	}
-
-
-
-
-	
-	
-	
-
+}

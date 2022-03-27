@@ -77,7 +77,7 @@ public class Event implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "event")
 	Set<Media> medias;
 	
-
+	@JsonIgnore
 	@ManyToOne
 	User createurEvent;
 	
