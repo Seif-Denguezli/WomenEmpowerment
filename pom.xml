@@ -41,7 +41,7 @@
 		<dependency>
   <groupId>com.nylas.sdk</groupId>
   <artifactId>nylas-java-sdk</artifactId>
-  <version>1.6.0</version>
+  <version>1.12.0</version>
 </dependency>
 		
 		
