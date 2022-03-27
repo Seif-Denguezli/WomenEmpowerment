@@ -2,6 +2,7 @@ package tn.esprit.spring.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -27,16 +28,17 @@ serviceRepo serrepo;
 UserRepository userrepo;
 @Override
 public void addRdv(Appointment apt, Long serviceId, Long userId, Long expert_id) {
-	tn.esprit.spring.entities.Service serv= serrepo.findById(serviceId).orElse(null);
+	tn.esprit.spring.entities.Service s = serrepo.findById(serviceId).orElse(null);
 	User user = userrepo.findById(userId).orElse(null);
 	User expert = userrepo.findById(expert_id).orElse(null);
-  apt.setUser(user);
-  apt.setExpert(expert);
-    
+	
+
+	apt.setService(s);
+	  apt.setUser(user);
+	  apt.setExpert(expert);
 
 	
-	if (serv.getStartDate().before(apt.getAppointmentDate())&&serv.getEndDate().after(apt.getAppointmentDate())){
-		
+	if (apt.getAppointmentDate().before(s.getEndDate()) && apt.getAppointmentDate().after(s.getStartDate())){
 		
 		apprepo.save(apt);
 		
@@ -83,6 +85,15 @@ public void NombresCaseSolved() {
 		
 	}
 } 
-	 
+@Override
+public Boolean isDisponible(Date date ,Long service_id) {
+tn.esprit.spring.entities.Service s = serrepo.findById(service_id).orElse(null);
+if (date.before(s.getEndDate()) && date.after(s.getStartDate())) {
+	return true;
+}
+else  
+	return false;
+
+} 
 
 }

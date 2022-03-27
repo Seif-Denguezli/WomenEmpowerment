@@ -126,6 +126,19 @@ public class ExceptionProcessing implements ErrorController {
         LOGGER.error(exception.getMessage());
         return createHttpResponse(NOT_FOUND, exception.getMessage());
     }
+    @ExceptionHandler(CourseNotExist.class)
+    public ResponseEntity<HTTPProtocolResponse> courseNotFoundException(CourseNotExist exception) {
+        LOGGER.error(exception.getMessage());
+        return createHttpResponse(NOT_FOUND, exception.getMessage());
+    }
+    @ExceptionHandler(CoursesLimitReached.class)
+    public ResponseEntity<HTTPProtocolResponse> CoursesLimit(CoursesLimitReached exception) {
+        return createHttpResponse(FORBIDDEN, exception.getMessage());
+    }
+    @ExceptionHandler(CourseOwnerShip.class)
+    public ResponseEntity<HTTPProtocolResponse> CourseOwnerShip(CourseOwnerShip exception) {
+        return createHttpResponse(FORBIDDEN, exception.getMessage());
+    }
 
     @ExceptionHandler(IOException.class)
     public ResponseEntity<HTTPProtocolResponse> iOException(IOException exception) { 

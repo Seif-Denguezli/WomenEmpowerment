@@ -1,28 +1,48 @@
 package tn.esprit.spring.controllers;
 
+
+import java.io.IOException;
 import java.util.List;
-import java.util.Set;
+
+import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.*;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.nylas.RequestFailedException;
+
 import io.swagger.annotations.Api;
-import tn.esprit.spring.entities.Answer;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import tn.esprit.spring.entities.Course;
+import tn.esprit.spring.entities.FileInfo;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.QuizQuestion;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.exceptions.CourseNotExist;
+import tn.esprit.spring.exceptions.CourseOwnerShip;
+import tn.esprit.spring.exceptions.CoursesLimitReached;
+import tn.esprit.spring.service.courses.CourseCalendarServiceImpl;
 import tn.esprit.spring.service.courses.CourseServiceImpl;
+import tn.esprit.spring.service.courses.FileStorageServiceImpl;
 import tn.esprit.spring.service.courses.QuizServiceImpl;
 import tn.esprit.spring.serviceInterface.courses.UserCourseService;
 
 @RestController
+@EnableSwagger2
 @Api(tags = "Courses Management")
 @RequestMapping("/course")
 public class CourseRestController {
@@ -32,21 +52,26 @@ CourseServiceImpl courseService;
 UserCourseService userCourseService;
 @Autowired
 QuizServiceImpl quizService;
-/*******************COURSE*********************/
+@Autowired
+CourseCalendarServiceImpl courseCalendarServiceImpl;
+/*******************COURSE
+ * @throws CoursesLimitReached 
+ * @throws RequestFailedException 
+ * @throws IOException *********************/
 @PostMapping(path = "addCourse/{userid}")
-public Course addCourse(@RequestBody Course c,@PathVariable("userid")Long userId) {
+public Course addCourse(@RequestBody Course c,@PathVariable("userid")Long userId) throws CoursesLimitReached, IOException, RequestFailedException {
 	
 	courseService.affectCourseToUser(userId, c);
 	return c;
 }
 @DeleteMapping(path="removeCourse/{userId}/{courseId}")
-public void deleteCourse(@PathVariable("userId")Long userId,@PathVariable("courseId")Long courseId) {
+public void deleteCourse(@PathVariable("userId")Long userId,@PathVariable("courseId")Long courseId) throws CourseNotExist, CourseOwnerShip {
 	courseService.deleteCourse(userId,courseId);
 	
 }
 
 @PutMapping(path="editCourse/{courseId}")
-public void editCourse(@RequestBody Course c,@PathVariable("courseId")Long courseId) {
+public void editCourse(@RequestBody Course c,@PathVariable("courseId")Long courseId) throws CourseNotExist {
 	courseService.editCourse(c,courseId);
 
 }
@@ -58,9 +83,10 @@ public List<Course> getAllCourses(){
 public Course getCourse(@PathVariable("courseId")Long courseId){
 	return courseService.displayCourse(courseId);
 }
-/***************************** USER JOIN COURSE**********************/
+/***************************** USER JOIN COURSE
+ * @throws CoursesLimitReached **********************/
 @PostMapping(path = "joinCourse/{userid}/{courseid}")
-public void joinCourse(@PathVariable("userid")Long userId,@PathVariable("courseid")Long courseId) {
+public void joinCourse(@PathVariable("userid")Long userId,@PathVariable("courseid")Long courseId) throws CoursesLimitReached {
 	
 	userCourseService.joinCourse(userId, courseId);
 	
@@ -83,6 +109,27 @@ public User getParticipant(@PathVariable("userId")Long userId){
 public int verificate(@PathVariable("userId")Long userId,@PathVariable("courseId")Long courseId) {
 	return courseService.userjoinCourseVerificator(userId, courseId);
 }
+
+
+@PostMapping(path = "addEvent/{courseId}/{eventName}/{hour}/{minutes}")
+public void addEvent(@PathVariable("courseId")Long courseId,@PathVariable("eventName")String eventName,@PathVariable("hour")int hour,@PathVariable("minutes")int minutes) throws CoursesLimitReached, IOException, RequestFailedException {
+	courseCalendarServiceImpl.addEvent(courseId, eventName,hour,minutes);
+	
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

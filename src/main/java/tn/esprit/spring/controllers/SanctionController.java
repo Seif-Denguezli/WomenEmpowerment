@@ -1,6 +1,5 @@
 package tn.esprit.spring.controllers;
 
-import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,13 +13,16 @@ import tn.esprit.spring.service.courses.SanctionLearnerImpl;
 
 @RestController
 @Api(tags = "Sanction")
-@RequestMapping("/SanctionLearner")
+@RequestMapping("api/SanctionLearner")
 public class SanctionController {
 	@Autowired
 	SanctionLearnerImpl sanctionLearnerImpl;
+	
 	@PostMapping("addSanction/{idUser}/{idCouse}/{pen}")
 	public void SanctionLearner(@PathVariable("idUser")Long userId,@PathVariable("idCouse")Long courseId,@PathVariable("pen") Penality p) 
 	{
 		sanctionLearnerImpl.Sanction(courseId, userId, p);
 	}
+	
+	
 }

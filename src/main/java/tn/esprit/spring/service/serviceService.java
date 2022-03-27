@@ -28,12 +28,12 @@ public class serviceService implements IService {
 	public void addService(tn.esprit.spring.entities.Service s , Long userId){
 		User u = userrepo.findById(userId).orElse(null);
 		
-		if( u.getRole() == Role.EXPERT) {
+		 
 	
 			
 			s.setJob(u.getJob());
 		servrepo.save(s);
-		}
+		
 	}
 	@Override
 	public void updateService(tn.esprit.spring.entities.Service s,Long serviceId ){
@@ -68,4 +68,6 @@ public class serviceService implements IService {
 		return servrepo.getAllBetweenDates(start, end) ;
 	}*/
 	}
+
+
 	

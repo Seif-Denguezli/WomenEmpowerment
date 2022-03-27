@@ -26,7 +26,7 @@ public class FileRestController {
 	 @Autowired
 	  private FileStorageServiceImpl storageService;
 	  @PostMapping("/upload/{courseId}")
-	  public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file,@PathVariable("courseId")Long courseId) {
+	  public ResponseEntity<ResponseMessage> uploadFile(@PathVariable("file") MultipartFile file,@PathVariable("courseId")Long courseId) {
 	    String message = "";
 	    try {
 	      storageService.store(file,courseId);
