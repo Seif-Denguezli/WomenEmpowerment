@@ -20,8 +20,7 @@ import tn.esprit.spring.repository.*;
 
 @Service
 public class ForumService {
-	@Autowired
-	MessageRepo messageRepo;
+
 	
 	@Autowired
 	AdvertisingRepo advertisingRepo;
@@ -430,16 +429,6 @@ public class ForumService {
 		
 	}
 
-	public Message SendMessage(Message m, Long idSender, Long idRecever) {
-		User sender = userRepo.findById(idSender).orElse(null);
-		User recever = userRepo.findById(idRecever).orElse(null);
-		
-		m.setRescever(recever);
-		m.setSender(sender);
-		
-		
-		return messageRepo.save(m);
-	}
 
 	public List<Message> get_conversation(Long idSender, Long idRecever) {
 		

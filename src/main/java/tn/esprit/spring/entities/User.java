@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -62,7 +63,9 @@ public class User implements Serializable{
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     Role role;
-
+    
+    String PhoneNumber;
+    
 	String email;
 	
 	@Temporal(TemporalType.DATE)
@@ -86,7 +89,6 @@ public class User implements Serializable{
 	@JsonIgnore
 	Set<Notification> notifications;
 
-	
 
 	@OneToOne
 	User woman; // Reflexive association
@@ -117,7 +119,7 @@ public class User implements Serializable{
 	
 
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+	@OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
 	Set<Certificate> obtainedCertificates; // Certificates obtained after joining courses
 	@ManyToMany(cascade = CascadeType.ALL)
 	Set<Answer> answers;
@@ -143,7 +145,8 @@ public class User implements Serializable{
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Course> createdCourses; // Courses created By the former
-	
+	@ManyToMany(mappedBy = "buser",fetch = FetchType.EAGER)
+	Set<Course> bcourses;
 	
 	//******************************************************************//
 	
@@ -192,6 +195,12 @@ public class User implements Serializable{
 	
 	//******************************************************************//
 
-
+	// message
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="sender")
+	private Set<Message> senders;
+	
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="reciver")
+	private Set<Message> recivers;
 	
 	}

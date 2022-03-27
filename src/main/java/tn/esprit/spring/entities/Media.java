@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -25,11 +28,28 @@ import lombok.experimental.FieldDefaults;
 @Entity
 @ToString
 public class Media implements Serializable{
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long mediaId;
 	
-	String mediaPath;
+	
+	
+	private String name;
+    private String imagenUrl;
+    private String codeImage;
+    @ManyToOne
+    Event event;
+	public Media(String name, String imagenUrl, String imagencode) {
+	
+		this.name = name;
+		this.imagenUrl = imagenUrl;
+		this.codeImage = imagencode;
+	}
+    
+    
+    
+    
+    
+    
 
 }
