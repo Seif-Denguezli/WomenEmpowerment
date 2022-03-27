@@ -1,10 +1,13 @@
 package tn.esprit.spring.serviceInterface.courses;
 
+import java.io.IOException;
 import java.time.Period;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
+
+import com.nylas.RequestFailedException;
 
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Quiz;
@@ -15,7 +18,7 @@ import tn.esprit.spring.exceptions.CoursesLimitReached;
 @Service
 public interface CourseService {
 public Course addCourse(Course c);
-public void affectCourseToUser(Long idUser,Course c) throws CoursesLimitReached;
+public void affectCourseToUser(Long idUser,Course c) throws CoursesLimitReached, IOException, RequestFailedException;
 public Course deleteCourse(Long idUser,Long idCourse) throws CourseNotExist, CourseOwnerShip;
 public Course editCourse(Course c,Long courseId) throws CourseNotExist;
 public void createQuizz(Quiz Q, Long idCourse,Long idUser) throws CourseOwnerShip;
