@@ -10,6 +10,8 @@ import com.nylas.NylasAccount;
 import com.nylas.NylasClient;
 import com.nylas.RequestFailedException;
 
+import tn.esprit.spring.entities.Offer;
+import tn.esprit.spring.repository.IOfferRepository;
 import tn.esprit.spring.serviceInterface.offer.ICalendarService;
 
 import com.nylas.Calendar;
@@ -36,16 +38,19 @@ import com.nylas.Event.Timespan;
 @Service
 public class CalendarServiceImpl {
 	
+	@Autowired 
+	IOfferRepository offerRepo;
 	
-	
-	public String createCal() throws IOException, RequestFailedException {
+	public String createCal(long offerId) throws IOException, RequestFailedException {
+		 
+		Offer o = offerRepo.findById(offerId).get();
 		 NylasClient client = new NylasClient();
 		  NylasAccount account = client.account("wOIy4UmmlWREVdr9S4pH5kAzRprvax");
 		  Calendars calendars = account.calendars();
 		  Calendar newCal1 = new Calendar();
-		  newCal1.setName("z3ibira");
-		  newCal1.setDescription("Testing calendar creation");
-		  newCal1.setLocation("far, far away");
+		  newCal1.setName(o.getTitle()+" Offer");
+		  newCal1.setDescription(o.getDescription());
+		  newCal1.setLocation(o.getLocation());
 		  newCal1.setTimezone("America/Los_Angeles");
 		  Calendar created = calendars.create(newCal1);
 		  return created.getId();
