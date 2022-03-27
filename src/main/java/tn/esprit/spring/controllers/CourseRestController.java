@@ -1,6 +1,7 @@
 package tn.esprit.spring.controllers;
 
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.websocket.server.PathParam;
@@ -21,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.nylas.RequestFailedException;
+
 import io.swagger.annotations.Api;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import tn.esprit.spring.entities.Course;
@@ -31,6 +35,7 @@ import tn.esprit.spring.entities.User;
 import tn.esprit.spring.exceptions.CourseNotExist;
 import tn.esprit.spring.exceptions.CourseOwnerShip;
 import tn.esprit.spring.exceptions.CoursesLimitReached;
+import tn.esprit.spring.service.courses.CourseCalendarServiceImpl;
 import tn.esprit.spring.service.courses.CourseServiceImpl;
 import tn.esprit.spring.service.courses.FileStorageServiceImpl;
 import tn.esprit.spring.service.courses.QuizServiceImpl;
@@ -47,10 +52,14 @@ CourseServiceImpl courseService;
 UserCourseService userCourseService;
 @Autowired
 QuizServiceImpl quizService;
+@Autowired
+CourseCalendarServiceImpl courseCalendarServiceImpl;
 /*******************COURSE
- * @throws CoursesLimitReached *********************/
+ * @throws CoursesLimitReached 
+ * @throws RequestFailedException 
+ * @throws IOException *********************/
 @PostMapping(path = "addCourse/{userid}")
-public Course addCourse(@RequestBody Course c,@PathVariable("userid")Long userId) throws CoursesLimitReached {
+public Course addCourse(@RequestBody Course c,@PathVariable("userid")Long userId) throws CoursesLimitReached, IOException, RequestFailedException {
 	
 	courseService.affectCourseToUser(userId, c);
 	return c;
@@ -102,7 +111,12 @@ public int verificate(@PathVariable("userId")Long userId,@PathVariable("courseId
 }
 
 
-
+@PostMapping(path = "addEvent/{courseId}/{eventName}/{hour}/{minutes}")
+public void addEvent(@PathVariable("courseId")Long courseId,@PathVariable("eventName")String eventName,@PathVariable("hour")int hour,@PathVariable("minutes")int minutes) throws CoursesLimitReached, IOException, RequestFailedException {
+	courseCalendarServiceImpl.addEvent(courseId, eventName,hour,minutes);
+	
+	
+}
 
 
 
