@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -64,7 +65,8 @@ public class Event implements Serializable {
 	int MaxPlace;
 	
 	float TargetDonation;
-	String place;
+	String address;
+
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "joinedEvents")
 	Set<User> participants;
@@ -74,5 +76,14 @@ public class Event implements Serializable {
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "event")
 	Set<Media> medias;
+	
 
+	@ManyToOne
+	User createurEvent;
+	
+	
+	
+	
+
+	
 }

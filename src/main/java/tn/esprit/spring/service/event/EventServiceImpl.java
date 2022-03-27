@@ -1,4 +1,4 @@
-package tn.esprit.spring.serviceInterface.event;
+package tn.esprit.spring.service.event;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -43,9 +43,9 @@ import tn.esprit.spring.enumerations.EventType;
 import tn.esprit.spring.repository.EventRepo;
 import tn.esprit.spring.repository.MediaRepo;
 import tn.esprit.spring.repository.UserRepository;
-import tn.esprit.spring.service.event.EventService;
-import tn.esprit.spring.service.event.SmsSender;
 import tn.esprit.spring.service.user.ServiceAllEmail;
+import tn.esprit.spring.serviceInterface.EventService;
+import tn.esprit.spring.serviceInterface.SmsSender;
 
 @Service
 public class EventServiceImpl implements EventService{
@@ -90,9 +90,9 @@ public class EventServiceImpl implements EventService{
     
 	@Override
 	public ResponseEntity<?> createEventbyUser(Long idUser, MultipartFile multipartFile, String EventName,
-			String description,Date createAt, Date endAt, EventType typeEvent, int maxPlace, float targetDonation, String place)
+			String description,Date createAt, Date endAt, EventType typeEvent, int maxPlace, float targetDonation,String address)
 			throws MessagingException, IOException {
-		
+		Set<User> usersList = new HashSet<User>();
 		Set<Event> eventList = new HashSet<Event>();
 		User user = userRepo.findById(idUser).orElse(null);
 		BufferedImage bi = ImageIO.read(multipartFile.getInputStream());
@@ -106,10 +106,10 @@ public class EventServiceImpl implements EventService{
 	        event.setEventType(typeEvent);
 	        event.setMaxPlace(maxPlace);
 	        event.setTargetDonation(targetDonation);
-	        event.setPlace(place);
+	        event.setAddress(address);
 	        event.setDescription(description);
 	        
-	        
+	        event.setCreateurEvent(user);
 	        
 	        
 	        Media media =
@@ -118,18 +118,24 @@ public class EventServiceImpl implements EventService{
 	                        (String)result.get("public_id"));
 	       
 	        media.setEvent(event);
+	        eventList= user.getCreatedEvents();
 	        eventList.add(event);
 	        eventRepo.save(event);
 	        user.setCreatedEvents(eventList);
+	     
 			userRepo.save(user);
 	        mediaService.save(media);
 	    	invite_participants (event);
 			emailService.sendNewEventCreatedByUser(event.getEventName(), user.getEmail());
 			
 	
-			return  new ResponseEntity(result, HttpStatus.OK);
+			return  new ResponseEntity(" the event was created with succeed ", HttpStatus.OK);
 	}
 	
+	
+	
+	
+
 		
 	
 	
@@ -150,10 +156,10 @@ public class EventServiceImpl implements EventService{
 				Event.setDescription(e.getDescription());
 				Event.setMaxPlace(e.getMaxPlace());
 				Event.setTargetDonation(e.getTargetDonation());
+		        Event.setAddress(e.getAddress());
 				eventRepo.flush();
 				return e;
 	}
-	
 	
 
 	
@@ -214,32 +220,35 @@ public class EventServiceImpl implements EventService{
 	
 	public void invite_participants (Event event) throws MessagingException {
 		
-	//	SmsRequest smsrequest = new SmsRequest(null, null);
+		//SmsRequest smsrequest = new SmsRequest(null, null);
 		List<Long> CampanyList =  eventRepo.GET_LIST_CAMPANY();
+		
 		System.out.println("user campany");
-		for (Long user : CampanyList) {
-			if(CampanyList.equals(null)) System.out.println("not company");
-			else {
-			User u = userRepo.findById(user).orElse(null);
+		if(eventRepo.GET_LIST_CAMPANY() != null) {
+			
+			for (Long user : CampanyList) {
+				User u = userRepo.findById(user).orElse(null);
 			
 			emailService.sendNewEventCreatedByUser(event.getEventName(), u.getEmail());
-			//sendSms(smsrequest, u.getPhoneNumber(), event.getEventName()  + " : void vvotre mail");
+			//sendSms(smsrequest, u.getPhoneNumber(), event.getEventName()  + " : yatik Asba yahachlef");
 			System.out.println("email envoye a"+ u.getName());
-			}}
-		
-		List<Long> ID_d = eventRepo.GET_ID_BEST_DONNER();
+			}
+		}
+	/*	List<Long> ID_d = eventRepo.GET_ID_BEST_DONNER();
 		System.out.println("user plus donneur");
-		for (Long long1 : ID_d) {
-			if(ID_d.equals(null))
+		if(eventRepo.GET_ID_BEST_DONNER() != null)
+		{
+		for (Long id : ID_d) {
+			
 					System.out.println("no userbestdonnor");
-			else {
-			User u = userRepo.findById(long1).orElse(null);
+			 
+			User u = userRepo.findById(id).orElse(null);
 			
 			emailService.sendNewEventCreatedByUser(event.getEventName(), u.getEmail());
 			
 			System.out.println("email envoye a"+ u.getName());
-		}}
-		
+		}
+		}*/
 	}
 	
 	 
@@ -271,7 +280,7 @@ public class EventServiceImpl implements EventService{
 		SmsRequest smsrequest = new SmsRequest(null, null);
 		User u = userRepo.findById(userid).orElse(null);
 		Event event = eventRepo.findById(eventId).orElse(null);
-		if (event.getParticipants().size() < event.getMaxPlace()) {
+		if (event.getParticipants().size() < event.getMaxPlace() && userid != event.getCreateurEvent().getUserId()) {
 		
 			Set<Event> ev = u.getJoinedEvents();
 			ev.add(event);
@@ -284,7 +293,7 @@ public class EventServiceImpl implements EventService{
 			event.setMaxPlace(event.getMaxPlace() -1);
 			eventRepo.save(event);
 			
-			//sendSms(smsrequest, u.getPhoneNumber(), event.getEventName()  + " : Participation avec succes");
+			sendSms(smsrequest, u.getPhoneNumber(), event.getEventName()  + " : Participation avec succes");
 			// evoie d un sms (Participation avec succes)
 			System.out.println("Participation avec succes");
 		}
@@ -305,13 +314,11 @@ public class EventServiceImpl implements EventService{
 		User user = userRepo.findById(userid).orElse(null);
 		Event event = eventRepo.findById(eventId).orElse(null);
 		user.getJoinedEvents().remove(event);
-		
 		userRepo.flush();
 		
 	}
-	@Override
-	public void AcceptInvitation(Long userid, boolean a) {
-	}
+	//arefaire
+
 
 
 	
@@ -319,7 +326,7 @@ public class EventServiceImpl implements EventService{
 	@Override
 	public String TargetAtrbut(Long eventId) {
 		float s=0;
-		Event e = eventRepo.findById(eventId).orElse(null)		;
+		Event e = eventRepo.findById(eventId).orElse(null);
 		
 		for (Donation d : e.getDonations()) {
 			s=s+d.getAmount_forEvent();
@@ -352,7 +359,8 @@ public class EventServiceImpl implements EventService{
 		if (y>x)  {  x = y ; a = string;}
 		}
 	Event e = eventRepo.findById(id_event).orElse(null);
-	e.setPlace(a);
+	//e.setPlace(a);
+	
 	return eventRepo.save(e);
 	}
 
@@ -373,7 +381,7 @@ public class EventServiceImpl implements EventService{
 	}
 
 
-//-----------------------------pagination
+//-----------------------------pagination--------------------------------------------------------------------------//
 
 	@Override
 	public Page<Event> findEventWithPaginationAndSorting(int offset, int pageSize, String field) {
@@ -400,6 +408,21 @@ public class EventServiceImpl implements EventService{
 	public List<Event> Get_all_Event() {
 		return  eventRepo.findAll();
 
+	}
+
+
+	@Override
+	public List<Long> GET_ID_BEST_DONNER() {
+	
+		return eventRepo.GET_ID_BEST_DONNER();
+	}
+
+
+	@Override
+	public Event affecterEventToAddress(Long idEvent, String address) {
+		Event event = eventRepo.findById(idEvent).orElse(null);
+		
+		return event;
 	}
 
 

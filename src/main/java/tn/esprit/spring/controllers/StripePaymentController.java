@@ -15,7 +15,7 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 
 import tn.esprit.spring.entities.Payment;
-import tn.esprit.spring.serviceInterface.event.PaymentService;
+import tn.esprit.spring.service.event.PaymentService;
 
 @RestController
 @RequestMapping("/stripe")

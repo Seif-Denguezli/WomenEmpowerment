@@ -110,7 +110,7 @@ public class User implements Serializable{
 	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "donor")
-	Set<Donation> donations;
+	List<Donation> donations;
 	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
@@ -123,7 +123,7 @@ public class User implements Serializable{
 	@ManyToMany(cascade = CascadeType.ALL)
 	Set<Answer> answers;
 
-
+    
 	
 	//******************************************************************//
 	
@@ -166,9 +166,9 @@ public class User implements Serializable{
 	
 	// Specefic Association Attributes
 	
-	int nbEventsCreated;
+	
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "createurEvent")
 	Set<Event> createdEvents;
 	
 	
@@ -193,7 +193,7 @@ public class User implements Serializable{
 	
 	
 	//******************************************************************//
-
+     
 
 	
 	}

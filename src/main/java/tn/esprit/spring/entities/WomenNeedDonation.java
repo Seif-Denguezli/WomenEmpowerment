@@ -50,8 +50,8 @@ public class WomenNeedDonation {
 	
 	@Temporal(TemporalType.DATE)
 	Date datePost;
-	
-	
+	float montant_needed;
+	@JsonIgnore
 	@OneToOne
 	private User user;
 	

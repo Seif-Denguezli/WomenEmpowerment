@@ -2,6 +2,10 @@ package tn.esprit.spring.controllers;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -42,9 +46,9 @@ import tn.esprit.spring.entities.SmsRequest;
 import tn.esprit.spring.enumerations.EventType;
 import tn.esprit.spring.repository.EventRepo;
 import tn.esprit.spring.repository.MediaRepo;
-import tn.esprit.spring.service.event.EventService;
-import tn.esprit.spring.serviceInterface.event.CloudinaryService;
-import tn.esprit.spring.serviceInterface.event.MediaService;
+import tn.esprit.spring.service.event.CloudinaryService;
+import tn.esprit.spring.service.event.MediaService;
+import tn.esprit.spring.serviceInterface.EventService;
 
 @CrossOrigin
 @RestController
@@ -82,7 +86,9 @@ public class EventController {
 	  
 
 	@PostMapping(path = "createEventByUser")
-	public void createEventByUser(@RequestParam Long userid,@RequestParam MultipartFile multipartFile
+	public void createEventByUser(
+			@RequestParam Long userid
+			,@RequestParam MultipartFile multipartFile
 			,@RequestParam String EventName
 			,@RequestParam String Description
 			,@RequestParam  (name ="createAt") @DateTimeFormat(pattern = "dd-MM-yyyy")  Date createAt
@@ -90,11 +96,17 @@ public class EventController {
 			,@RequestParam EventType typeEvent
 			,@RequestParam  int maxPlace
 			,@RequestParam  float targetDonation
-			,@RequestParam   String place) throws MessagingException, IOException {
-		eventService.createEventbyUser(userid, multipartFile, EventName, Description,createAt, endAt, typeEvent, maxPlace, targetDonation, place);
+			,@RequestParam String address) throws MessagingException, IOException, InterruptedException {
+		//addressMaps("KFC L'Aouina Rue Mongi Slim");
+		   
+		eventService.createEventbyUser(userid, multipartFile, EventName, Description, createAt, endAt, typeEvent, maxPlace, targetDonation, address);
 		
 		
 	}
+	
+
+	
+	
 	   @DeleteMapping("/deleteImage/{id}")
 	    public ResponseEntity<?> delete(@PathVariable("id") Long id)throws IOException {
 	         
@@ -115,7 +127,10 @@ public class EventController {
 		return eventService.findUserDonationsById(userid);
 	}
 	
-	  
+	@GetMapping("donationasba")
+	public List<Long>  getbestdonation(){
+		return eventService.GET_ID_BEST_DONNER();
+	}
 	  
 	  
 	@PutMapping("/userparticipe-event/{userid}/{eventId}")
@@ -139,18 +154,37 @@ public class EventController {
         Page<Event> productsWithPagination = eventService.findEventWithPaginationAndSorting(offset, pageSize, field);
         return new APIResponse<>(productsWithPagination.getSize(), productsWithPagination);
     }
-	
-	
-	
 
 	
-	
-	
-	
 
-	
-	
-	
+
+    
+
+    
+    @GetMapping("/googleMap/{idEvent}")
+    public ResponseEntity<?> addressMapss(@PathVariable Long  idEvent) throws IOException, InterruptedException{
+    	Event event = eventRepo.findById(idEvent).orElse(null);
+    	String ad = event.getAddress().replaceAll(" ","");
+    	HttpRequest request = HttpRequest.newBuilder()
+    			.uri(URI.create("https://trueway-geocoding.p.rapidapi.com/Geocode?address="+ad+"&language=en"))
+    			.header("X-RapidAPI-Host", "trueway-geocoding.p.rapidapi.com")
+    			.header("X-RapidAPI-Key", "ed49ed85d6msh938f7708ed191dbp16c7dfjsne72e10f27091")
+    			.method("GET", HttpRequest.BodyPublishers.noBody())
+    			.build();
+    	HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+    	System.out.println(response.body());
+    return new ResponseEntity(response.body(), HttpStatus.OK);
+    
 	
 	  
+}
+    
+    
+    
+    
+    
+
+    
+    
+    
 }

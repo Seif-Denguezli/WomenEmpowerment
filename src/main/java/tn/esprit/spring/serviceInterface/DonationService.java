@@ -1,7 +1,10 @@
-package tn.esprit.spring.service.event;
+package tn.esprit.spring.serviceInterface;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
@@ -9,10 +12,11 @@ import org.springframework.http.ResponseEntity;
 import com.stripe.exception.StripeException;
 
 import tn.esprit.spring.entities.Donation;
-import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.Payment;
-import tn.esprit.spring.entities.User;
 import tn.esprit.spring.entities.WomenNeedDonation;
+
+
+
 
 public interface DonationService {
 	public Donation addDonation(Donation donation);
@@ -21,14 +25,18 @@ public interface DonationService {
 	public Donation addDonation_to_Event( Long idEvent, Long idUser, Payment pi)  throws StripeException;
 	public float totaldonationsByUser(Long id);
 	public float maxDonationByUser(Long id);
+	 public void FacturePdfDonation(HttpServletResponse response , Long idUser) throws IOException;
+	public List<Donation> Get_Donation_by_User(Long idUser);
+	public List<Donation> Get_all_Donation();
 	
-	public Set<Donation> Get_Donation_by_User(Long idUser);
-	public Set<Donation> Get_all_Donation();
+	
+
 	
 	
-	//--------------------womenNeedDonation
-	public WomenNeedDonation addWomenNeedDonation(WomenNeedDonation WND) ;
+	
+	public WomenNeedDonation addWomanNeedDonation(WomenNeedDonation wommenNeedDonation);
 	public void NeedDonnation(Long idEvent);
+
 	
 	
 	

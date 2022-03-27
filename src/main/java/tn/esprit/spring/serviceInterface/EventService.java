@@ -1,4 +1,4 @@
-package tn.esprit.spring.service.event;
+package tn.esprit.spring.serviceInterface;
 
 import java.io.IOException;
 import java.util.Date;
@@ -29,23 +29,20 @@ public interface EventService  {
 	public Long findUserDonationsById(Long id);
 	public void Participer_event(Long userid, Long eventId);
 	public void cancelparticipation(Long userid, Long eventId);
-	public void AcceptInvitation(Long userid , boolean  a);
+
 	public String TargetAtrbut(Long eventId);
 	public Event affecte_place_event_byavie(Long id_event);
 	public  void invite_participants (Event t) throws MessagingException;
-	//	public void createEventbyUser(Long idUser , Event event)  throws MessagingException;
-	//public List<Event> findEventsWithSorting(String field);
-	void sendSms(SmsRequest smsRequest, String nb, String msg);
 	
+	  void sendSms(SmsRequest smsRequest, String nb, String msg);
 	
+	  public List<Long> GET_ID_BEST_DONNER();
 	
-	public  ResponseEntity<?> createEventbyUser(Long idUser ,MultipartFile multipartFile, 
-			String EventName,String description,Date createAt , Date endAt , 
-			EventType typeEvent , int maxPlace , 
-			float targetDonation , String place)  throws MessagingException,IOException;
-	
-	public Event EditEventCreateByUser(Event event , Long idEvent);
-	public ResponseEntity<?> updateImageForEvent(Long idmedia, MultipartFile multipartFile) throws IOException ;
+	  public  ResponseEntity<?> createEventbyUser(Long idUser, MultipartFile multipartFile, String EventName,
+			String description,Date createAt, Date endAt, EventType typeEvent, int maxPlace, float targetDonation, String address)  throws MessagingException,IOException;
+	  public Event affecterEventToAddress(Long idEvent , String address);
+	  public Event EditEventCreateByUser(Event event , Long idEvent);
+	  public ResponseEntity<?> updateImageForEvent(Long idmedia, MultipartFile multipartFile) throws IOException ;
 	  public ResponseEntity<?> deleteImageForEvent(@PathVariable("idMedia") Long id)throws IOException;
 	  public ResponseEntity<?> addImageForDocumentOfEvent(Long idEvent,Set<MultipartFile> multipartFile) throws IOException;
 	

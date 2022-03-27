@@ -1,4 +1,4 @@
-package tn.esprit.spring.serviceInterface.event;
+package tn.esprit.spring.service.event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
