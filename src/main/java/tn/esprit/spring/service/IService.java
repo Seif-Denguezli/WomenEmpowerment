@@ -15,4 +15,5 @@ public interface IService {
 	public void deletService(Long serviceId );
 	public List<tn.esprit.spring.entities.Service> recherche(String keyword);
 //	List<Service> getAllBetweenDates(Date start, Date end);
+	
 }

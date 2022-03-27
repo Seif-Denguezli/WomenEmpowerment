@@ -1,5 +1,6 @@
 package tn.esprit.spring.controllers;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,10 @@ public void deleteAppoitment(@PathVariable Long appointmentId){
 @PutMapping ("/nbre")
 public void NombresCaseSolved() {
 	 appserv.NombresCaseSolved();
+}
+@GetMapping("calendrier/{date}/{service_id}")
+public Boolean isDisponible(@PathVariable Date date,@PathVariable Long service_id)
+{ return appserv.isDisponible(date, service_id);
 }
 
 
