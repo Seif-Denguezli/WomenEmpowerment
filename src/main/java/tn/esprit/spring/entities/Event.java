@@ -3,6 +3,7 @@ package tn.esprit.spring.entities;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,9 +14,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -43,9 +47,11 @@ public class Event implements Serializable {
 	
 	String eventName;
 	
-	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	
 	Date createdAt;
 	
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	@Temporal(TemporalType.DATE)
 	Date endAt;
 	
@@ -59,7 +65,8 @@ public class Event implements Serializable {
 	int MaxPlace;
 	
 	float TargetDonation;
-	String place;
+	String address;
+
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "joinedEvents")
 	Set<User> participants;
@@ -70,5 +77,13 @@ public class Event implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "event")
 	Set<Media> medias;
 	
+	@JsonIgnore
+	@ManyToOne
+	User createurEvent;
+	
+	
+	
+	
 
+	
 }

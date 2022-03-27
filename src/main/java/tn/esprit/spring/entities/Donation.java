@@ -39,8 +39,9 @@ public class Donation implements Serializable {
 	Date donationDate;
 	
     float amount_forEvent;
+    String codePayement;
 	
-    
+    String qrcode;
     
     @JsonIgnore
 	@ManyToOne

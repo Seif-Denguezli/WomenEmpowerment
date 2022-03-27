@@ -1,4 +1,9 @@
 package tn.esprit.spring.service.courses;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -13,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.nylas.RequestFailedException;
 import com.sun.xml.bind.v2.runtime.reflect.Lister.CollectionLister;
 
 import tn.esprit.spring.entities.Answer;
@@ -36,6 +42,8 @@ CourseRepository courseRepository;
 UserRepository userRepository;
 @Autowired
 QuizzRepository quizzRepository; 
+@Autowired
+CourseCalendarServiceImpl courseCalendarServiceImpl;
 	@Override
 	public Course addCourse(Course c) {
 		return courseRepository.save(c);
@@ -69,12 +77,21 @@ QuizzRepository quizzRepository;
 		Set<Course> courses = usr.getCreatedCourses();
 		courses.add(c);
 		userRepository.save(usr);
+		
 		}
 		else {
 		throw new CoursesLimitReached("Limit reached : The maximum ongoing courses is 2 ");
 	}
 	}
-
+	@Scheduled(cron= "0/10 * * * * *")
+ public void verifyCourseCalendar() throws IOException, RequestFailedException {
+	 List<Course> courses = courseRepository.findAll();
+	 for (Course course : courses) {
+		if(course.getCalendarId()==null) {
+			courseCalendarServiceImpl.createCal(course.getCourseId());
+		}
+	}
+ }
 	@Override
 	public Course deleteCourse(Long idUser, Long idCourse) throws CourseNotExist, CourseOwnerShip {
 		    User usr = userRepository.findById(idUser).get();
@@ -239,8 +256,6 @@ QuizzRepository quizzRepository;
 	            LocalDate.parse(date1).withDayOfMonth(1),
 	            LocalDate.parse(date2).withDayOfMonth(1));
 	}
-	
-	
 	
 	
 	

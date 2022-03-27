@@ -44,6 +44,12 @@ public class AdminController
     	return ResponseEntity.ok(true);
     }
     
+    @PutMapping("unlock/{username}")
+    public ResponseEntity<?> unlockUser(@PathVariable(value="username") String username) {
+    	userService.unlockUser(username);
+    	return ResponseEntity.ok(true);
+    }
+    
     
     @GetMapping("/subscribed")
     public List<User> findSubscribedUsers() {

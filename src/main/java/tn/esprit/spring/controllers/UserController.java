@@ -34,6 +34,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("api/user")//pre-path
 public class UserController
 {
+		
     @Autowired
     private UserService userService;
     

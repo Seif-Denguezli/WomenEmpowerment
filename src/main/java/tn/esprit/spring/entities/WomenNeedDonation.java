@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -22,6 +24,7 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import tn.esprit.spring.enumerations.Job;
 import tn.esprit.spring.enumerations.Role;
+import tn.esprit.spring.enumerations.TypeHelpForDonation;
 
 @Getter
 @Setter
@@ -37,15 +40,20 @@ public class WomenNeedDonation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long idWNDonation;
 	
-	private String TypeHelp;
+	private TypeHelpForDonation TypeHelp;
+	
 	private int priority;
 	
-	@OneToOne
-	private User user;
-	
-	Boolean GetHelp;
+       Boolean GetHelp;
 	
 	Float montantRecu;
+	
+	@Temporal(TemporalType.DATE)
+	Date datePost;
+	float montant_needed;
+	@JsonIgnore
+	@OneToOne
+	private User user;
 	
 	
 
