@@ -8,6 +8,8 @@ import java.util.Optional;
 
 import javax.mail.MessagingException;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Notification;
 import tn.esprit.spring.entities.Subscription;
@@ -54,6 +56,8 @@ public interface UserService
 	void saveFriend(String username1, String username2) throws FriendExist;
 
 	List<User> getMyFriends(User u);
+
+	void unlockUser(String username);
 
 
     

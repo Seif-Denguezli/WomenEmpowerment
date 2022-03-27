@@ -1,0 +1,13 @@
+https://badgen.net/
+
+https://badgen.net/badge/:subject/:status/:color?icon=github
+
+
+
+{
+  "username": "xxxxx",
+  "email": "test@espritt.tn",
+  "name": "test testtt",
+  "phoneNumber": 50212322,
+  "password": "Xxaze*1111"
+}
