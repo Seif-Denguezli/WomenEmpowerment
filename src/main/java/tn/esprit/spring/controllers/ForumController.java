@@ -18,8 +18,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+
+import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.entities.*;
 import tn.esprit.spring.service.forum.*;
+import springfox.documentation.annotations.ApiIgnore;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 
 
@@ -32,32 +36,33 @@ public class ForumController {
 	
 	@PostMapping("/add-Post/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> addPost_affectedto_User(@RequestBody Post post, @PathVariable("IdUser") Long IdUser) {
-		return forumService.addPost(post,IdUser);
+	public ResponseEntity<?> addPost_affectedto_User(@RequestBody Post post,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		Long iduser = u.getId();
+		return forumService.addPost(post,iduser);
 	}
 	
 	@PostMapping("/add-Advertising/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> addAdvertising_affectedto_User(@RequestBody Advertising a, @PathVariable("IdUser") Long IdUser) {
-		return forumService.addAdvertising(a,IdUser);
+	public ResponseEntity<?> addAdvertising_affectedto_User(@RequestBody Advertising a,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.addAdvertising(a,u.getId());
 	}
 	
 	@PostMapping("/add-Com-to-Com/{IdCom}/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> add_Com_to_Com(@RequestBody PostComment post, @PathVariable("IdUser") Long IdUser, @PathVariable("IdCom") Long IdCom) {
-		return forumService.add_Com_to_Com(post,IdUser,IdCom);
+	public ResponseEntity<?> add_Com_to_Com(@RequestBody PostComment post, @ApiIgnore @AuthenticationPrincipal UserPrincipal u, @PathVariable("IdCom") Long IdCom) {
+		return forumService.add_Com_to_Com(post,u.getId(),IdCom);
 	}
 	
 	@PostMapping("/add-Comment/{IdPost}/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> addComment_to_Post(@RequestBody PostComment postComment, @PathVariable("IdPost") Long IdPost, @PathVariable("IdUser") Long IdUser) {
-		return forumService.addComment_to_Post(postComment,IdPost,IdUser);
+	public ResponseEntity<?> addComment_to_Post(@RequestBody PostComment postComment, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.addComment_to_Post(postComment,IdPost,u.getId());
 	}
 	
 	@PostMapping("/add-Like-post/{IdPost}/{IdUser}")
 	@ResponseBody
-	public PostLike addLike_to_Post(@RequestBody PostLike postLike, @PathVariable("IdPost") Long IdPost, @PathVariable("IdUser") Long IdUser) {
-		return forumService.addLike_to_Post(postLike,IdPost,IdUser);
+	public PostLike addLike_to_Post(@RequestBody PostLike postLike, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.addLike_to_Post(postLike,IdPost,u.getId());
 	}
 	/*
 	@PostMapping("/add-DisLike-post/{IdPost}/{IdUser}")
@@ -72,15 +77,15 @@ public class ForumController {
 	*/
 	@PostMapping("/add-Like-Comment/{IdComment}/{IdUser}")
 	@ResponseBody
-	public CommentLike addLike_to_Comment(@RequestBody CommentLike commentLike, @PathVariable("IdComment") Long IdComment, @PathVariable("IdUser") Long IdUser) {
-		return forumService.addLike_to_Comment(commentLike,IdComment,IdUser);
+	public CommentLike addLike_to_Comment(@RequestBody CommentLike commentLike, @PathVariable("IdComment") Long IdComment, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.addLike_to_Comment(commentLike,IdComment,u.getId());
 	}
 	
 	
 	@PutMapping("/Update-Post/{IdPost}/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> Update_Post(@RequestBody Post post, @PathVariable("IdPost") Long IdPost, @PathVariable("IdUser") Long IdUser) {
-		return forumService.Update_post(post,IdPost,IdUser);
+	public ResponseEntity<?> Update_Post(@RequestBody Post post, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.Update_post(post,IdPost,u.getId());
 	}
 	
 	@PutMapping("/Update-Adversting/{IdPost}/{IdUser}")
@@ -92,8 +97,8 @@ public class ForumController {
 	
 	@PutMapping("/Update-Comment/{IdPostCom}/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> Update_Comment(@RequestBody PostComment postComment, @PathVariable("IdPostCom") Long IdPostCom, @PathVariable("IdUser") Long IdUser) {
-		return forumService.Update_Comment(postComment,IdPostCom,IdUser);
+	public ResponseEntity<?> Update_Comment(@RequestBody PostComment postComment, @PathVariable("IdPostCom") Long IdPostCom, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.Update_Comment(postComment,IdPostCom,u.getId());
 	}
 	
 	@PutMapping("/Update-Likes-Dislikes/{IdLike}")
@@ -186,16 +191,6 @@ public class ForumController {
 		 return forumService.Get_more_likers_user();
 	}
 	
-	@PostMapping("/Send-Message/{IdSender}/{IdRecever}")
-	@ResponseBody
-	public Message send_Message( @RequestBody Message m,@PathVariable("IdSender") Long IdSender, @PathVariable("IdRecever") Long IdRecever) {
-		return forumService.SendMessage(m,IdSender,IdRecever);
-	}
-	
-	@GetMapping("/Get-Conversation/{IdSender}/{IdRecever}")
-	@ResponseBody
-	public List<Message> send_Message( @PathVariable("IdSender") Long IdSender, @PathVariable("IdRecever") Long IdRecever) {
-		return forumService.get_conversation(IdSender,IdRecever);
-	}
+
 }
 

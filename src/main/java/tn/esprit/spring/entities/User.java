@@ -64,7 +64,8 @@ public class User implements Serializable{
     @Column(name = "role", nullable = false)
     Role role;
     
-    String PhoneNumber ;
+    String PhoneNumber;
+    
 	String email;
 	
 	@Temporal(TemporalType.DATE)
@@ -110,7 +111,7 @@ public class User implements Serializable{
 	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "donor")
-	List<Donation> donations;
+	Set<Donation> donations;
 	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
@@ -123,7 +124,7 @@ public class User implements Serializable{
 	@ManyToMany(cascade = CascadeType.ALL)
 	Set<Answer> answers;
 
-    
+
 	
 	//******************************************************************//
 	
@@ -166,9 +167,9 @@ public class User implements Serializable{
 	
 	// Specefic Association Attributes
 	
-	
+	int nbEventsCreated;
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "createurEvent")
+	@OneToMany(cascade = CascadeType.ALL)
 	Set<Event> createdEvents;
 	
 	
@@ -193,7 +194,13 @@ public class User implements Serializable{
 	
 	
 	//******************************************************************//
-     
 
+	// message
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="sender")
+	private Set<Message> senders;
+	
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="reciver")
+	private Set<Message> recivers;
 	
 	}

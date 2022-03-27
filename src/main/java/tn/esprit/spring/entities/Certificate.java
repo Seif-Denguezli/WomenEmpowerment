@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.springframework.lang.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
@@ -43,12 +45,14 @@ public class Certificate implements Serializable {
 	Date obtainingDate;
 	
 	boolean isAquired;
-
+	@Nullable
+    String certificateQR;
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	User user;
 
 	@ManyToOne
+	@JsonIgnore
 	Course course;
 	@OneToMany(mappedBy = "certificate")
 	Set<SanctionLearnner> sanctions;

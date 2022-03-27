@@ -1,18 +1,14 @@
 package tn.esprit.spring.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.Table;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,25 +25,20 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @ToString
-public class Message implements Serializable{
-	
+@Table(name = "password_reset_token")
+public class PasswordResetToken implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long messageId;
+    @Column(name = "token_id", nullable = false)
+	Long passwordResetTokenId;
 	
+	String token;
 	
-    private String messageContent;
-    
-    @JsonIgnore
-    @ManyToOne
-    User sender;
-    @JsonIgnore
-    @ManyToOne
-    User reciver;
-    
-    @Temporal(TemporalType.DATE)
-    Date dateEnvoie;
-
+	Long userId;;
+	
+	LocalDateTime createDate;
+	
+	LocalDateTime exprirationDate;
 
 }
