@@ -8,4 +8,5 @@ import tn.esprit.spring.enumerations.Penality;
 public interface SanctionLearner {
 public void Sanction(Long courseId,Long userId,Penality p);
 public void PunishmendDecision();
+public int userSanctionsByCourse(long userId,long courseId);
 }

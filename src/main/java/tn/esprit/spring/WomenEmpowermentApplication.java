@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 @EnableAspectJAutoProxy
 @EnableScheduling
 @SpringBootApplication

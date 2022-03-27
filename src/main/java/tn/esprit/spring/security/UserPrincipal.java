@@ -9,6 +9,7 @@ import tn.esprit.spring.entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.security.Principal;
 import java.util.Collection;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserPrincipal implements UserDetails
+public class UserPrincipal implements UserDetails, Principal
 {
     private Long id;
     private String username;
@@ -66,4 +67,10 @@ public class UserPrincipal implements UserDetails
     {
         return true;
     }
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

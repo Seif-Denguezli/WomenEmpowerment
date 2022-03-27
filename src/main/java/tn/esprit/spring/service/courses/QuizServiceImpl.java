@@ -136,10 +136,8 @@ SanctionLearnerImpl sanctionLearnerImpl;
 			
 			String[] ans = userAns.split(",");
 			if(ans[0].equals(usercred) && ans[4].equals(quizcred)){
-				score = score + Integer.parseInt(ans[3]);
-				
+				score = score + Integer.parseInt(ans[3]);	
 			}
-			
 			
 		}
 		return score;
@@ -160,7 +158,7 @@ SanctionLearnerImpl sanctionLearnerImpl;
 	}
 
 	@Override
-	public int userPassed(Long idUser, Long idCourse) {
+	public String userPassed(Long idUser, Long idCourse) {
 		
 	    Date date = new Date();  
 		int nbr=0;
@@ -177,38 +175,19 @@ SanctionLearnerImpl sanctionLearnerImpl;
 		
 		mark= (nbr*70)/100;
 		if(userCourseScore(idUser,idCourse)>=mark) {
-			System.out.println("YOU PASSED THIS COURSE");
 			Certificate c = certificateRepository.findByCourseAndByUserId(idCourse,idUser);
-			
 			c.setAquired(true);
 			c.setObtainingDate(date);
 			certificateRepository.flush();
+			return "User:"+u.getUsername()+"\t Passed the "+cours.getCourseName()+"\t with a mark of "+userCourseScore(idUser,idCourse)+"/"+nbr; 
 			
 		}
 		else  {
-			System.out.println("You failed the test");
+			return "User:"+u.getUsername()+"\t failed the "+cours.getCourseName()+"\t with a mark of "+userCourseScore(idUser,idCourse)+"/"+nbr;
 		}
 		
-		return nbr;
 	}
-	@Scheduled(cron = "0/10 * * * * *")
-	public void createCertificateQr() throws IOException, InterruptedException {
-		List<Certificate> c = certificateRepository.findAll();
-		for (Certificate certificate : c) {
-			if(certificate.isAquired()==true && certificate.getCertificateQR()==null) {
-				String text=certificate.getCourse().getCourseName()+certificate.getUser().getUsername()+"'mail'"+certificate.getUser().getEmail();
-				HttpRequest request = HttpRequest.newBuilder()
-						.uri(URI.create("https://codzz-qr-cods.p.rapidapi.com/getQrcode?type=text&value="+text+""))
-						.header("x-rapidapi-host", "codzz-qr-cods.p.rapidapi.com")
-						.header("x-rapidapi-key", "b648c42070msh2f1e24111397e42p1155f4jsn864d7705eee5")
-						.method("GET", HttpRequest.BodyPublishers.noBody())
-						.build();
-				HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-				certificate.setCertificateQR(response.body().substring(8, 61));
-				certificateRepository.saveAndFlush(certificate);
-				
-			}
-		}
+
 	
 	
 
@@ -217,5 +196,3 @@ SanctionLearnerImpl sanctionLearnerImpl;
 
 	
 	
-
-}

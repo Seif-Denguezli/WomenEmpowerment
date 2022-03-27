@@ -52,6 +52,7 @@ public class Certificate implements Serializable {
 	User user;
 
 	@ManyToOne
+	@JsonIgnore
 	Course course;
 	@OneToMany(mappedBy = "certificate")
 	Set<SanctionLearnner> sanctions;

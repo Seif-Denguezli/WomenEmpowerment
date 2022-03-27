@@ -43,7 +43,7 @@ public class CalendarServiceImpl {
 		  NylasAccount account = client.account("wOIy4UmmlWREVdr9S4pH5kAzRprvax");
 		  Calendars calendars = account.calendars();
 		  Calendar newCal1 = new Calendar();
-		  newCal1.setName("New Test Calendar");
+		  newCal1.setName("z3ibira");
 		  newCal1.setDescription("Testing calendar creation");
 		  newCal1.setLocation("far, far away");
 		  newCal1.setTimezone("America/Los_Angeles");

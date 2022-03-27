@@ -7,6 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Base64;
 import java.util.Base64.Decoder;
@@ -23,8 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,10 +41,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import springfox.documentation.annotations.ApiIgnore;
 import tn.esprit.spring.entities.Answer;
+import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.QuizQuestion;
+import tn.esprit.spring.exceptions.CourseOwnerShip;
 import tn.esprit.spring.repository.CertificateRepository;
+import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.service.courses.CourseServiceImpl;
 import tn.esprit.spring.service.courses.QuizServiceImpl;
 import tn.esprit.spring.serviceInterface.courses.UserCourseService;
@@ -54,10 +63,12 @@ public class QuizRestController {
 	UserCourseService userCourseService;
 	@Autowired
 	QuizServiceImpl quizService;
+	@Autowired
+	CertificateRepository certificateRepository;
 	@PostMapping(path = "createQuiz/{courseId}")
-	public void createQuiz(@RequestBody Quiz q,@PathVariable("courseId")Long courseId) {
-		
-		courseService.createQuizz(q, courseId);
+	public void createQuiz(@RequestBody Quiz q,@PathVariable("courseId")Long courseId,@ApiIgnore @AuthenticationPrincipal UserPrincipal u ) throws CourseOwnerShip {
+		Long iduser = u.getId();
+		courseService.createQuizz(q, courseId,iduser);
 		
 	}
 	@PostMapping(path = "addQuestion/{quizId}")
@@ -105,27 +116,23 @@ public class QuizRestController {
 		return quizService.userCourseScore(idUser, idCourse);
 	}
 	@GetMapping(path="didUserPass/{idUser}/{idCourse}")
-	int userPassed(@PathVariable("idUser")Long idUser,@PathVariable("idCourse") Long idCourse) {
+	String userPassed(@PathVariable("idUser")Long idUser,@PathVariable("idCourse") Long idCourse) {
 		return quizService.userPassed(idUser, idCourse);
 	}
-	/*@Autowired
-	ServletContext context;
-	@PostMapping(path="genCertificateQR",produces = MediaType.IMAGE_PNG_VALUE)
-	@ResponseBody
-	public HttpResponse<String> userAnswerQuestion(HttpServletResponse response) throws IOException, InterruptedException  {
-		response.setContentType("image/png");
-
-		 HttpResponse<String> responsse = quizService.createCertificateQr(null);
-		return responsse; 
-	
-		
-		 
-		
-		
-		
-	}*/
-
-	
-	
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

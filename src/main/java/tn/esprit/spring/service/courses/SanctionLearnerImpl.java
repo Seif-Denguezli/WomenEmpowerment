@@ -39,14 +39,11 @@ UserCourseServiceImpl userCourseServiceImpl;
 		sc.setPenality(p);
 		sanctionLearnerRepository.save(sc);
 		
-		
 	}
 	@Override
 	@Scheduled(cron="*/10 * * * * *")
 	public void PunishmendDecision()
 		{
-		
-			
 			List<Certificate> certificates = certificateRepository.findAll();
 			for (Certificate certificate : certificates)
 				{
@@ -74,9 +71,6 @@ UserCourseServiceImpl userCourseServiceImpl;
 								System.err.println( certificate.getCertificateId() + ":::::::" +warnCount);
 								
 							}
-						
-						
-						
 					}
 					if(warnCount==1 )
 					{	
@@ -91,15 +85,29 @@ UserCourseServiceImpl userCourseServiceImpl;
 					    certificateRepository.save(certificate);
 						List<SanctionLearnner> sanctions =sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
 						sanctionLearnerRepository.deleteAll(sanctions);
-						
-						
-					 
-				
-						
 					}
 					
 					
 				}		
 		}
+
+	@Override
+	public int userSanctionsByCourse(long userId,long courseId) {
+		int pen = 0;
+		User user = userRepository.findById(userId).get();
+		Set<Certificate> certificates = user.getObtainedCertificates();
+		for (Certificate certificate : certificates) {
+			List<SanctionLearnner> sl = sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
+			
+			for (SanctionLearnner sanction : sl) {
+				if(sanction.getCertificate().getCourse().getCourseId()==courseId && sanction.getPenality().equals(Penality.SANCTION)) {
+					pen = pen + 1;
+					System.out.println(pen);
+				}
+			}
+		}
+		return pen;
+	}
+
 	}
 	
