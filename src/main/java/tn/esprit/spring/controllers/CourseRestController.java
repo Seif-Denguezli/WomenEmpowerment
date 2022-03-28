@@ -9,6 +9,8 @@ import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -60,10 +62,14 @@ CourseCalendarServiceImpl courseCalendarServiceImpl;
  * @throws RequestFailedException 
  * @throws IOException *********************/
 @PostMapping(path = "addCourse/{userid}")
-public Course addCourse(@RequestBody Course c,@PathVariable("userid")Long userId) throws CoursesLimitReached, IOException, RequestFailedException {
-	
+public ResponseEntity<Object> addCourse(@RequestBody Course c,@PathVariable("userid")Long userId) throws CoursesLimitReached, IOException, RequestFailedException {
+	if(c.getStartDate().compareTo(c.getEndDate())>0) {
+		return new ResponseEntity<>("Start date shouldn't be after end date",HttpStatus.EXPECTATION_FAILED);
+	}
+	else {
 	courseService.affectCourseToUser(userId, c);
-	return c;
+	return new ResponseEntity<>(c,HttpStatus.OK);
+	}
 }
 @DeleteMapping(path="removeCourse/{userId}/{courseId}")
 public void deleteCourse(@PathVariable("userId")Long userId,@PathVariable("courseId")Long courseId) throws CourseNotExist, CourseOwnerShip {
