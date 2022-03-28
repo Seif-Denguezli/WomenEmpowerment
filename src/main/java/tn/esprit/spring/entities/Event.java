@@ -67,6 +67,9 @@ public class Event implements Serializable {
 	float TargetDonation;
 	String address;
 
+	String calendarId;
+	
+	
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "joinedEvents")
 	Set<User> participants;
@@ -81,6 +84,8 @@ public class Event implements Serializable {
 	@ManyToOne
 	User createurEvent;
 	
+	
+	float montantCollecte;
 	
 	
 	

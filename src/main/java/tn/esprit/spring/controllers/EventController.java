@@ -38,15 +38,19 @@ import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
+import com.nylas.RequestFailedException;
+
 import tn.esprit.spring.entities.APIResponse;
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.Media;
 import tn.esprit.spring.entities.SmsRequest;
 import tn.esprit.spring.enumerations.EventType;
+import tn.esprit.spring.exceptions.CoursesLimitReached;
 import tn.esprit.spring.repository.EventRepo;
 import tn.esprit.spring.repository.MediaRepo;
 import tn.esprit.spring.service.event.CloudinaryService;
+
 import tn.esprit.spring.service.event.MediaService;
 import tn.esprit.spring.serviceInterface.EventService;
 
@@ -66,26 +70,9 @@ public class EventController {
 	@Autowired
 	EventRepo eventRepo;
 	
-	@GetMapping("/TargetDonationattindre/{idEvent}")
-	public String getTargetDonationattinreParEvent(@PathVariable("idEvent")Long idEvent){
-		return eventService.TargetAtrbut(idEvent);
-	}
+	//@Autowired
+	//EventCalendarServiceImpl eventCalander;
 	
-	
-
-	@PutMapping(path="editEventCreatedByUser/{IdEvent}")
-	public void editCourse(@RequestBody Event c,@PathVariable("IdEvent")Long IdEvent) {
-		eventService.EditEventCreateByUser(c, IdEvent);
-
-	}
-	
-	@PutMapping("updateImagesForEventCreateByUser")
-	public ResponseEntity<?>  UpdateImageforEventCreateByUser(@RequestParam Long idmedia,@RequestParam MultipartFile multipartFile) throws IOException{
-		 return eventService.updateImageForEvent(idmedia, multipartFile);
-	}
-
-	  
-
 	@PostMapping(path = "createEventByUser")
 	public void createEventByUser(
 			@RequestParam Long userid
@@ -98,15 +85,22 @@ public class EventController {
 			,@RequestParam  int maxPlace
 			,@RequestParam  float targetDonation
 			,@RequestParam String address) throws MessagingException, IOException, InterruptedException {
-		//addressMaps("KFC L'Aouina Rue Mongi Slim");
+	
 		   
 		eventService.createEventbyUser(userid, multipartFile, EventName, Description, createAt, endAt, typeEvent, maxPlace, targetDonation, address);
 		
 		
 	}
+	@PutMapping("/userparticipe-event/{userid}/{eventId}")
+	public void participationToEvent(@PathVariable("userid")Long userid,@PathVariable("eventId")Long eventId) throws MessagingException,IOException, InterruptedException{
+		 eventService.Participer_event(userid,eventId);
+	}
 	
+	@PutMapping(path="editEventCreatedByUser/{IdEvent}")
+	public void editEventCreatedByUser(@RequestBody Event e,@PathVariable("IdEvent")Long IdEvent) {
+		eventService.EditEventCreateByUser(e, IdEvent);
 
-	
+	}
 	
 	   @DeleteMapping("/deleteImage/{id}")
 	    public ResponseEntity<?> delete(@PathVariable("id") Long id)throws IOException {
@@ -114,7 +108,19 @@ public class EventController {
 		   eventService.deleteImageForEvent(id);
 	        return new ResponseEntity("imagen eliminada", HttpStatus.OK);
 	    }
+	
+	   @PutMapping("updateImagesForEventCreateByUser")
+		public ResponseEntity<?>  UpdateImageforEventCreateByUser(@RequestParam Long idmedia,@RequestParam MultipartFile multipartFile) throws IOException{
+			 return eventService.updateImageForEvent(idmedia, multipartFile);
+		}
 	   
+	   
+	@GetMapping("/TargetDonationattindre/{idEvent}")
+	public String getTargetDonationattinreParEvent(@PathVariable("idEvent")Long idEvent){
+		return eventService.TargetAtrbut(idEvent);
+	}
+	
+	
 	   
 	   
 	@GetMapping("/Get-all-Event")
@@ -122,22 +128,15 @@ public class EventController {
 		return eventService.Get_all_Event();
 	}
 	
-	
 	@GetMapping("/userAllDonation/{userid}")
 	public Long getUSERDonationByID(@PathVariable("userid")Long userid){
 		return eventService.findUserDonationsById(userid);
 	}
 	
-	@GetMapping("donation")
-	public List<Long>  getbestdonation(){
-		return eventService.GET_ID_BEST_DONNER();
-	}
+	
 	  
 	  
-	@PutMapping("/userparticipe-event/{userid}/{eventId}")
-	public void getUSERDonationByID(@PathVariable("userid")Long userid,@PathVariable("eventId")Long eventId){
-		 eventService.Participer_event(userid,eventId);
-	}
+
 	 @DeleteMapping("/cancelParticiopation/{iduser}/{idEvent}")
 	public void cancelparticipation(@PathVariable("iduser")Long iduser,@PathVariable("idEvent")Long idEvent) {
 		 eventService.cancelparticipation(iduser, idEvent);
@@ -156,34 +155,27 @@ public class EventController {
         return new APIResponse<>(productsWithPagination.getSize(), productsWithPagination);
     }
 
-	
-
-
-    
-
-    
     @GetMapping("/googleMap/{idEvent}")
-    public ResponseEntity<?> addressMapss(@PathVariable Long  idEvent) throws IOException, InterruptedException{
-    	Event event = eventRepo.findById(idEvent).orElse(null);
-    	String ad = event.getAddress().replaceAll(" ","");
-    	HttpRequest request = HttpRequest.newBuilder()
-    			.uri(URI.create("https://trueway-geocoding.p.rapidapi.com/Geocode?address="+ad+"&language=en"))
-    			.header("X-RapidAPI-Host", "trueway-geocoding.p.rapidapi.com")
-    			.header("X-RapidAPI-Key", "ed49ed85d6msh938f7708ed191dbp16c7dfjsne72e10f27091")
-    			.method("GET", HttpRequest.BodyPublishers.noBody())
-    			.build();
-    	HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-    	System.out.println(response.body());
-    return new ResponseEntity(response.body(), HttpStatus.OK);
+    public ResponseEntity<?> addressMapss(@PathVariable Long  idEvent) throws IOException, InterruptedException {
+   
+    //	eventService.addressMapss(idEvent);
+    	
+    	
+    return new ResponseEntity(eventService.addressMapss(idEvent), HttpStatus.OK);
+    }
     
-	
-	  
-}
+
+
+    
+
+    
+
     
     
+ 
     
-    
-    
+   
+   
 
     
     

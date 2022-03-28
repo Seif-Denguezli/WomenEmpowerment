@@ -24,8 +24,8 @@ public interface DonationService {
 	public void removeDonation(Long idDonation);
 	public Donation addDonation_to_Event( Long idEvent, Long idUser, Payment pi)  throws StripeException;
     public List<Donation> Get_all_Donation();
-	public WomenNeedDonation addWomanNeedDonation(WomenNeedDonation wommenNeedDonation);
 	public void NeedDonnation(Long idEvent);
+	public void womenNeedDonation(Long iduser, WomenNeedDonation wnd);
 
 	
 	

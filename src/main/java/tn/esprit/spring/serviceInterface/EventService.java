@@ -29,7 +29,7 @@ public interface EventService {
 
 	public Long findUserDonationsById(Long id);
 
-	public void Participer_event(Long userid, Long eventId);
+	public void Participer_event(Long userid, Long eventId) throws MessagingException ,IOException, InterruptedException ;
 
 	public void cancelparticipation(Long userid, Long eventId);
 
@@ -41,13 +41,13 @@ public interface EventService {
 
 	void sendSms(SmsRequest smsRequest, String nb, String msg);
 
-	public List<Long> GET_ID_BEST_DONNER();
+	
 
 	public ResponseEntity<?> createEventbyUser(Long idUser, MultipartFile multipartFile, String EventName,
 			String description, Date createAt, Date endAt, EventType typeEvent, int maxPlace, float targetDonation,
 			String address) throws MessagingException, IOException;
 
-	public Event affecterEventToAddress(Long idEvent, String address);
+
 
 	public Event EditEventCreateByUser(Event event, Long idEvent);
 
@@ -60,5 +60,6 @@ public interface EventService {
 
 	// ---------------pagination-------------//
 	public Page<Event> findEventWithPaginationAndSorting(int offset, int pageSize, String field);
+	 public ResponseEntity<?> addressMapss(Long  idEvent) throws IOException, InterruptedException;
 
 }

@@ -115,25 +115,7 @@ public class OfferRestContrller {
 	}
 	
 	
-	/*Melek Saidi
-	@GetMapping("/asbadddd/{idEvent}")
-	    public ResponseEntity<?> addressMapss(@PathVariable Long  idEvent) throws IOException, InterruptedException{
-	    	Event event = eventRepo.findById(idEvent).orElse(null);
-	    	String ad = event.getAddress().replaceAll(" ","");
-	    	HttpRequest request = HttpRequest.newBuilder()
-	    			.uri(URI.create("https://trueway-geocoding.p.rapidapi.com/Geocode?address="+ad+"&language=en"))
-	    			.header("X-RapidAPI-Host", "trueway-geocoding.p.rapidapi.com")
-	    			.header("X-RapidAPI-Key", "ed49ed85d6msh938f7708ed191dbp16c7dfjsne72e10f27091")
-	    			.method("GET", HttpRequest.BodyPublishers.noBody())
-	    			.build();
-	    	HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-	    	System.out.println(response.body());
-	    return new ResponseEntity(response.body(), HttpStatus.OK);
-	    
-		
-		  
-	}*/
-	
+
 	@PutMapping ("/Hold-Cnadidacy/{id}")
 	@ResponseBody
 	public void HoldCandidacy ( @PathVariable(value="id") Long candidacy_id) throws MessagingException {
