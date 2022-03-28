@@ -242,7 +242,7 @@ public class EventServiceImpl implements EventService {
 
 		//	sendSms(smsrequest, u.getPhoneNumber(), event.getEventName() + " : Participation avec succes");
 			//emailService.sendNewEventCreatedByUser(event.getEventName(), u.getEmail());
-			emailService.sendEmailForParticipationInEvent(event.getEventName()+  addressMapss(event.getEventId()) , u.getEmail());
+		//	emailService.sendEmailForParticipationInEvent(event.getEventName()+  addressMapss(event.getEventId()) , u.getEmail());
 		}
 
 		else {

@@ -46,6 +46,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
 import lombok.SneakyThrows;
 import net.bytebuddy.utility.RandomString;
 
@@ -93,7 +97,7 @@ public class AuthenticationServiceImpl implements AuthenticationService
 
 
 	@Override
-	public PasswordResetToken generatePasswordResetToken(String email) throws EmailNotExist {
+	public PasswordResetToken generatePasswordResetToken(String email) throws EmailNotExist, io.jsonwebtoken.io.IOException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, TemplateException, IOException {
 		User user = userRepository.findByEmail(email).orElse(null);
 		if (user!=null) {
 			PasswordResetToken token = new PasswordResetToken();
