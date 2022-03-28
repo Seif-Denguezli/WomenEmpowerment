@@ -2,12 +2,13 @@ package tn.esprit.spring.controllers;
 
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.*;
-
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -109,24 +110,6 @@ public User getParticipant(@PathVariable("userId")Long userId){
 public int verificate(@PathVariable("userId")Long userId,@PathVariable("courseId")Long courseId) {
 	return courseService.userjoinCourseVerificator(userId, courseId);
 }
-
-
-@PostMapping(path = "addEvent/{courseId}/{eventName}/{hour}/{minutes}")
-public void addEvent(@PathVariable("courseId")Long courseId,@PathVariable("eventName")String eventName,@PathVariable("hour")int hour,@PathVariable("minutes")int minutes) throws CoursesLimitReached, IOException, RequestFailedException {
-	courseCalendarServiceImpl.addEvent(courseId, eventName,hour,minutes);
-	
-	
-}
-
-
-
-
-
-
-
-
-
-
 
 
 

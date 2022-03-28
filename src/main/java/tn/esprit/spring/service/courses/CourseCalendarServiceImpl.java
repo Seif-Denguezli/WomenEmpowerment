@@ -8,6 +8,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.nylas.Calendar;
 import com.nylas.Calendars;
 import com.nylas.Event;
+import com.nylas.Events;
 import com.nylas.NylasAccount;
 import com.nylas.NylasClient;
 import com.nylas.Participant;
@@ -23,7 +25,9 @@ import com.nylas.RequestFailedException;
 
 import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Course;
+import tn.esprit.spring.entities.CourseCalEvent;
 import tn.esprit.spring.repository.CertificateRepository;
+import tn.esprit.spring.repository.CourseCalEventRepository;
 import tn.esprit.spring.repository.CourseRepository;
 @Service
 public class CourseCalendarServiceImpl {
@@ -31,6 +35,8 @@ public class CourseCalendarServiceImpl {
 	CourseRepository courseRepository;
 	@Autowired
 	CertificateRepository certificateRepository;
+	@Autowired
+	CourseCalEventRepository courseCalEventRepository;
 	public String createCal(long courseId) throws IOException, RequestFailedException {
 		 Course c =courseRepository.findById(courseId).get();
 		 NylasClient client = new NylasClient();
@@ -49,17 +55,17 @@ public class CourseCalendarServiceImpl {
 	}
 	
 	
-	 public void addEvent(Long courseId,String eventName,int hour,int minutes) throws IOException, RequestFailedException {
+	 public void addEvent(Long courseId,String eventName,int hour,int minutes,LocalDate date) throws IOException, RequestFailedException {
 		 Course c =courseRepository.findById(courseId).get();
 		 List<Certificate> certif = certificateRepository.findByCourse(courseId);
 		  NylasClient client = new NylasClient();
 		  NylasAccount account = client.account("PfdQX6tyfrwPkqfO1z1dr6oAtxn7zD");
 		 // Calendars calendars = account.calendars();
 		  Event.When when = null;
-		  LocalDate today = LocalDate.now();
-		  when = new Event.Date(today);
-		  when = new Event.Datespan(today, today.plusDays(1));
-		  Instant sixPmUtc = today.atTime(hour-1,minutes).toInstant(ZoneOffset.UTC);
+		 // LocalDate today = LocalDate.now();
+		  when = new Event.Date(date);
+		  when = new Event.Datespan(date, date.plusDays(1));
+		  Instant sixPmUtc = date.atTime(hour-1,minutes).toInstant(ZoneOffset.UTC);
 		  when = new Event.Time(sixPmUtc);
 		  when = new Event.Timespan(sixPmUtc, sixPmUtc.plus(1, ChronoUnit.HOURS));
 		  
@@ -81,8 +87,48 @@ public class CourseCalendarServiceImpl {
 			  event.setParticipants(participant);
 		  }
 		  
-		  account.events().create(event, true);
-		  
+		 
+		  CourseCalEvent courseEvent = new CourseCalEvent();
+		  courseEvent.setEventName(eventName);
+		  courseEvent.setCourse(c);
+		  courseEvent.setEventOnCalId( account.events().create(event, true).getId());
+		  courseCalEventRepository.save(courseEvent);
+		 
 		  
 		 }
+	 public Event getEvent(Long eventId) throws IOException, RequestFailedException {
+		CourseCalEvent courseEvent =  courseCalEventRepository.findById(eventId).get();
+		 NylasClient nylas = new NylasClient();
+	        NylasAccount account = nylas.account("PfdQX6tyfrwPkqfO1z1dr6oAtxn7zD");
+	        Events events = account.events();
+	        return  events.get(courseEvent.getEventOnCalId());
+	 }
+	 public void deleteEvent(long eventId)throws IOException, RequestFailedException {
+		 CourseCalEvent courseEvent =  courseCalEventRepository.findById(eventId).get();
+		 NylasClient nylas = new NylasClient();
+	     NylasAccount account = nylas.account("PfdQX6tyfrwPkqfO1z1dr6oAtxn7zD");
+		 account.events().delete(courseEvent.getEventOnCalId(), true);
+		 courseCalEventRepository.delete(courseEvent);
+	 }
+	 public void updateEventTime(long eventId,int hour,int minutes,LocalDate date) throws IOException, RequestFailedException {
+		 CourseCalEvent courseEvent =  courseCalEventRepository.findById(eventId).get();
+		 NylasClient nylas = new NylasClient();
+	     NylasAccount account = nylas.account("PfdQX6tyfrwPkqfO1z1dr6oAtxn7zD");
+	     Event event = account.events().get(courseEvent.getEventOnCalId());
+	     Event.When when = null;
+		 // LocalDate today = LocalDate.now();
+		  when = new Event.Date(date);
+		  when = new Event.Datespan(date, date.plusDays(1));
+		  Instant sixPmUtc = date.atTime(hour-1,minutes).toInstant(ZoneOffset.UTC);
+		  when = new Event.Time(sixPmUtc);
+		  when = new Event.Timespan(sixPmUtc, sixPmUtc.plus(1, ChronoUnit.HOURS));
+		  event.setWhen(when);
+		  event.setLocation("Remote");
+		  event.setDescription("Visit the course on the website Live section");
+		  event.setBusy(true);
+		  account.events().update(event, true);
+	     
+	 }
+	 
+	 
 }

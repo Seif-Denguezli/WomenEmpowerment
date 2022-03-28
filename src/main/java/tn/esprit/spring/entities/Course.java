@@ -70,5 +70,7 @@ public class Course implements Serializable {
 	Set<FileInfo> files;
 	@ManyToMany(fetch = FetchType.EAGER)
 	Set<User> buser;
+	@OneToMany(mappedBy = "course")
+	Set<CourseCalEvent> courseEvents;
 
 }
