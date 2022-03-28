@@ -151,6 +151,7 @@ public class OfferRestContrller {
 	@PostMapping("/Accept-and-add-interview/{candidacyId}/{hour}/{minutes}/{date}")
 	@ResponseBody
 	public  void interview(Long candidacyId, @PathVariable("hour")int hour,@PathVariable("minutes")int minutes,@RequestParam(value = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) throws IOException, RequestFailedException {
+		String x ="";
 		userAccount.postEventExample( candidacyId,hour,minutes,date);
 	}
 	@PostMapping("/add-even")
