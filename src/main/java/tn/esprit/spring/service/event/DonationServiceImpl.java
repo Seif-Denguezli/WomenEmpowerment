@@ -52,8 +52,7 @@ public class DonationServiceImpl implements DonationService {
 	@Autowired
 	EventRepo eventRepo;
 
-	@Autowired
-	PostRepo PR;
+	
 
 	@Autowired
 	WomenNeedHelpRepo womanNeedHelpRepo;
@@ -85,7 +84,7 @@ public class DonationServiceImpl implements DonationService {
 		donation.setAmount_forEvent(p.getAmount());
 		donation.setCodePayement(p.getId());
 		// donation.setDonationDate(p.GET);
-
+			event.setMontantCollecte(event.getMontantCollecte()+p.getAmount());
 		// ps.confirm(p.getId());
 		return donationRepo.save(donation);
 
@@ -119,38 +118,40 @@ public class DonationServiceImpl implements DonationService {
 	@Override
 	public void NeedDonnation(Long idEvent) {
 		Event e = eventRepo.findById(idEvent).orElse(null);
-		float montant = 0;
-		for (Donation d : donationRepo.findAll()) {
-			if (d.getEvent().getEventId() == idEvent) {
-				montant = montant + d.getAmount_forEvent();
-			}
 
-		}
 
 		for (WomenNeedDonation w : womanNeedHelpRepo.findAll()) {
 			if (w.getPriority() == 1) {
+				e.setMontantCollecte(e.getMontantCollecte()-w.getMontant_needed());
+				float montant = w.getMontant_needed();
 				w.setGetHelp(true);
-				w.setMontantRecu(montant);
+				w.setMontantRecu(w.getMontant_needed());
 				w.setMontant_needed(w.getMontant_needed() - montant);
-
+				System.out.println(w.getMontant_needed()-montant);
+				eventRepo.flush();
+				womanNeedHelpRepo.saveAndFlush(w);
 			}
-			womanNeedHelpRepo.saveAll(womanNeedHelpRepo.findAll());
+		
 
 		}
 
 	}
 
+	@Override
 	public void womenNeedDonation(Long iduser, WomenNeedDonation wnd) {
-		womanNeedHelpRepo.save(wnd);
+	
 		User user = userRepo.findById(iduser).orElse(null);
 		wnd.setUser(user);
-		womanNeedHelpRepo.saveAndFlush(wnd);
+		womanNeedHelpRepo.save(wnd);
+		
+		
 	}
 
-	@Override
-	public WomenNeedDonation addWomanNeedDonation(WomenNeedDonation wommenNeedDonation) {
+	
 
-		return womanNeedHelpRepo.save(wommenNeedDonation);
-	}
+
+
+
+	
 
 }

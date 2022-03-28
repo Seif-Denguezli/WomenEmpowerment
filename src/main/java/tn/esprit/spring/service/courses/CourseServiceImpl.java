@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -46,12 +48,16 @@ QuizzRepository quizzRepository;
 CourseCalendarServiceImpl courseCalendarServiceImpl;
 	@Override
 	public Course addCourse(Course c) {
+		
 		return courseRepository.save(c);
 	}
 	@Override
-	public Course editCourse(Course c,Long courseId) throws CourseNotExist {
-		
+	public Course editCourse(Course c,Long courseId,Long userId) throws CourseNotExist,CourseOwnerShip {
+		User user = userRepository.findById(userId).get();
 		Course course = courseRepository.findById(courseId).orElse(null);
+		if(!user.getCreatedCourses().contains(course)) {
+			throw new CourseOwnerShip("You aren't the owner of this course");
+		}
 		if(course==null) {
 			throw new CourseNotExist("This course does not exist");
 			
@@ -196,12 +202,6 @@ CourseCalendarServiceImpl courseCalendarServiceImpl;
 			
 		}
 		
-		
-		
-		
-		
-		
-
 	}
 	@Override
 	public boolean courseVerificator(Long userId) {

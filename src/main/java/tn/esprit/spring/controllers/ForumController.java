@@ -2,10 +2,16 @@ package tn.esprit.spring.controllers;
 
 
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-
+import javax.imageio.ImageIO;
+import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +22,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 
+
+import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
 import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.entities.*;
 import tn.esprit.spring.service.forum.*;
@@ -45,8 +57,8 @@ public class ForumController {
 	
 	@PostMapping("/add-Advertising/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> addAdvertising_affectedto_User(@RequestBody Advertising a,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-		return forumService.addAdvertising(a,u.getId());
+	public ResponseEntity<?> addAdvertising_affectedto_User(@RequestBody Advertising a,@ApiIgnore @AuthenticationPrincipal UserPrincipal u,Long idCategory) {
+		return forumService.addAdvertising(a,u.getId(),idCategory);
 	}
 	
 	@PostMapping("/add-Com-to-Com/{IdCom}/{IdUser}")
@@ -121,9 +133,9 @@ public class ForumController {
 		return forumService.Get_post_by_User(IdUser);
 	}
 	
-	@DeleteMapping("/Delete-Like/{IdLike}/{IdUser}")
-	public ResponseEntity<?> Delete_Like( @PathVariable("IdLike") Long IdLike, @PathVariable("IdUser") Long IdUser) {
-		return forumService.Delete_Like(IdLike,IdUser);
+	@DeleteMapping("/Delete-Like/{IdLike}")
+	public ResponseEntity<?> Delete_Like( @PathVariable("IdLike") Long IdLike, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.Delete_Like(IdLike,u.getId());
 	}
 	
 	
@@ -139,9 +151,9 @@ public class ForumController {
 	}
 	
 	
-	@DeleteMapping("/Delete-Post/{IdPost}/{IdUser}")
-	public ResponseEntity<?> Delete_Post( @PathVariable("IdPost") Long IdPost, @PathVariable("IdUser") Long IdUser) {
-		return forumService.Delete_post(IdPost,IdUser);
+	@DeleteMapping("/Delete-Post/{IdPost}")
+	public ResponseEntity<?> Delete_Post( @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.Delete_post(IdPost,u.getId());
 	}
 	
 	@DeleteMapping("/Delete-Adversting/{IdAdv}")
@@ -159,7 +171,7 @@ public class ForumController {
 		 forumService.delete_sujet_sans_Int();
 	}
 	@GetMapping("/Get-best-podt-week")
-	public Post Get_best_Post( ){
+	public Post Get_best_Post( ) throws MessagingException{
 		return forumService.Get_best_Post();
 	}
 	
@@ -179,12 +191,12 @@ public class ForumController {
 	}
 	
 	@PutMapping("/Report-Post/{idPost}")
-	public  Post Report_User(@PathVariable("idPost") Long idPost ){
-		return forumService.Report_User (idPost);
+	public  ResponseEntity<?> Report_User(@PathVariable("idPost") Long idPost ,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) throws MessagingException{
+		return forumService.Report_User (idPost,u.getId());
 	}
 	
 	@DeleteMapping("/Delete-reported-Post")
-	public  void Delete_reported_post(){
+	public  void Delete_reported_post() throws MessagingException{
 		 forumService.delete_reported_post();
 	}
 	
@@ -193,6 +205,47 @@ public class ForumController {
 		 return forumService.Get_more_likers_user();
 	}
 	
+	@PostMapping("/add-categor-adv")
+	public  ResponseEntity<?> addCategorAdv(@RequestBody CategoryAdve a ){
+		 return forumService.addCategoryAdv(a);
+	}
+	
+	
+	@PutMapping("/Put-test-Data")
+	public  void aa(@ApiIgnore @AuthenticationPrincipal UserPrincipal u){
+		forumService.DetctaDataLoad("sabri krima",u.getId());
+	}
+	
+	
+	@GetMapping("/Get-Adversting-By-Loaddata-age")
+	public  List<Advertising> adversting_bydata(@ApiIgnore @AuthenticationPrincipal UserPrincipal u){
+		return forumService.getAdverByUserData(u.getId());
+	}
+	
+	@GetMapping("/Get-Search-post{ch}")
+	public  List<Post> adversting_bydata(@PathVariable("ch") String ch,@ApiIgnore @AuthenticationPrincipal UserPrincipal u ){
+		return forumService.Searchpost(ch,u.getId());
+	}
+	
+	@GetMapping("/Get-post-report-users/{id}")
+	public  Set<User> getre(@PathVariable("id") Long id ){
+		return forumService.reportuser(id);
+	}
 
+	
+	@PostMapping("/api/ocr")
+	public String DoOCR(
+			@RequestParam("Image") MultipartFile image) throws IOException {
+				return forumService.DoOCR(image);
+
+	}	
+	
+	@PostMapping("/Post-Addimage/{idpost}")
+	public ResponseEntity<?> addpostimage(@RequestParam("Image") MultipartFile image,@PathVariable("idpost") Long idpost) throws IOException {
+				return forumService.addimagepost(image,idpost);
+
+	}
+	
+	
 }
 

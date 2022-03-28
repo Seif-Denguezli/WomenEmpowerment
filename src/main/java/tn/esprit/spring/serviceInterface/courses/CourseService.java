@@ -20,7 +20,7 @@ public interface CourseService {
 public Course addCourse(Course c);
 public void affectCourseToUser(Long idUser,Course c) throws CoursesLimitReached, IOException, RequestFailedException;
 public Course deleteCourse(Long idUser,Long idCourse) throws CourseNotExist, CourseOwnerShip;
-public Course editCourse(Course c,Long courseId) throws CourseNotExist;
+public Course editCourse(Course c,Long courseId,Long userId) throws CourseNotExist,CourseOwnerShip;
 public void createQuizz(Quiz Q, Long idCourse,Long idUser) throws CourseOwnerShip;
 public List<Course> displayAllCourses();
 public Course displayCourse(Long courseId);

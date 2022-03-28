@@ -49,13 +49,7 @@ public class DonationController {
 	@Autowired
 	DonationRepo donationRepo;
 	
-	@PostMapping("addWomenNeedDonation")
-	@ResponseBody
-	public WomenNeedDonation addDonation_to_Event(@RequestBody WomenNeedDonation wommenDonation )   {
-		return donationService.addWomanNeedDonation(wommenDonation);
-		
-	  
-	}
+
 
 	
 	
@@ -67,11 +61,7 @@ public class DonationController {
 		return donationService.addDonation_to_Event(idEvent, idUser,payment);
 	}
 	
-	@PutMapping(path="editDonation/{idEvent}")
-	public Donation editDonation(@RequestBody Donation donation,@PathVariable("idEvent")Long idEvent) {
-		
-return donationService.editDonation(donation,idEvent);
-	}
+
 
 	
 	@DeleteMapping("delete/{idDonation}")
@@ -95,13 +85,13 @@ return donationService.editDonation(donation,idEvent);
 	
 
 
-
+    
 
 	
 
-	@PutMapping("/Donne-Many-towaman/{idEvent}")
+	@PutMapping("/AffactDonationToWomen/{idEvent}")
 	@ResponseBody
-	public void Donne_Many( @PathVariable("idEvent") Long idEvent) {
+	public void AffactDonationToWomen( @PathVariable("idEvent") Long idEvent) {
 		 donationService.NeedDonnation(idEvent);
 	}
 	
@@ -148,6 +138,16 @@ return donationService.editDonation(donation,idEvent);
              .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ordeesr.pdf") 
              .contentType(MediaType.APPLICATION_PDF).body(res);
 	}
+	
+	
+	
+	@PostMapping(path="addWomenNeedDoantion/{idUser}")
+	public void womenNeedDonation(@PathVariable("idUser") Long idUser,@RequestBody WomenNeedDonation wnd) {
+		
+		donationService.womenNeedDonation(idUser, wnd);
+		
+	}
+	
 	
 	
 

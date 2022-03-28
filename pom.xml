@@ -210,7 +210,12 @@
 				<artifactId>spring-boot-starter-websocket</artifactId>
 			</dependency>
 
-
+	<dependency>  
+		    <groupId>net.sourceforge.tess4j</groupId>  
+		    <artifactId>tess4j</artifactId>  
+		    <version>3.4.0</version>  
+		</dependency> 
+		
 	</dependencies>
 
 	<build>

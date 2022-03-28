@@ -2,6 +2,10 @@ package tn.esprit.spring.service.event;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -191,10 +195,11 @@ public class EventServiceImpl implements EventService {
 				User u = userRepo.findById(user).orElse(null);
 
 				emailService.sendNewEventCreatedByUser(event.getEventName(), u.getEmail());
-				// sendSms(smsrequest, u.getPhoneNumber(), event.getEventName() + " : yatik Asba
-				// yahachlef");
+				 
 				System.out.println("email envoye a" + u.getName());
 			}
+			
+			
 		}
 		/*
 		 * List<Long> ID_d = eventRepo.GET_ID_BEST_DONNER();
@@ -218,7 +223,7 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
-	public void Participer_event(Long userid, Long eventId) {
+	public void Participer_event(Long userid, Long eventId) throws MessagingException, IOException, InterruptedException {
 		SmsRequest smsrequest = new SmsRequest(null, null);
 		User u = userRepo.findById(userid).orElse(null);
 		Event event = eventRepo.findById(eventId).orElse(null);
@@ -236,8 +241,8 @@ public class EventServiceImpl implements EventService {
 			eventRepo.save(event);
 
 		//	sendSms(smsrequest, u.getPhoneNumber(), event.getEventName() + " : Participation avec succes");
-			// evoie d un sms (Participation avec succes)
-			System.out.println("Participation avec succes");
+			//emailService.sendNewEventCreatedByUser(event.getEventName(), u.getEmail());
+			emailService.sendEmailForParticipationInEvent(event.getEventName()+  addressMapss(event.getEventId()) , u.getEmail());
 		}
 
 		else {
@@ -251,10 +256,12 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public void cancelparticipation(Long userid, Long eventId) {
+		SmsRequest smsrequest = new SmsRequest(null, null);
 		User user = userRepo.findById(userid).orElse(null);
 		Event event = eventRepo.findById(eventId).orElse(null);
 		user.getJoinedEvents().remove(event);
 		userRepo.flush();
+		sendSms(smsrequest, user.getPhoneNumber() +  " : your invitation has been canceled", "");
 
 	}
 	// arefaire
@@ -322,7 +329,7 @@ public class EventServiceImpl implements EventService {
 	}
 
 	// --------------------------------crud simple non validé
-	// ----------------------------------
+
 
 	@Override
 	public void removeEvent(Long IdEvent) {
@@ -336,17 +343,24 @@ public class EventServiceImpl implements EventService {
 
 	}
 
-	@Override
-	public List<Long> GET_ID_BEST_DONNER() {
 
-		return eventRepo.GET_ID_BEST_DONNER();
-	}
+
+	
 
 	@Override
-	public Event affecterEventToAddress(Long idEvent, String address) {
+	public ResponseEntity<?> addressMapss(Long idEvent) throws IOException, InterruptedException {
 		Event event = eventRepo.findById(idEvent).orElse(null);
-
-		return event;
+    	String ad = event.getAddress().replaceAll(" ","");
+    	HttpRequest request = HttpRequest.newBuilder()
+    			.uri(URI.create("https://trueway-geocoding.p.rapidapi.com/Geocode?address="+ad+"&language=en"))
+    			.header("X-RapidAPI-Host", "trueway-geocoding.p.rapidapi.com")
+    			.header("X-RapidAPI-Key", "ed49ed85d6msh938f7708ed191dbp16c7dfjsne72e10f27091")
+    			.method("GET", HttpRequest.BodyPublishers.noBody())
+    			.build();
+    	HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+    	System.out.println(response.body());
+    return new ResponseEntity(response.body(), HttpStatus.OK);
+    
 	}
 
 	// ------------------------------------------------------------------------------------------------------

@@ -35,7 +35,15 @@ public class Advertising implements Serializable {
 	Long advertisingId;
 	
 	String Name;
-	String Canal;
+	
+	@JsonIgnore
+	
+	int minage;
+	int maxage;
+	
+	
+	@ManyToOne
+	CategoryAdve categoryadv;
 	
 	@Temporal(TemporalType.DATE)
 	Date StartDate;

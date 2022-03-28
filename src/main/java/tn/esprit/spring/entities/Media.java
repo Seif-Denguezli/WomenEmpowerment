@@ -39,6 +39,9 @@ public class Media implements Serializable{
     private String codeImage;
     @ManyToOne
     Event event;
+    
+    @ManyToOne
+    Post post;
 	public Media(String name, String imagenUrl, String imagencode) {
 	
 		this.name = name;

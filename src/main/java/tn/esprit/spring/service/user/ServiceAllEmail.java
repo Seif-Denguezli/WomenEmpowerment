@@ -94,11 +94,18 @@ public class ServiceAllEmail {
         smtpTransport.sendMessage(message, message.getAllRecipients());
         smtpTransport.close();
     }
-
+//------------------------------------Forummails-------------------------------
+    public void sendAllertReport(String EventName, String email) throws MessagingException {
+        Message message = createEmailForEvent(EventName, email);
+        SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport("smtps");
+        smtpTransport.connect("smtp.gmail.com", "womenempowermentapp@gmail.com", "womenempowerment1*");
+        smtpTransport.sendMessage(message, message.getAllRecipients());
+        smtpTransport.close();
+    }
+//-----------------------------------------------------------------------------    
     
     
     //Reset Password Email -----------------------------------------------------------------------------------
-    
     private MimeMessage createresetPasswordMail(String token, String email) throws MessagingException, IOException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, TemplateException, java.io.IOException {
     	User user = userRepository.findByEmail(email).orElse(null);
         MimeMessage message = new MimeMessage(getEmailSession());
@@ -130,8 +137,8 @@ public class ServiceAllEmail {
     }
     //Reset Password Email -----------------------------------------------------------------------------------
     
-    //Welcome Email -----------------------------------------------------------------------------------
     
+    //Welcome Email -----------------------------------------------------------------------------------
     private MimeMessage createWelcomeMail(String token, String email) throws MessagingException, IOException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, TemplateException, java.io.IOException {
     	User user = userRepository.findByEmail(email).orElse(null);
         MimeMessage message = new MimeMessage(getEmailSession());
@@ -161,7 +168,7 @@ public class ServiceAllEmail {
         configuration.getTemplate("WelcomeEmail.ftlh").process(model, stringWriter);
         return stringWriter.getBuffer().toString();
     }
-    //Reset Password Email -----------------------------------------------------------------------------------
+    //Welcome Email -----------------------------------------------------------------------------------
     
     
     public void sendCandidacyEmail(String firstName, String title, String email, String candidacyState) throws MessagingException {
