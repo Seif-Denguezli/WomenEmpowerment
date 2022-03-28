@@ -38,6 +38,11 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
+
 
 @RestController
 @RequestMapping("api/authentication")//pre-path
@@ -69,7 +74,7 @@ public class AuthenticationController
     private JwtRefreshTokenService jwtRefreshTokenService;
 
     @PostMapping(value="sign-up", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})//api/authentication/sign-up
-    public ResponseEntity<User> signUp(@RequestPart("user") String user, @RequestPart("file") MultipartFile file) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException, IOException
+    public ResponseEntity<User> signUp(@RequestPart("user") String user, @RequestPart("file") MultipartFile file) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException, IOException, io.jsonwebtoken.io.IOException, TemplateException
     {
     	//upload file
     	
@@ -145,7 +150,7 @@ public class AuthenticationController
     }
     
     @PostMapping("/reset-password")
-    public ResponseEntity<?> generatePasswordResetToken(@RequestParam String email) throws EmailNotExist {
+    public ResponseEntity<?> generatePasswordResetToken(@RequestParam String email) throws EmailNotExist, io.jsonwebtoken.io.IOException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, TemplateException, IOException {
     	return new ResponseEntity<>(authenticationService.generatePasswordResetToken(email), HttpStatus.OK);
     }
     

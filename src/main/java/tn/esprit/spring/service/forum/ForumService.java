@@ -135,14 +135,14 @@ a.setCategoryadv(c);
 		return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");
 	}
 
-	public PostLike addLike_to_Post(PostLike postLike, Long idPost, Long idUser) {
-		Post p = postRepo.findById(idPost).orElse(null);
-		User u = userRepo.findById(idUser).orElse(null);
-		DetctaDataLoad(p.getBody(),idUser);
-		postLike.setUser(u);
-		postLike.setPost(p);
-		return postLikeRepo.save(postLike);
-	}
+		public PostLike addLike_to_Post(PostLike postLike, Long idPost, Long idUser) {
+			Post p = postRepo.findById(idPost).orElse(null);
+			User u = userRepo.findById(idUser).orElse(null);
+			DetctaDataLoad(p.getBody(),idUser);
+			postLike.setUser(u);
+			postLike.setPost(p);
+			return postLikeRepo.save(postLike);
+		}
 
 	/*
 	 * public ResponseEntity<?> addDisLike_to_Post(PostDislike postDisLike, Long
@@ -378,38 +378,40 @@ a.setCategoryadv(c);
 		postLikeRepo.saveAndFlush(p);
 		return ResponseEntity.ok().body(p);
 	}
-	@Scheduled(cron = "*/30 * * * * *")
-	public void delete_sujet_sans_Int() {
-		for (Post p : postRepo.findAll()) {
-			if (date_comp(p.getCreatedAt())) {
-				if (p.getPostLikes().size() == 0) {
-					Delete_post(p.getPostId(), p.getUser().getUserId());
-
+	
+	
+//@Scheduled(cron = "*/30 * * * * *")
+		public void delete_sujet_sans_Int() {
+			for (Post p : postRepo.findAll()) {
+				if (date_comp(p.getCreatedAt())) {
+					if (p.getPostLikes().size() == 0) {
+						Delete_post(p.getPostId(), p.getUser().getUserId());
+	
+					}
 				}
 			}
+	
 		}
-
-	}
-
-	public boolean date_comp(Date d) {
-		if (LocalDate.now().getMonthValue() - d.getMonth() > 2) {
-			return true;
-		}
-		if (LocalDate.now().getMonthValue() - d.getMonth() > 1) {
-			if (LocalDate.now().getDayOfMonth() >= d.getDate()) {
+	
+		public boolean date_comp(Date d) {
+			if (LocalDate.now().getMonthValue() - d.getMonth() > 2) {
 				return true;
 			}
-
-			else {
-				if (LocalDate.now().getDayOfMonth() - d.getDate() == 30) {
+			if (LocalDate.now().getMonthValue() - d.getMonth() > 1) {
+				if (LocalDate.now().getDayOfMonth() >= d.getDate()) {
 					return true;
 				}
+	
+				else {
+					if (LocalDate.now().getDayOfMonth() - d.getDate() == 30) {
+						return true;
+					}
+				}
+	
 			}
-
+	
+			return false;
 		}
-
-		return false;
-	}
 
 	public Post Get_best_Post() throws MessagingException {
 		Post p1 = null;
@@ -619,18 +621,45 @@ public ResponseEntity<?> addimagepost(MultipartFile image,Long idpost) throws IO
 			result.get("original_filename")
 			, (String) result.get("url"),
 			(String) result.get("public_id"));
-	//media.setPost(p);
+	media.setPost(p);
+	mediaService.save(media);
+	/*
 	Set<Media> lp = p.getMedias();
 	lp.add(media);
 	p.setMedias(lp);
-	//mediaService.save(media);
-	postRepo.save(p);
-	return ResponseEntity.status(HttpStatus.OK).body("Image added ");
+	*/
+	//postRepo.save(p);
+	return ResponseEntity.status(HttpStatus.OK).body("Image added to post");
 	}
 	else return ResponseEntity.status(HttpStatus.OK).body("U r Image Content interdit word");
 
 }
 
+
+public ResponseEntity<?> addimageAdverstingt(MultipartFile image,Long idadv) throws IOException {
+	Advertising p = advertisingRepo.findById(idadv).orElse(null);
+	String ch = DoOCR(image);
+	BufferedImage bi = ImageIO.read(image.getInputStream());
+	if (Filtrage_bad_word(ch) == 0 ) {
+	Map result = cloudImage.upload(image);
+	
+	Media media = new Media((String) 
+			result.get("original_filename")
+			, (String) result.get("url"),
+			(String) result.get("public_id"));
+	media.setAdvertising(p);
+	mediaService.save(media);
+	/*
+	Set<Media> lp = p.getMedias();
+	lp.add(media);
+	p.setMedias(lp);
+	advertisingRepo.save(p);
+	*/
+	return ResponseEntity.status(HttpStatus.OK).body("Image added to adversting");
+	}
+	else return ResponseEntity.status(HttpStatus.OK).body("U r Image Content interdit word");
+
+}
 
 public String DoOCR(
 		MultipartFile image) throws IOException {
@@ -653,7 +682,7 @@ public String DoOCR(
 		g.dispose();
         
 		instance.setLanguage(request.getDestinationLanguage());
-		instance.setDatapath("C:\\Users\\lenovo\\Desktop\\spring git\\WomenEmpowerment\\tessdata");
+		instance.setDatapath("..\\WomenEmpowerment\\tessdata");
 
 		String result = instance.doOCR(newImage);
 

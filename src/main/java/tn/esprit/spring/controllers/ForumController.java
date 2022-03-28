@@ -232,12 +232,16 @@ public class ForumController {
 
 	}	
 	
-	@PostMapping("/Post-Addimage/{idpost}")
+	@PostMapping("/add-Post-image/{idpost}")
 	public ResponseEntity<?> addpostimage(@RequestParam("Image") MultipartFile image,@PathVariable("idpost") Long idpost) throws IOException {
 				return forumService.addimagepost(image,idpost);
 
 	}
 	
-	
+	@PostMapping("/add-Adversting-image/{idadv}")
+	public ResponseEntity<?> addadvimage(@RequestParam("Image") MultipartFile image,@PathVariable("idadv") Long idadv) throws IOException {
+				return forumService.addimageAdverstingt(image,idadv);
+
+	}
 }
 

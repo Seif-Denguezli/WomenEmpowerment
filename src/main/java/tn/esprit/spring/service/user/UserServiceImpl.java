@@ -23,8 +23,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import tn.esprit.spring.entities.Course;
@@ -90,16 +92,17 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public User saveUser(User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException
+    public User saveUser(User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException, io.jsonwebtoken.io.IOException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, TemplateException, IOException
     {
     	isvalidUsernameAndEmail(EMPTY, user.getUsername(), user.getEmail());
     	isValid(user.getPassword());
         //user.setRole(Role.USER);
-        emailService.sendNewPasswordEmail(user.getName(), user.getPassword(), user.getEmail());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setLocked(false);
         user.setLoginAttempts(0);
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        emailService.sendWelcomeMail(savedUser.getName(), savedUser.getEmail());
+        return savedUser;
     }
 
     @Override
