@@ -153,9 +153,9 @@ public class OfferRestContrller {
 	public  void interview(Long candidacyId, @PathVariable("hour")int hour,@PathVariable("minutes")int minutes,@RequestParam(value = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) throws IOException, RequestFailedException {
 		userAccount.postEventExample( candidacyId,hour,minutes,date);
 	}
-	/*@PostMapping("/add-even")
+	@PostMapping("/add-even")
 	@ResponseBody
 	public  String createcal(long offerId) throws IOException, RequestFailedException {
 		return userAccount.createCal(offerId);
-	}*/
+	}
 }
