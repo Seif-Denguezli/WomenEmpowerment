@@ -135,7 +135,10 @@ public class OfferRestContrller {
 	}
 	@PostMapping("/add-even")
 	@ResponseBody
-	public  String createcal() throws IOException, RequestFailedException {
-		return userAccount.createCal();
+
+	public  String createcal(long offerId) throws IOException, RequestFailedException {
+		String x = "";
+		return userAccount.createCal(offerId);
+
 	}
 }
