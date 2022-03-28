@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import springfox.documentation.annotations.ApiIgnore;
+import tn.esprit.spring.exceptions.CourseOwnerShip;
 import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.service.courses.CourseChannelImpl;
 @RestController
@@ -43,7 +44,7 @@ public class ChannelCourseController {
 	}
 	
 	@DeleteMapping("/deleteStream/{courseId}")
-	public void deletechannel(@PathVariable("courseId")Long courseid,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) throws IOException, InterruptedException {
+	public void deletechannel(@PathVariable("courseId")Long courseid,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) throws IOException, InterruptedException, CourseOwnerShip {
 		courseChannelImpl.deleteChannel(courseid,u.getId());
 				
 		}

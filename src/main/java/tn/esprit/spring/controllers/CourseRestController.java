@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nylas.RequestFailedException;
 
 import io.swagger.annotations.Api;
+import springfox.documentation.annotations.ApiIgnore;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.FileInfo;
@@ -38,6 +40,7 @@ import tn.esprit.spring.entities.User;
 import tn.esprit.spring.exceptions.CourseNotExist;
 import tn.esprit.spring.exceptions.CourseOwnerShip;
 import tn.esprit.spring.exceptions.CoursesLimitReached;
+import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.service.courses.CourseCalendarServiceImpl;
 import tn.esprit.spring.service.courses.CourseServiceImpl;
 import tn.esprit.spring.service.courses.FileStorageServiceImpl;
@@ -57,29 +60,26 @@ UserCourseService userCourseService;
 QuizServiceImpl quizService;
 @Autowired
 CourseCalendarServiceImpl courseCalendarServiceImpl;
-/*******************COURSE
- * @throws CoursesLimitReached 
- * @throws RequestFailedException 
- * @throws IOException *********************/
-@PostMapping(path = "addCourse/{userid}")
-public ResponseEntity<Object> addCourse(@RequestBody Course c,@PathVariable("userid")Long userId) throws CoursesLimitReached, IOException, RequestFailedException {
+/*******************COURSE *********************/
+@PostMapping(path = "addCourse")
+public ResponseEntity<Object> addCourse(@RequestBody Course c,@ApiIgnore @AuthenticationPrincipal UserPrincipal u ) throws CoursesLimitReached, IOException, RequestFailedException {
 	if(c.getStartDate().compareTo(c.getEndDate())>0) {
 		return new ResponseEntity<>("Start date shouldn't be after end date",HttpStatus.EXPECTATION_FAILED);
 	}
 	else {
-	courseService.affectCourseToUser(userId, c);
+	courseService.affectCourseToUser(u.getId(), c);
 	return new ResponseEntity<>(c,HttpStatus.OK);
 	}
 }
-@DeleteMapping(path="removeCourse/{userId}/{courseId}")
-public void deleteCourse(@PathVariable("userId")Long userId,@PathVariable("courseId")Long courseId) throws CourseNotExist, CourseOwnerShip {
-	courseService.deleteCourse(userId,courseId);
+@DeleteMapping(path="removeCourse/{courseId}")
+public void deleteCourse(@ApiIgnore @AuthenticationPrincipal UserPrincipal u ,@PathVariable("courseId")Long courseId) throws CourseNotExist, CourseOwnerShip {
+	courseService.deleteCourse(u.getId(),courseId);
 	
 }
 
 @PutMapping(path="editCourse/{courseId}")
-public void editCourse(@RequestBody Course c,@PathVariable("courseId")Long courseId) throws CourseNotExist {
-	courseService.editCourse(c,courseId);
+public void editCourse(@RequestBody Course c,@PathVariable("courseId")Long courseId,@ApiIgnore @AuthenticationPrincipal UserPrincipal u ) throws CourseNotExist, CourseOwnerShip {
+	courseService.editCourse(c,courseId,u.getId());
 
 }
 @GetMapping(path="getAllCourses")
@@ -93,9 +93,9 @@ public Course getCourse(@PathVariable("courseId")Long courseId){
 /***************************** USER JOIN COURSE
  * @throws CoursesLimitReached **********************/
 @PostMapping(path = "joinCourse/{userid}/{courseid}")
-public void joinCourse(@PathVariable("userid")Long userId,@PathVariable("courseid")Long courseId) throws CoursesLimitReached {
+public void joinCourse(@ApiIgnore @AuthenticationPrincipal UserPrincipal u ,@PathVariable("courseid")Long courseId) throws CoursesLimitReached {
 	
-	userCourseService.joinCourse(userId, courseId);
+	userCourseService.joinCourse(u.getId(), courseId);
 	
 }
 @DeleteMapping(path="leaveCourse/{certificateId}")

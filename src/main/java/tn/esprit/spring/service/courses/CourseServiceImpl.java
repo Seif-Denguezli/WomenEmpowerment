@@ -52,9 +52,12 @@ CourseCalendarServiceImpl courseCalendarServiceImpl;
 		return courseRepository.save(c);
 	}
 	@Override
-	public Course editCourse(Course c,Long courseId) throws CourseNotExist {
-		
+	public Course editCourse(Course c,Long courseId,Long userId) throws CourseNotExist,CourseOwnerShip {
+		User user = userRepository.findById(userId).get();
 		Course course = courseRepository.findById(courseId).orElse(null);
+		if(!user.getCreatedCourses().contains(course)) {
+			throw new CourseOwnerShip("You aren't the owner of this course");
+		}
 		if(course==null) {
 			throw new CourseNotExist("This course does not exist");
 			
@@ -199,12 +202,6 @@ CourseCalendarServiceImpl courseCalendarServiceImpl;
 			
 		}
 		
-		
-		
-		
-		
-		
-
 	}
 	@Override
 	public boolean courseVerificator(Long userId) {

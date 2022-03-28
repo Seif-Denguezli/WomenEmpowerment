@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.exceptions.CourseOwnerShip;
 import tn.esprit.spring.repository.CourseRepository;
 import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.serviceInterface.courses.CourseLiveService;
@@ -90,7 +91,7 @@ UserRepository userRepository;
 
 
 	@Override
-	public void deleteChannel(long courseId, long userId) throws IOException, InterruptedException {
+	public void deleteChannel(long courseId, long userId) throws IOException, InterruptedException, CourseOwnerShip {
 		Course cour = courseRepository.findById(courseId).get();
 		User user = userRepository.findById(userId).get();
 		if(user.getCreatedCourses().contains(cour)) {
@@ -106,7 +107,7 @@ UserRepository userRepository;
 			courseRepository.saveAndFlush(cour);
 		}
 		else {
-			System.out.println("No permission");
+			throw new CourseOwnerShip("You aren not the owner of the course");
 		}
 	}
 
@@ -115,6 +116,7 @@ UserRepository userRepository;
 	@Override
 	public HttpResponse<String> getChannelStatus(long courseId) throws IOException, InterruptedException {
 		Course cour = courseRepository.findById(courseId).get();
+		{
 		HttpRequest request = HttpRequest.newBuilder()
 			    .uri(URI.create("https://api.hesp.live/channels/"+cour.getChannelId() +"/status"))
 			    .header("Accept", "application/json")
@@ -124,6 +126,7 @@ UserRepository userRepository;
 			HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 			System.out.println(response.body());
 			return response;
+		}
 		
 	}
 
