@@ -38,7 +38,12 @@ UserRepository userRepository;
 			System.out.println(response.body());
 			cour.setChannelId(response.body().substring(14, 39));
 			courseRepository.saveAndFlush(cour);
+			int index =response.body().toString().indexOf("streamKey")+12;
+			int index2 = index+36;
+			cour.setStreamKey(response.body().substring(index,index2));
+			courseRepository.save(cour);
 			return response.body().substring(14, 39);
+		
 		}
 		else 
 			return "You aren't the owner of this course";
@@ -60,6 +65,7 @@ UserRepository userRepository;
 				    .build();
 				HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 				System.out.println(response.body());
+				
 		}
 		else {
 			System.out.println("you aren't the owner of the channel");
@@ -68,7 +74,7 @@ UserRepository userRepository;
 	}
 
 
-
+	
 	@Override
 	public void stopChannel(long courseId, long userId) throws IOException, InterruptedException {
 		Course cour = courseRepository.findById(courseId).get();
