@@ -36,6 +36,9 @@ CourseServiceImpl courseService;
 		if(course.getBuser().contains(us)) {
 			throw new AccessDeniedException("You are banned from this course");
 		}
+		if(us.getCreatedCourses().contains(course)) {
+			throw new AccessDeniedException("You are the owner of this course allready");
+		}
 		else {
 		
 	    Certificate c = new Certificate();

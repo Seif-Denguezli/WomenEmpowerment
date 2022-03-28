@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import tn.esprit.spring.entities.Answer;
@@ -114,7 +115,6 @@ SanctionLearnerImpl sanctionLearnerImpl;
 	@Override
 	public Answer answerQuizQuestion(Long idUser,Long idAnswer) {
 		User user = userRepository.findById(idUser).get();
-		
 		Answer answer = answerRepository.findById(idAnswer).get();
 		user.getAnswers().add(answer);
 		userRepository.flush();
