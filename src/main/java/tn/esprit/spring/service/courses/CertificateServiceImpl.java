@@ -29,17 +29,18 @@ public class CertificateServiceImpl implements CertificateService {
 		List<Certificate> c = certificateRepository.findAll();
 		for (Certificate certificate : c) {
 			if(certificate.isAquired()==true && certificate.getCertificateQR()==null) {
-				String text=certificate.getCourse().getCourseName()+certificate.getUser().getUsername()+"'mail'"+certificate.getUser().getEmail();
+				String text=certificate.getUser().getUsername()+"'mail'"+certificate.getUser().getEmail();
+				String texttrimmed = text.replaceAll("\\s","");
 				
 				HttpRequest request = HttpRequest.newBuilder()
-						.uri(URI.create("https://codzz-qr-cods.p.rapidapi.com/getQrcode?type=text&value="+text+""))
+						.uri(URI.create("https://codzz-qr-cods.p.rapidapi.com/getQrcode?type=text&value="+texttrimmed+""))
 						.header("x-rapidapi-host", "codzz-qr-cods.p.rapidapi.com")
 						.header("x-rapidapi-key", "b648c42070msh2f1e24111397e42p1155f4jsn864d7705eee5")
 						.method("GET", HttpRequest.BodyPublishers.noBody())
 						.build();
 				HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 				System.err.println(response.body());
-				certificate.setCertificateQR(response.body().substring(8, 61));
+			 certificate.setCertificateQR(response.body().substring(8, 61));
 				certificateRepository.saveAndFlush(certificate);
 				
 			}
