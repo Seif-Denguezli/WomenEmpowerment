@@ -10,6 +10,7 @@ import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +47,12 @@ public class ForumController {
 		Long iduser = u.getId();
 		return forumService.addPost(post,iduser);
 	}
+	@PostMapping("/add-Bad-word")
+	@ResponseBody
+	public BadWord addPost_affectedto_User(@RequestBody BadWord b) {
 	
+		return forumService.addBadWord(b);
+	}
 	@PostMapping("/add-Advertising/{IdUser}")
 	@ResponseBody
 	public ResponseEntity<?> addAdvertising_affectedto_User(@RequestBody Advertising a,@ApiIgnore @AuthenticationPrincipal UserPrincipal u,Long idCategory) {
@@ -157,7 +163,7 @@ public class ForumController {
 	public ResponseEntity<?> Delete_PostCom( @PathVariable("IdPostCom") Long IdPostCom, @PathVariable("IdUser") Long IdUser) {
 		return forumService.Delete_PostCom(IdPostCom,IdUser);
 	}
-	
+	//@Scheduled(cron = "*/30 * * * * *")
 	@DeleteMapping("/Delete-Post-Redandant")
 	public void Delete_post_Redendant( ){
 		 forumService.delete_sujet_sans_Int();

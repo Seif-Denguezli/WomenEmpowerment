@@ -112,7 +112,10 @@ a.setCategoryadv(c);
 			return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");
 	}
 	
-
+	public BadWord addBadWord(BadWord b ) {
+		
+		return badWordRepo.save(b);
+	}
 	public ResponseEntity<?> addComment_to_Post(PostComment postComment, Long idPost, Long idUser) {
 		Post p = postRepo.findById(idPost).orElse(null);
 		User u = userRepo.findById(idUser).orElse(null);
@@ -225,6 +228,8 @@ a.setCategoryadv(c);
 			Post post1 = postRepo.findById(idPost).orElseThrow(() -> new EntityNotFoundException("post not found"));
 			User user = userRepo.findById(post1.getUser().getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
 			//if (post1.getUser().equals(user)) {
+			post1.setReportedby(null);
+			postRepo.save(post1);
 			Set<Post> p = user.getPosts();
 			p.remove(post1);
 			user.setPosts(p);
@@ -383,14 +388,14 @@ a.setCategoryadv(c);
 //@Scheduled(cron = "*/30 * * * * *")
 		public void delete_sujet_sans_Int() {
 			for (Post p : postRepo.findAll()) {
-				if (date_comp(p.getCreatedAt())) {
+				if (postRepo.diffrence_entre_date(p.getCreatedAt())>30) {
 					if (p.getPostLikes().size() == 0) {
 						Delete_post(p.getPostId(), p.getUser().getUserId());
-	
+						System.out.println("Post with id = "+ p.getPostId() +" deleted");
 					}
 				}
 			}
-	
+			System.out.println("Testing for post with no interraction");
 		}
 	
 		public boolean date_comp(Date d) {
