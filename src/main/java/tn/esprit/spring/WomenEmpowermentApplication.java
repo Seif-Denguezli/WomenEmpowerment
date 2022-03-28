@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -13,6 +14,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableAspectJAutoProxy
 @EnableScheduling
 @SpringBootApplication
+@ComponentScan({"tn.esprit.*"})
 public class WomenEmpowermentApplication {
 	
 

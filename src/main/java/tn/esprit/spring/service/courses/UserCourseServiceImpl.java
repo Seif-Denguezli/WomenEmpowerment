@@ -1,6 +1,7 @@
 package tn.esprit.spring.service.courses;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import tn.esprit.spring.entities.Certificate;
@@ -23,7 +24,8 @@ CertificateRepository certificateRepository;
 CourseServiceImpl courseService;
 	@Override
 	public void joinCourse(Long idUser, Long idCourse) throws CoursesLimitReached {
-		
+		User us = userRepository.findById(idUser).get();
+		Course course = courseRepository.findById(idCourse).get();
 		if(courseService.userjoinCourseVerificator(idUser, idCourse)>=0 && courseService.userjoinCourseVerificator(idUser, idCourse)<6) {
 			throw new CoursesLimitReached("You can not join 2 courses with same field in a semester");
 		}
@@ -31,9 +33,11 @@ CourseServiceImpl courseService;
 			throw new CoursesLimitReached("You allready joined this course");
 			
 		}
+		if(course.getBuser().contains(us)) {
+			throw new AccessDeniedException("You are banned from this course");
+		}
 		else {
-		User us = userRepository.findById(idUser).get();
-		Course course = courseRepository.findById(idCourse).get();
+		
 	    Certificate c = new Certificate();
 	    c.setUser(us);
 	    c.setCourse(course);
