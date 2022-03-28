@@ -28,6 +28,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -169,6 +171,14 @@ public class AuthenticationController
     	final GoogleIdToken googleIdToken = GoogleIdToken.parse(verifier.getJsonFactory(), tokenDto.getValue());
     	final GoogleIdToken.Payload payload = googleIdToken.getPayload();
     	return new ResponseEntity(payload, HttpStatus.OK);
+    }
+    
+    @PostMapping("/facebook")
+    public ResponseEntity<?> loginWithFacebook(@RequestBody TokenDto tokenDto) throws IOException{
+    	Facebook facebook = new FacebookTemplate(tokenDto.getValue());
+    	final String [] fields = {"email", "picture"};
+    	org.springframework.social.facebook.api.User user = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, fields); 
+    	return new ResponseEntity(user, HttpStatus.OK);
     }
 
 }
