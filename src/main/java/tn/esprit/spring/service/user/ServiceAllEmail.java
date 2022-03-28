@@ -1,7 +1,6 @@
- package tn.esprit.spring.service.user;
+package tn.esprit.spring.service.user;
 
 import static javax.mail.Message.RecipientType.TO;
-import static javax.mail.Message.RecipientType.CC;
 
 import java.util.Date;
 import java.util.Properties;
@@ -12,7 +11,7 @@ import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.*;
 //import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +37,7 @@ public class ServiceAllEmail {
         Message message = new MimeMessage(getEmailSession());
         message.setFrom(new InternetAddress("womenempowermentapp@gmail.com"));
         message.setRecipients(TO, InternetAddress.parse(email, false));
-        message.setRecipients(CC, InternetAddress.parse("seifeddine.denguezli@esprit.tn", false));
+        //message.setRecipients(CC, InternetAddress.parse("bdtcourse@gmail.com", false));
         message.setSubject("Women Empowerment - New Password");
         message.setText("Hello " + firstName + ", \n \n Your new account password is: " + password + "\n \n The Support Team"+"\n From Les Elites Dev Team");
         message.setSentDate(new Date());
@@ -58,6 +57,7 @@ public class ServiceAllEmail {
     
     
     //-------------------EventDonation-------------------------------------------------
+    
     private Message createEmailForEvent(String EventName, String email) throws MessagingException {
         Message message = new MimeMessage(getEmailSession());
         message.setFrom(new InternetAddress("womenempowermentapp@gmail.com"));
@@ -77,7 +77,16 @@ public class ServiceAllEmail {
         smtpTransport.sendMessage(message, message.getAllRecipients());
         smtpTransport.close();
     }
-//------------------------------------Forummails-------------------------------
+    public void sendEmailEventForParticipation(String EventName, String email) throws MessagingException {
+        Message message = createEmailForEvent(EventName, email);
+        SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport("smtps");
+        smtpTransport.connect("smtp.gmail.com", "womenempowermentapp@gmail.com", "womenempowerment1*");
+        smtpTransport.sendMessage(message, message.getAllRecipients());
+        smtpTransport.close();
+    }
+
+    
+  //------------------------------------Forummails-------------------------------
     public void sendAllertReport(String EventName, String email) throws MessagingException {
         Message message = createEmailForEvent(EventName, email);
         SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport("smtps");
@@ -104,9 +113,7 @@ public class ServiceAllEmail {
     }
 
 
-    public void sendEmailForParticipationInEvent(String EventName, String email) throws MessagingException {
-        Message message = createEmailForEvent(EventName, email);
-
+    
     public void sendNewResetPasswordMail(String token, String email) throws MessagingException {
         Message message = createresetPasswordMail(token, email);
         SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport("smtps");
@@ -114,8 +121,13 @@ public class ServiceAllEmail {
         smtpTransport.sendMessage(message, message.getAllRecipients());
         smtpTransport.close();
     }
-
-    //Reset Password Email -----------------------------------------------------------------------------------
+    
+    
+    
+    
+    //-----------------------------------------------------------------------------------
+    
+    
     public void sendCandidacyEmail(String firstName, String title, String email, String candidacyState) throws MessagingException {
         Message message = createCandidacyEmail( firstName,  title,  email,  candidacyState);
         SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport("smtps");
