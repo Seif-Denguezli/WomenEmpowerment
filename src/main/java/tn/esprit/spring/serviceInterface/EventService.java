@@ -29,7 +29,7 @@ public interface EventService {
 
 	public Long findUserDonationsById(Long id);
 
-	public void Participer_event(Long userid, Long eventId) throws MessagingException ,IOException, InterruptedException ;
+	public ResponseEntity<?> Participer_event(Long userid, Long eventId) throws MessagingException ,IOException, InterruptedException ;
 
 	public void cancelparticipation(Long userid, Long eventId);
 

@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
-
 import com.nylas.Participant;
 import com.nylas.Event.Conferencing;
 import com.nylas.Event.Timespan;
