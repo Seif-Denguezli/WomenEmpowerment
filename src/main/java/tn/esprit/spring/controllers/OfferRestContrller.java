@@ -1,12 +1,14 @@
 package tn.esprit.spring.controllers;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -129,10 +132,10 @@ public class OfferRestContrller {
 	public void RestrainCandidacy ( @PathVariable(value="id") Long candidacy_id) throws MessagingException {
 		CandidacyService.RestrainCandidacy(candidacy_id);
 	}
-	@PostMapping("/add-interview")
+	@PostMapping("/Accept-and-add-interview/{candidacyId}/{hour}/{minutes}/{date}")
 	@ResponseBody
-	public  void interview() throws IOException, RequestFailedException {
-		userAccount.postEventExample();
+	public  void interview(Long candidacyId, @PathVariable("hour")int hour,@PathVariable("minutes")int minutes,@RequestParam(value = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) throws IOException, RequestFailedException {
+		userAccount.postEventExample( candidacyId,hour,minutes,date);
 	}
 	/*@PostMapping("/add-even")
 	@ResponseBody
