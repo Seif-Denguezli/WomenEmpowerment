@@ -148,7 +148,11 @@ public class DonationController {
 		
 	}
 	
-	
+	@DeleteMapping("deleteWomenNeedDonation/{idDonation}")
+	@ResponseBody
+	public void DELETEWomenNeedDonation(@PathVariable Long idWomenNeedDonation ){
+		donationService.removeDonation(idWomenNeedDonation);
+	}
 	
 
 	}
