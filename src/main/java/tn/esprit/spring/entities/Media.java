@@ -42,6 +42,11 @@ public class Media implements Serializable{
     
     @ManyToOne
     Post post;
+    
+    @ManyToOne
+    Advertising advertising;
+    
+    
 	public Media(String name, String imagenUrl, String imagencode) {
 	
 		this.name = name;
