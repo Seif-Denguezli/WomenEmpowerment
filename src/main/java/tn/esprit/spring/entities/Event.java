@@ -53,6 +53,10 @@ public class Event implements Serializable {
 	
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	@Temporal(TemporalType.DATE)
+	Date StartAt;
+	
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	@Temporal(TemporalType.DATE)
 	Date endAt;
 	
 	String description;
@@ -67,7 +71,7 @@ public class Event implements Serializable {
 	float TargetDonation;
 	String address;
 
-	String calendarId;
+	
 	
 	
 	@JsonIgnore

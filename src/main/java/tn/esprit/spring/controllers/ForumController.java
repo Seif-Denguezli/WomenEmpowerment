@@ -2,15 +2,10 @@ package tn.esprit.spring.controllers;
 
 
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
 import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 
-import net.sourceforge.tess4j.ITesseract;
-import net.sourceforge.tess4j.Tesseract;
-import net.sourceforge.tess4j.TesseractException;
 import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.entities.*;
 import tn.esprit.spring.service.forum.*;
