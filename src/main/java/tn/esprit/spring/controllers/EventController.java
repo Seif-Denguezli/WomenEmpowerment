@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +41,7 @@ import org.supercsv.prefs.CsvPreference;
 
 import com.nylas.RequestFailedException;
 
+import springfox.documentation.annotations.ApiIgnore;
 import tn.esprit.spring.entities.APIResponse;
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
@@ -76,18 +78,19 @@ public class EventController {
 	@PostMapping(path = "createEventByUser")
 	public void createEventByUser(
 			@RequestParam Long userid
-			,@RequestParam MultipartFile multipartFile
+			,@RequestPart MultipartFile multipartFile
 			,@RequestParam String EventName
 			,@RequestParam String Description
-			,@RequestParam  (name ="createAt") @DateTimeFormat(pattern = "dd-MM-yyyy")  Date createAt
+			
+			,@RequestParam  (name ="startAt") @DateTimeFormat(pattern = "dd-MM-yyyy")  Date startAt
 			,@RequestParam  (name ="endAt") @DateTimeFormat(pattern = "dd-MM-yyyy")  Date endAt
 			,@RequestParam EventType typeEvent
 			,@RequestParam  int maxPlace
 			,@RequestParam  float targetDonation
 			,@RequestParam String address) throws MessagingException, IOException, InterruptedException {
 	
-		   
-		eventService.createEventbyUser(userid, multipartFile, EventName, Description, createAt, endAt, typeEvent, maxPlace, targetDonation, address);
+		Date createAt=new Date();
+		eventService.createEventbyUser(userid, multipartFile, EventName, Description, createAt, endAt, startAt,typeEvent, maxPlace, targetDonation, address);
 		
 		
 	}

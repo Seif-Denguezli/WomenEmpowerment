@@ -88,7 +88,7 @@ public String GetType(Long id_c) {
 	Doctor_key.add("medicin");Doctor_key.add("pharmacie");Doctor_key.add("hopital");
 	
 	List<String> Attorney_key = new ArrayList<>();
-	Doctor_key.add("Attorney");Doctor_key.add("loyer");Doctor_key.add("avocat");
+	Attorney_key.add("Attorney");Attorney_key.add("loyer");Attorney_key.add("avocat");
 	
 	List<String> Psychologist_key = new ArrayList<>();
 	Psychologist_key.add("psy");Psychologist_key.add("mahboul");Psychologist_key.add("mdaba3");
@@ -126,7 +126,7 @@ public float statCoplaint() {
 	
 	
 	for (Complaint complaint : comprepo.findAll()) {
-		if (complaint.getIsTreated() == true)
+		if (complaint.getIsTreated())
 			x++;	
 	}
 	for (Complaint complaint : comprepo.findAll()) {
@@ -135,9 +135,9 @@ public float statCoplaint() {
 	}
 
 	
+System.err.println("x = " + x + "\n y = " + y);
 
-
-z=(x/y)*100 ;
+z = ((float)x)/((float)y)*100;
 
 return z;
 

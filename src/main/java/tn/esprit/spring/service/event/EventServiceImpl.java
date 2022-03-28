@@ -17,6 +17,8 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -92,7 +95,7 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public ResponseEntity<?> createEventbyUser(Long idUser, MultipartFile multipartFile, String EventName,
-			String description, Date createAt, Date endAt, EventType typeEvent, int maxPlace, float targetDonation,
+			String description, Date createAt,Date StartAt ,Date endAt, EventType typeEvent, int maxPlace, float targetDonation,
 			String address) throws MessagingException, IOException {
 		Set<User> usersList = new HashSet<User>();
 		Set<Event> eventList = new HashSet<Event>();
@@ -185,7 +188,7 @@ public class EventServiceImpl implements EventService {
 
 	public void invite_participants(Event event) throws MessagingException {
 
-		// SmsRequest smsrequest = new SmsRequest(null, null);
+		 SmsRequest smsrequest = new SmsRequest(null, null);
 		List<Long> CampanyList = eventRepo.GET_LIST_CAMPANY();
 
 		System.out.println("user campany");
@@ -240,7 +243,7 @@ public class EventServiceImpl implements EventService {
 			event.setMaxPlace(event.getMaxPlace() - 1);
 			eventRepo.save(event);
 
-		//	sendSms(smsrequest, u.getPhoneNumber(), event.getEventName() + " : Participation avec succes");
+			sendSms(smsrequest, u.getPhoneNumber(), event.getEventName() + " : Participation avec succes");
 			//emailService.sendNewEventCreatedByUser(event.getEventName(), u.getEmail());
 			//emailService.sendEmailForParticipationInEvent(event.getEventName()+  addressMapss(event.getEventId()) , u.getEmail());
 		}

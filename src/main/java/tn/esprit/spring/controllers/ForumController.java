@@ -2,19 +2,15 @@ package tn.esprit.spring.controllers;
 
 
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
 import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,9 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 
-import net.sourceforge.tess4j.ITesseract;
-import net.sourceforge.tess4j.Tesseract;
-import net.sourceforge.tess4j.TesseractException;
 import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.entities.*;
 import tn.esprit.spring.service.forum.*;
@@ -54,7 +47,12 @@ public class ForumController {
 		Long iduser = u.getId();
 		return forumService.addPost(post,iduser);
 	}
+	@PostMapping("/add-Bad-word")
+	@ResponseBody
+	public BadWord addPost_affectedto_User(@RequestBody BadWord b) {
 	
+		return forumService.addBadWord(b);
+	}
 	@PostMapping("/add-Advertising/{IdUser}")
 	@ResponseBody
 	public ResponseEntity<?> addAdvertising_affectedto_User(@RequestBody Advertising a,@ApiIgnore @AuthenticationPrincipal UserPrincipal u,Long idCategory) {
@@ -165,7 +163,7 @@ public class ForumController {
 	public ResponseEntity<?> Delete_PostCom( @PathVariable("IdPostCom") Long IdPostCom, @PathVariable("IdUser") Long IdUser) {
 		return forumService.Delete_PostCom(IdPostCom,IdUser);
 	}
-	
+	//@Scheduled(cron = "*/30 * * * * *")
 	@DeleteMapping("/Delete-Post-Redandant")
 	public void Delete_post_Redendant( ){
 		 forumService.delete_sujet_sans_Int();
@@ -240,12 +238,16 @@ public class ForumController {
 
 	}	
 	
-	@PostMapping("/Post-Addimage/{idpost}")
+	@PostMapping("/add-Post-image/{idpost}")
 	public ResponseEntity<?> addpostimage(@RequestParam("Image") MultipartFile image,@PathVariable("idpost") Long idpost) throws IOException {
 				return forumService.addimagepost(image,idpost);
 
 	}
 	
-	
+	@PostMapping("/add-Adversting-image/{idadv}")
+	public ResponseEntity<?> addadvimage(@RequestParam("Image") MultipartFile image,@PathVariable("idadv") Long idadv) throws IOException {
+				return forumService.addimageAdverstingt(image,idadv);
+
+	}
 }
 

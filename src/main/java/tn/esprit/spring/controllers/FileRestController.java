@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,7 +27,7 @@ public class FileRestController {
 	 @Autowired
 	  private FileStorageServiceImpl storageService;
 	  @PostMapping("/upload/{courseId}")
-	  public ResponseEntity<ResponseMessage> uploadFile(@PathVariable("file") MultipartFile file,@PathVariable("courseId")Long courseId) {
+	  public ResponseEntity<ResponseMessage> uploadFile(@RequestPart("file") MultipartFile file,@PathVariable("courseId")Long courseId) {
 	    String message = "";
 	    try {
 	      storageService.store(file,courseId);

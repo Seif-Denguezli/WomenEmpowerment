@@ -1,5 +1,6 @@
 package tn.esprit.spring.controllers;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -17,13 +18,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nylas.RequestFailedException;
+
 import tn.esprit.spring.entities.Service;
+import tn.esprit.spring.service.CalendarServiceImpla;
 import tn.esprit.spring.service.IService;
 import tn.esprit.spring.service.serviceService;
 
 @RestController
 @RequestMapping("/service")
 public class serviceController {
+	
+	@Autowired
+	CalendarServiceImpla cs;
+	
+	
 	@Autowired
 	IService servserv;
 	@PostMapping("/addService/{userId}")
@@ -50,6 +59,16 @@ public void deletService(@PathVariable Long serviceId ){
 @GetMapping("recherche")
 public List<tn.esprit.spring.entities.Service> recherche(String keyword){
 	return servserv.recherche(keyword);
+}
+
+@GetMapping("/Createcalande/{idUser}")	
+String createtexpcalander(@PathVariable Long idUser) throws IOException, RequestFailedException{
+	return cs.createCal(idUser);
+}
+
+@GetMapping("/create-event-calander/{idUser}/{idService}")	
+void createevntcalander(@PathVariable Long idUser,@PathVariable Long idService) throws IOException, RequestFailedException{
+	 cs.postEventExample(idService, idUser);
 }
 }
 /*
