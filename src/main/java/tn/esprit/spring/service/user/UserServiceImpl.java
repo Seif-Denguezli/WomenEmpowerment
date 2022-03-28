@@ -381,6 +381,15 @@ public class UserServiceImpl implements UserService
 		 }
 		 return myFriends;
 	 }
+
+	@Override
+	public void lockUser(String username) {
+		User u = userRepository.findByUsername(username).get();
+		u.setLoginAttempts(0);
+		u.setLocked(true);
+		userRepository.save(u);
+		
+	}
 	
 	
 	 

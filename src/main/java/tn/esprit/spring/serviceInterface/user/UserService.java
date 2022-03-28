@@ -63,6 +63,9 @@ public interface UserService
 	List<User> getMyFriends(User u);
 
 	void unlockUser(String username);
+	
+	void lockUser(String username);
+
 
 
     
