@@ -10,6 +10,11 @@ import javax.mail.MessagingException;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
+import io.jsonwebtoken.io.IOException;
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Notification;
 import tn.esprit.spring.entities.Subscription;
@@ -23,7 +28,7 @@ import tn.esprit.spring.exceptions.UsernameNotExist;
 
 public interface UserService
 {
-    User saveUser(User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException;
+    User saveUser(User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException, IOException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, TemplateException, java.io.IOException;
 
     Optional<User> findByUsername(String username);
     
