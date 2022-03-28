@@ -1,13 +1,14 @@
 package tn.esprit.spring.websocket;
 
 import tn.esprit.spring.entities.Message;
+import tn.esprit.spring.entities.Notification;
 import tn.esprit.spring.entities.ResponseMessage;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.repository.MessageRepo;
+import tn.esprit.spring.repository.NotificationRepository;
 import tn.esprit.spring.repository.UserRepository;
 
-import java.sql.Date;
-import java.time.LocalDate;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class WSService {
 MessageRepo messageRepo;
 @Autowired
 UserRepository userRepo;
+
+@Autowired
+NotificationRepository notificationRepository;
 
     private final SimpMessagingTemplate messagingTemplate;
     private final NotificationService notificationService;
@@ -37,7 +41,7 @@ UserRepository userRepo;
         messagingTemplate.convertAndSend("/topic/messages", response);
    
     }
-
+// send message
     public void notifyUser( Long sender,String reciver , Message message) {
         ResponseMessage response = new ResponseMessage(message.getMessageContent());
         User senderU = userRepo.findById(sender).orElse(null);
@@ -51,6 +55,12 @@ UserRepository userRepo;
         
         notificationService.sendPrivateNotification(reciver);
         messagingTemplate.convertAndSendToUser(reciver, "/topic/private-messages", response);
+        Notification notif = new Notification();
+        notif.setCreatedAt(new java.util.Date());
+        notif.setMessage("U have a new message from" + senderU.getName());
+        notif.setRead(false);
+        notif.setUser(reciverU);
+        notificationRepository.save(notif);
     }
     
     public List<String> getConversation(Long user1,Long user2){

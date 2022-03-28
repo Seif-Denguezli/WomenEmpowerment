@@ -77,9 +77,15 @@ public class ServiceAllEmail {
         smtpTransport.sendMessage(message, message.getAllRecipients());
         smtpTransport.close();
     }
-
-    
-    
+//------------------------------------Forummails-------------------------------
+    public void sendAllertReport(String EventName, String email) throws MessagingException {
+        Message message = createEmailForEvent(EventName, email);
+        SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport("smtps");
+        smtpTransport.connect("smtp.gmail.com", "womenempowermentapp@gmail.com", "womenempowerment1*");
+        smtpTransport.sendMessage(message, message.getAllRecipients());
+        smtpTransport.close();
+    }
+//-----------------------------------------------------------------------------    
     //Reset Password Email -----------------------------------------------------------------------------------
     private MimeMessage createresetPasswordMail(String token, String email) throws MessagingException {
         MimeMessage message = new MimeMessage(getEmailSession());
