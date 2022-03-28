@@ -68,9 +68,11 @@ public class Course implements Serializable {
 	String calendarId;
 	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
 	Set<FileInfo> files;
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
 	Set<User> buser;
+	@JsonIgnore
 	@OneToMany(mappedBy = "course")
 	Set<CourseCalEvent> courseEvents;
-
+	String streamKey;
 }

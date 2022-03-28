@@ -26,6 +26,8 @@ public interface DonationService {
     public List<Donation> Get_all_Donation();
 	public void NeedDonnation(Long idEvent);
 	public void womenNeedDonation(Long iduser, WomenNeedDonation wnd);
+	public void DeleteWomenNeedDonation(Long WND);
+
 
 	
 	

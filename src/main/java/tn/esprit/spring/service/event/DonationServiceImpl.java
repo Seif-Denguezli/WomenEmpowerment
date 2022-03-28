@@ -147,6 +147,18 @@ public class DonationServiceImpl implements DonationService {
 		
 	}
 
+	@Override
+	public void DeleteWomenNeedDonation(Long idWND) {
+		WomenNeedDonation wnd = womanNeedHelpRepo.findById(idWND).orElse(null);
+		womanNeedHelpRepo.save(wnd);
+		
+		
+	}
+
+	
+	
+	
+
 	
 
 
