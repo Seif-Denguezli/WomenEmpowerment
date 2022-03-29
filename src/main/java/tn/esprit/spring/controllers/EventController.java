@@ -95,8 +95,8 @@ public class EventController {
 		
 	}
 	@PutMapping("/userparticipe-event/{userid}/{eventId}")
-	public void participationToEvent(@PathVariable("userid")Long userid,@PathVariable("eventId")Long eventId) throws MessagingException,IOException, InterruptedException{
-		 eventService.Participer_event(userid,eventId);
+	public ResponseEntity<?> participationToEvent(@PathVariable("userid")Long userid,@PathVariable("eventId")Long eventId) throws MessagingException,IOException, InterruptedException{
+		return eventService.Participer_event(userid,eventId);
 	}
 	
 	@PutMapping(path="editEventCreatedByUser/{IdEvent}")

@@ -580,7 +580,7 @@ a.setCategoryadv(c);
 			}}}
 		List<Advertising> aa = advertisingRepo.findAll();
 	for (Advertising advertising : aa) {
-		if(advertising.getCategoryadv().getNameCategory().equals(dataus.getCategorieData()) && advertising.getMinage()>=getuserage(idUser) && advertising.getMaxage()<=getuserage(idUser))
+		if(advertising.getCategoryadv().getNameCategory().equals(dataus.getCategorieData()) && advertising.getMinage()<=getuserage(idUser) && advertising.getMaxage()>=getuserage(idUser))
 			ll.add(advertising);
 	}	
 		return ll;
