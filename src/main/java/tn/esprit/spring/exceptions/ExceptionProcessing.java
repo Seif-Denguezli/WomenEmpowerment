@@ -40,7 +40,7 @@ public class ExceptionProcessing implements ErrorController {
 
     @ExceptionHandler(PasswordValidException.class)
     public ResponseEntity<HTTPProtocolResponse> passwordValidException(PasswordValidException exception) {
-        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+        return createHttpResponse(NOT_ACCEPTABLE, exception.getMessage());
     }
     @ExceptionHandler(PasswordMatchException.class)
     public ResponseEntity<HTTPProtocolResponse> passwordMatchException(PasswordMatchException exception) {
@@ -54,7 +54,7 @@ public class ExceptionProcessing implements ErrorController {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<HTTPProtocolResponse> badCredentialsException() {
-        return createHttpResponse(BAD_REQUEST, INCORRECT_CREDENTIALS);
+        return createHttpResponse(CONFLICT, INCORRECT_CREDENTIALS);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -88,7 +88,7 @@ public class ExceptionProcessing implements ErrorController {
     }
    @ExceptionHandler(UsernameExist.class)
     public ResponseEntity<HTTPProtocolResponse> usernameExistException(UsernameExist exception) {
-        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+        return createHttpResponse(CONFLICT, exception.getMessage());
     }
 
     @ExceptionHandler(EmailNotExist.class)
