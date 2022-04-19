@@ -43,9 +43,9 @@ public class ForumController {
 	
 	@PostMapping("/add-Post/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> addPost_affectedto_User(@RequestBody Post post,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-		Long iduser = u.getId();
-		return forumService.addPost(post,iduser);
+	public ResponseEntity<?> addPost_affectedto_User(@RequestBody Post post/*,@ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
+		/*Long iduser = u.getId();*/
+		return forumService.addPost(post,(long) 1);
 	}
 	@PostMapping("/add-Bad-word")
 	@ResponseBody
@@ -67,14 +67,25 @@ public class ForumController {
 	
 	@PostMapping("/add-Comment/{IdPost}/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> addComment_to_Post(@RequestBody PostComment postComment, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-		return forumService.addComment_to_Post(postComment,IdPost,u.getId());
+	public ResponseEntity<?> addComment_to_Post(@RequestBody PostComment postComment, @PathVariable("IdPost") Long IdPost/*, @ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
+		return forumService.addComment_to_Post(postComment,IdPost,(long)1/*,u.getId()*/);
 	}
 	
 	@PostMapping("/add-Like-post/{IdPost}/{IdUser}")
 	@ResponseBody
-	public PostLike addLike_to_Post(@RequestBody PostLike postLike, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-		return forumService.addLike_to_Post(postLike,IdPost,u.getId());
+	public PostLike addLike_to_Post(@RequestBody(required = false) PostLike postLike, @PathVariable("IdPost") Long IdPost/*, @ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
+		PostLike pos1 = new PostLike();
+		pos1.setIsLiked(true);
+		
+		return forumService.addLike_to_Post(pos1,IdPost,(long)1/*,u.getId()*/);
+	}
+	@PostMapping("/add-DisLike-post/{IdPost}/{IdUser}")
+	@ResponseBody
+	public PostLike addDisLike_to_Post(@RequestBody(required = false) PostLike postLike, @PathVariable("IdPost") Long IdPost/*, @ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
+		PostLike pos1 = new PostLike();
+		pos1.setIsLiked(false);
+		
+		return forumService.addLike_to_Post(pos1,IdPost,(long)1/*,u.getId()*/);
 	}
 	/*
 	@PostMapping("/add-DisLike-post/{IdPost}/{IdUser}")
@@ -126,6 +137,11 @@ public class ForumController {
 		return forumService.Get_all_post();
 	}
 	
+	@GetMapping("/Get-all-adversting")
+	public List<Advertising> Get_all_adv(){
+		return forumService.get_all_adversting();
+	}
+	
 	@GetMapping("/Get-Posts-By-user/{IdUser}")
 	public Set<Post> Get_post_by_User( @PathVariable("IdUser") Long IdUser){
 		return forumService.Get_post_by_User(IdUser);
@@ -150,8 +166,8 @@ public class ForumController {
 	
 	
 	@DeleteMapping("/Delete-Post/{IdPost}")
-	public ResponseEntity<?> Delete_Post( @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-		return forumService.Delete_post(IdPost,u.getId());
+	public ResponseEntity<?> Delete_Post( @PathVariable("IdPost") Long IdPost/*, @ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
+		return forumService.Delete_post(IdPost,(long)1/*u.getId()*/);
 	}
 	
 	@DeleteMapping("/Delete-Adversting/{IdAdv}")

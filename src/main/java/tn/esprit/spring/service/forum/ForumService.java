@@ -116,11 +116,14 @@ a.setCategoryadv(c);
 		
 		return badWordRepo.save(b);
 	}
+	public List<Advertising> get_all_adversting(){
+		return advertisingRepo.findAll();
+	}
 	public ResponseEntity<?> addComment_to_Post(PostComment postComment, Long idPost, Long idUser) {
 		Post p = postRepo.findById(idPost).orElse(null);
 		User u = userRepo.findById(idUser).orElse(null);
-		DetctaDataLoad(postComment.getCommentBody(),idUser);
-		if (Filtrage_bad_word(postComment.getCommentBody()) == 0) {
+	//	DetctaDataLoad(postComment.getCommentBody(),idUser);
+	//	if (Filtrage_bad_word(postComment.getCommentBody()) == 0) {
 			postComment.setUser(u);
 			postComment.setPost(p);
 
@@ -134,8 +137,9 @@ a.setCategoryadv(c);
 			 * u.setPostComments(pu); userRepo.save(u);
 			 * 
 			 * 
-			 */}
-		return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");
+			 */
+			//}
+	//	return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");
 	}
 
 		public PostLike addLike_to_Post(PostLike postLike, Long idPost, Long idUser) {
