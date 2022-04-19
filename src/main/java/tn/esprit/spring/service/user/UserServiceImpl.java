@@ -218,11 +218,11 @@ public class UserServiceImpl implements UserService
 	}
 	
 	
-	//@Scheduled(cron = "*/30 * * * * *")
-	//public void nbreUnreadNotifications() {
-	//	int x = notificationRepository.userNotification(3L).size();
-	//	log.info("Unread notifs : " + x);
-	//}
+	@Scheduled(cron = "*/60 * * * * *")
+	public void nbreUnreadNotifications() {
+		int x = notificationRepository.userNotification(3L).size();
+		log.info("Unread notifs : " + x);
+	}
 	
 	
 	 private User isvalidUsernameAndEmail(String currentUsername, String newUsername, String newEmail) 
@@ -381,6 +381,15 @@ public class UserServiceImpl implements UserService
 		 }
 		 return myFriends;
 	 }
+
+	@Override
+	public void lockUser(String username) {
+		User u = userRepository.findByUsername(username).get();
+		u.setLoginAttempts(0);
+		u.setLocked(true);
+		userRepository.save(u);
+		
+	}
 	
 	
 	 

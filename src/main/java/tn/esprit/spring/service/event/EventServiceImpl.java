@@ -226,7 +226,7 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
-	public void Participer_event(Long userid, Long eventId) throws MessagingException, IOException, InterruptedException {
+	public ResponseEntity<?> Participer_event(Long userid, Long eventId) throws MessagingException, IOException, InterruptedException {
 		SmsRequest smsrequest = new SmsRequest(null, null);
 		User u = userRepo.findById(userid).orElse(null);
 		Event event = eventRepo.findById(eventId).orElse(null);
@@ -242,11 +242,14 @@ public class EventServiceImpl implements EventService {
 			event.setParticipants(user);
 			event.setMaxPlace(event.getMaxPlace() - 1);
 			eventRepo.save(event);
-
+			
 			sendSms(smsrequest, u.getPhoneNumber(), event.getEventName() + " : Participation avec succes");
 			//emailService.sendNewEventCreatedByUser(event.getEventName(), u.getEmail());
 
+
 		//	emailService.sendEmailForParticipationInEvent(event.getEventName()+  addressMapss(event.getEventId()) , u.getEmail());
+			return new ResponseEntity(" participate success ", HttpStatus.OK);
+
 		}
 
 		else {
@@ -255,6 +258,7 @@ public class EventServiceImpl implements EventService {
 			// System.out.println("Place complets");
 			System.out.println(event.getMaxPlace());
 			System.out.println(event.getParticipants().size());
+			return new ResponseEntity(" u are the creator of event or nbr of places are limited ", HttpStatus.OK);
 		}
 	}
 
@@ -265,7 +269,7 @@ public class EventServiceImpl implements EventService {
 		Event event = eventRepo.findById(eventId).orElse(null);
 		user.getJoinedEvents().remove(event);
 		userRepo.flush();
-		sendSms(smsrequest, user.getPhoneNumber() +  " : your invitation has been canceled", "");
+		//sendSms(smsrequest, user.getPhoneNumber() +  " : your invitation has been canceled", "");
 
 	}
 	// arefaire

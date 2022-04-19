@@ -85,7 +85,7 @@ public class DonationServiceImpl implements DonationService {
 		donation.setCodePayement(p.getId());
 		// donation.setDonationDate(p.GET);
 			event.setMontantCollecte(event.getMontantCollecte()+p.getAmount());
-		// ps.confirm(p.getId());
+		 ps.confirm(p.getId());
 		return donationRepo.save(donation);
 
 	}

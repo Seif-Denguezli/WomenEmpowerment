@@ -10,6 +10,10 @@ import com.nylas.NylasAccount;
 import com.nylas.NylasClient;
 import com.nylas.RequestFailedException;
 
+import tn.esprit.spring.entities.Candidacy;
+import tn.esprit.spring.entities.Offer;
+import tn.esprit.spring.repository.CandidacyRepository;
+import tn.esprit.spring.repository.IOfferRepository;
 import tn.esprit.spring.serviceInterface.offer.ICalendarService;
 
 import com.nylas.Calendar;
@@ -36,18 +40,25 @@ import com.nylas.Event.Timespan;
 @Service
 public class CalendarServiceImpl {
 	
+	@Autowired 
+	IOfferRepository offerRepo;
+	@Autowired
+	CandidacyRepository candidacyRepo; 
 	
-	
-	public String createCal() throws IOException, RequestFailedException {
+	public String createCal(long offerId) throws IOException, RequestFailedException {
+		 
+		Offer o = offerRepo.findById(offerId).get();
 		 NylasClient client = new NylasClient();
 		  NylasAccount account = client.account("wOIy4UmmlWREVdr9S4pH5kAzRprvax");
 		  Calendars calendars = account.calendars();
 		  Calendar newCal1 = new Calendar();
-		  newCal1.setName("z3ibira");
-		  newCal1.setDescription("Testing calendar creation");
-		  newCal1.setLocation("far, far away");
+		  newCal1.setName(o.getTitle()+" Offer");
+		  newCal1.setDescription(o.getDescription());
+		  newCal1.setLocation(o.getLocation());
 		  newCal1.setTimezone("America/Los_Angeles");
 		  Calendar created = calendars.create(newCal1);
+		  o.setCalendId(created.getId());
+		  offerRepo.saveAndFlush(o);
 		  return created.getId();
 	}
 	
@@ -55,26 +66,34 @@ public class CalendarServiceImpl {
 	
 	
 	
- public void postEventExample() throws IOException, RequestFailedException {
+ public void postEventExample(Long candidacyId,int hour,int minutes,LocalDate date) throws IOException, RequestFailedException {
+	 long offerId= candidacyRepo.getOfferId(candidacyId);
+	 Offer o =offerRepo.findById(offerId).get();
+	 Candidacy cc = candidacyRepo.findById(candidacyId).orElse(null);
+	 String candidacyState="Accepted";
   NylasClient client = new NylasClient();
   NylasAccount account = client.account("wOIy4UmmlWREVdr9S4pH5kAzRprvax");
-  Calendars calendars = account.calendars();
+  //Calendars calendars = account.calendars();
   Event.When when = null;
-  LocalDate today = LocalDate.now();
-  when = new Event.Date(today);
-  when = new Event.Datespan(today, today.plusDays(1));
-  Instant sixPmUtc = today.atTime(22,44).toInstant(ZoneOffset.UTC);
+  //LocalDate today = LocalDate.now();
+  when = new Event.Date(date);
+  when = new Event.Datespan(date, date.plusDays(1));
+  Instant sixPmUtc = date.atTime(hour-1,minutes).toInstant(ZoneOffset.UTC);
   when = new Event.Time(sixPmUtc);
   when = new Event.Timespan(sixPmUtc, sixPmUtc.plus(1, ChronoUnit.HOURS));
   
-  Event event = new Event("39oldk5ci3zqwexsl669wi48x",when);
+  Event event = new Event(o.getCalendId(),when);
+   
+  //
   
- event.setWhen(when);
-  event.setTitle("Hsounna!");
-  event.setLocation("Nahli!");
-  event.setDescription("Let's celebrate our calendar integration!!");
+  event.setWhen(when);
+  event.setTitle(candidacyRepo.getOfferTitle(candidacyId)+" Interview");
+  event.setLocation(candidacyRepo.getOfferLocation(candidacyId));
+  event.setDescription(candidacyRepo.getOfferDescription(candidacyId));
   event.setBusy(true);
-  event.setParticipants(Arrays.asList(new Participant("sabri.krima@esprit.tn").name("sabrouch"),new Participant("mohamedmalek.saidi@esprit.tn").name("sawssan")));
+  String mail =candidacyRepo.getCandidateEmail(candidacyId);
+  String name= candidacyRepo.getCandidateName(candidacyId);
+  event.setParticipants(Arrays.asList(new Participant(mail).name(name)));
   Event.Conferencing conferencing = new Event.Conferencing();
   conferencing.setProvider("Zoom Meeting");
 

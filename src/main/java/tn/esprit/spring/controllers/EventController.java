@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,7 +78,7 @@ public class EventController {
 	@PostMapping(path = "createEventByUser")
 	public void createEventByUser(
 			@RequestParam Long userid
-			,@RequestParam MultipartFile multipartFile
+			,@RequestPart MultipartFile multipartFile
 			,@RequestParam String EventName
 			,@RequestParam String Description
 			
@@ -94,8 +95,8 @@ public class EventController {
 		
 	}
 	@PutMapping("/userparticipe-event/{userid}/{eventId}")
-	public void participationToEvent(@PathVariable("userid")Long userid,@PathVariable("eventId")Long eventId) throws MessagingException,IOException, InterruptedException{
-		 eventService.Participer_event(userid,eventId);
+	public ResponseEntity<?> participationToEvent(@PathVariable("userid")Long userid,@PathVariable("eventId")Long eventId) throws MessagingException,IOException, InterruptedException{
+		return eventService.Participer_event(userid,eventId);
 	}
 	
 	@PutMapping(path="editEventCreatedByUser/{IdEvent}")
