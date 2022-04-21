@@ -43,9 +43,9 @@ public class ForumController {
 	
 	@PostMapping("/add-Post/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> addPost_affectedto_User(@RequestBody Post post/*,@ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
-		/*Long iduser = u.getId();*/
-		return forumService.addPost(post,(long) 1);
+	public ResponseEntity<?> addPost_affectedto_User(@RequestBody Post post,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		Long iduser = u.getId();
+		return forumService.addPost(post,iduser);
 	}
 	@PostMapping("/add-Bad-word")
 	@ResponseBody
@@ -73,19 +73,25 @@ public class ForumController {
 	
 	@PostMapping("/add-Like-post/{IdPost}/{IdUser}")
 	@ResponseBody
-	public PostLike addLike_to_Post(@RequestBody(required = false) PostLike postLike, @PathVariable("IdPost") Long IdPost/*, @ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
+	public PostLike addLike_to_Post(@RequestBody(required = false) PostLike postLike, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		PostLike pos1 = new PostLike();
 		pos1.setIsLiked(true);
 		
-		return forumService.addLike_to_Post(pos1,IdPost,(long)1/*,u.getId()*/);
+		return forumService.addLike_to_Post(pos1,IdPost,u.getId());
 	}
 	@PostMapping("/add-DisLike-post/{IdPost}/{IdUser}")
 	@ResponseBody
-	public PostLike addDisLike_to_Post(@RequestBody(required = false) PostLike postLike, @PathVariable("IdPost") Long IdPost/*, @ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
+	public PostLike addDisLike_to_Post(@RequestBody(required = false) PostLike postLike, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		PostLike pos1 = new PostLike();
 		pos1.setIsLiked(false);
 		
-		return forumService.addLike_to_Post(pos1,IdPost,(long)1/*,u.getId()*/);
+		return forumService.addLike_to_Post(pos1,IdPost,u.getId());
+	}
+	@GetMapping("/get-user-islike-post/{IdPost}")
+	@ResponseBody
+	public int addDisLike_to_Post( @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		
+		return forumService.PostLikeFromUser(IdPost,u.getId());
 	}
 	/*
 	@PostMapping("/add-DisLike-post/{IdPost}/{IdUser}")

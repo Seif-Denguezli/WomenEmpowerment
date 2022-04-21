@@ -143,12 +143,25 @@ a.setCategoryadv(c);
 	}
 
 		public PostLike addLike_to_Post(PostLike postLike, Long idPost, Long idUser) {
+			int x=0;
+			boolean y =false;
 			Post p = postRepo.findById(idPost).orElse(null);
 			User u = userRepo.findById(idUser).orElse(null);
+			for (PostLike l : postLikeRepo.findAll()) {
+				if(l.getPost().getPostId() == idPost && l.getUser().getUserId() == idUser)
+				{	
+					x=1;
+					y=l.getIsLiked();
+					postLikeRepo.delete(l);
+					}	
+				
+			}
+				if (x ==0 || (x == 1 && y!=postLike.getIsLiked()	)) {
 			DetctaDataLoad(p.getBody(),idUser);
 			postLike.setUser(u);
 			postLike.setPost(p);
-			return postLikeRepo.save(postLike);
+			 postLikeRepo.save(postLike);}
+				return postLike;
 		}
 
 	/*
@@ -710,5 +723,18 @@ public static File convert(MultipartFile file) throws IOException {
     fos.write(file.getBytes());
     fos.close();
     return convFile;
+}
+
+
+public int PostLikeFromUser(Long isUser,Long Idpost) {
+	int x =0;
+	for (PostLike l : postLikeRepo.findAll()) {
+		if (l.getPost().getPostId()== Idpost && l.getUser().getUserId()== isUser) {
+			if (l.getIsLiked() == true) {x= 1;}	
+			else {x=0;}
+		}
+		
+	}
+	return x;
 }
 }
