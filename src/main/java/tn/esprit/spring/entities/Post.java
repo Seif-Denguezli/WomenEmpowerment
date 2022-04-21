@@ -49,11 +49,10 @@ public class Post implements Serializable {
 	int nb_etoil;
 	
 
-	@JsonIgnore
 	@ManyToOne 
 	User user;
 	
-	@JsonIgnore
+	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
 	Set<PostLike> postLikes;
 	
