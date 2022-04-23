@@ -116,11 +116,14 @@ a.setCategoryadv(c);
 		
 		return badWordRepo.save(b);
 	}
+	public List<Advertising> get_all_adversting(){
+		return advertisingRepo.findAll();
+	}
 	public ResponseEntity<?> addComment_to_Post(PostComment postComment, Long idPost, Long idUser) {
 		Post p = postRepo.findById(idPost).orElse(null);
 		User u = userRepo.findById(idUser).orElse(null);
-		DetctaDataLoad(postComment.getCommentBody(),idUser);
-		if (Filtrage_bad_word(postComment.getCommentBody()) == 0) {
+	//	DetctaDataLoad(postComment.getCommentBody(),idUser);
+	//	if (Filtrage_bad_word(postComment.getCommentBody()) == 0) {
 			postComment.setUser(u);
 			postComment.setPost(p);
 
@@ -134,17 +137,31 @@ a.setCategoryadv(c);
 			 * u.setPostComments(pu); userRepo.save(u);
 			 * 
 			 * 
-			 */}
-		return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");
+			 */
+			//}
+	//	return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");
 	}
 
 		public PostLike addLike_to_Post(PostLike postLike, Long idPost, Long idUser) {
+			int x=0;
+			boolean y =false;
 			Post p = postRepo.findById(idPost).orElse(null);
 			User u = userRepo.findById(idUser).orElse(null);
+			for (PostLike l : postLikeRepo.findAll()) {
+				if(l.getPost().getPostId() == idPost && l.getUser().getUserId() == idUser)
+				{	
+					x=1;
+					y=l.getIsLiked();
+					postLikeRepo.delete(l);
+					}	
+				
+			}
+				if (x ==0 || (x == 1 && y!=postLike.getIsLiked()	)) {
 			DetctaDataLoad(p.getBody(),idUser);
 			postLike.setUser(u);
 			postLike.setPost(p);
-			return postLikeRepo.save(postLike);
+			 postLikeRepo.save(postLike);}
+				return postLike;
 		}
 
 	/*
@@ -706,5 +723,18 @@ public static File convert(MultipartFile file) throws IOException {
     fos.write(file.getBytes());
     fos.close();
     return convFile;
+}
+
+
+public int PostLikeFromUser(Long isUser,Long Idpost) {
+	int x =0;
+	for (PostLike l : postLikeRepo.findAll()) {
+		if (l.getPost().getPostId()== Idpost && l.getUser().getUserId()== isUser) {
+			if (l.getIsLiked() == true) {x= 1;}	
+			else {x=0;}
+		}
+		
+	}
+	return x;
 }
 }

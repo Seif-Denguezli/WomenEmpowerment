@@ -44,7 +44,8 @@ public class Advertising implements Serializable {
 	int minage;
 	int maxage;
 	
-	@JsonIgnore
+	String text;
+	
 	@ManyToOne
 	CategoryAdve categoryadv;
 	
