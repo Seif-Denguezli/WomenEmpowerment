@@ -188,6 +188,30 @@ SanctionLearnerImpl sanctionLearnerImpl;
 		
 	}
 
+	@Override
+	public Quiz getQuiz(Long idQuiz) {
+		return quizzRepository.findById(idQuiz).get();
+		
+	}
+
+	@Override
+	public Set<Quiz> getQuizezByCourseId(long courseId) {
+		Course c = courseRepository.findById(courseId).get();
+		return c.getQuiz();
+	}
+
+	@Override
+	public Set<QuizQuestion> getQuestionsByQuizzId(long quizId) {
+		Quiz q =  quizzRepository.findById(quizId).get();
+		return q.getQuestions();
+	}
+
+	@Override
+	public Set<Answer> getAnswersByQuestionId(long questionId) {
+		QuizQuestion qq = questionRepository.findById(questionId).get();
+		return qq.getAnswers();
+	}
+
 	
 	
 

@@ -23,6 +23,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -120,7 +121,7 @@ public class User implements Serializable{
 	
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
 	Set<Certificate> obtainedCertificates; // Certificates obtained after joining courses
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JsonIgnore
@@ -144,10 +145,10 @@ public class User implements Serializable{
 	//******************************************************************//
 	
 	// Specefic Former Attributes
-	@JsonIgnore
+	@JsonInclude
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Course> createdCourses; // Courses created By the former
-	@ManyToMany(mappedBy = "buser",fetch = FetchType.EAGER)
+	@ManyToMany(mappedBy = "buser",fetch = FetchType.LAZY)
 	@JsonIgnore
 	Set<Course> bcourses;
 	

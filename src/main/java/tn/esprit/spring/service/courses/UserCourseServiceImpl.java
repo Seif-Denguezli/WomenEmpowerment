@@ -1,5 +1,9 @@
 package tn.esprit.spring.service.courses;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -62,6 +66,26 @@ CourseServiceImpl courseService;
 		
 
 		
+	}
+	@Override
+	public List<User> participants(Long courseId){
+		List<Certificate> certif = certificateRepository.findByCourse(courseId);
+		List<User> users = new ArrayList<>();
+		for (Certificate cer : certif) {
+			users.add(cer.getUser());
+			
+		}
+		return users;
+	}
+	@Override
+	public Set<User> getBannedusers(Long courseId){
+		Course course = courseRepository.findById(courseId).get();
+		return course.getBuser();
+	}
+	@Override
+	public Set<Course> getCreatedCourses(Long idUser){
+		User us = userRepository.findById(idUser).get();
+		return us.getCreatedCourses();
 	}
 	
 

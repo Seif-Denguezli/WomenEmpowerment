@@ -69,7 +69,7 @@ public class Course implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
 	Set<FileInfo> files;
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	Set<User> buser;
 	@JsonIgnore
 	@OneToMany(mappedBy = "course")

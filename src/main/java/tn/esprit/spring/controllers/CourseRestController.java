@@ -4,6 +4,7 @@ package tn.esprit.spring.controllers;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import javax.websocket.server.PathParam;
 
@@ -32,6 +33,7 @@ import com.nylas.RequestFailedException;
 import io.swagger.annotations.Api;
 import springfox.documentation.annotations.ApiIgnore;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.FileInfo;
 import tn.esprit.spring.entities.Quiz;
@@ -41,10 +43,13 @@ import tn.esprit.spring.exceptions.CourseNotExist;
 import tn.esprit.spring.exceptions.CourseOwnerShip;
 import tn.esprit.spring.exceptions.CoursesLimitReached;
 import tn.esprit.spring.security.UserPrincipal;
+import tn.esprit.spring.service.courses.CertificateServiceImpl;
 import tn.esprit.spring.service.courses.CourseCalendarServiceImpl;
 import tn.esprit.spring.service.courses.CourseServiceImpl;
 import tn.esprit.spring.service.courses.FileStorageServiceImpl;
 import tn.esprit.spring.service.courses.QuizServiceImpl;
+import tn.esprit.spring.service.courses.UserCourseServiceImpl;
+import tn.esprit.spring.service.user.UserServiceImpl;
 import tn.esprit.spring.serviceInterface.courses.UserCourseService;
 
 @RestController
@@ -60,14 +65,17 @@ UserCourseService userCourseService;
 QuizServiceImpl quizService;
 @Autowired
 CourseCalendarServiceImpl courseCalendarServiceImpl;
+@Autowired
+CertificateServiceImpl certificateService;
+
 /*******************COURSE *********************/
-@PostMapping(path = "addCourse")
-public ResponseEntity<Object> addCourse(@RequestBody Course c,@ApiIgnore @AuthenticationPrincipal UserPrincipal u ) throws CoursesLimitReached, IOException, RequestFailedException {
+@PostMapping(path = "addCourse/{userId}")
+public ResponseEntity<Object> addCourse(@RequestBody Course c,@PathVariable("userId")Long userId) throws CoursesLimitReached, IOException, RequestFailedException {
 	if(c.getStartDate().compareTo(c.getEndDate())>0) {
 		return new ResponseEntity<>("Start date shouldn't be after end date",HttpStatus.EXPECTATION_FAILED);
 	}
 	else {
-	courseService.affectCourseToUser(u.getId(), c);
+	courseService.affectCourseToUser(userId, c);
 	return new ResponseEntity<>(c,HttpStatus.OK);
 	}
 }
@@ -92,7 +100,7 @@ public Course getCourse(@PathVariable("courseId")Long courseId){
 }
 /***************************** USER JOIN COURSE
  * @throws CoursesLimitReached **********************/
-@PostMapping(path = "joinCourse/{userid}/{courseid}")
+@PostMapping(path = "joinCourse/{courseid}")
 public void joinCourse(@ApiIgnore @AuthenticationPrincipal UserPrincipal u ,@PathVariable("courseid")Long courseId) throws CoursesLimitReached {
 	
 	userCourseService.joinCourse(u.getId(), courseId);
@@ -112,11 +120,27 @@ public List<User> getParticipants(@PathVariable("courseId")Long courseId){
 public User getParticipant(@PathVariable("userId")Long userId){
 	return courseService.getParticipant(userId);
 }
+
 @GetMapping(path="verifyUserjoin/{userId}/{courseId}")
 public int verificate(@PathVariable("userId")Long userId,@PathVariable("courseId")Long courseId) {
 	return courseService.userjoinCourseVerificator(userId, courseId);
 }
-
+@GetMapping(path="getBannedParticipants/{courseId}")
+public Set<User> getBannedusers(@PathVariable("courseId") Long courseId){
+	return userCourseService.getBannedusers(courseId);
+}
+@GetMapping(path="getAllParticipants/{courseId}")
+List<User> getParticipants(@PathVariable("courseId")Long courseId){
+	return userCourseService.participants(courseId);
+}
+@GetMapping(path="getuserCertif/{courseId}")
+public List<Certificate> userCertificate(@PathVariable("courseId") Long courseId) {
+	return certificateService.userCertificate(courseId);
+}
+@GetMapping(path="getCreatedCourses/{userId}")
+public Set<Course> userCertificate(@ApiIgnore @AuthenticationPrincipal UserPrincipal u  ) {
+	return userCourseService.getCreatedCourses(u.getId());
+}
 
 
 

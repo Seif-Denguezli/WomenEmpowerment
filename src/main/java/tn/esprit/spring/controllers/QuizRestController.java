@@ -102,9 +102,9 @@ public class QuizRestController {
 	public void setCorrectAnswer(@PathVariable("answerId")Long answerId) {
 		quizService.setCorrectAnswer(answerId) ;
 	}
-	@PostMapping(path="answerQuestion/{idUser}/{idAnswer}")
-	public Answer userAnswerQuestion(@PathVariable("idUser")Long idUser,@PathVariable("idAnswer")Long idAnswer) {
-		return quizService.answerQuizQuestion(idUser, idAnswer);
+	@PostMapping(path="answerQuestion/{idAnswer}")
+	public Answer userAnswerQuestion(@ApiIgnore @AuthenticationPrincipal UserPrincipal u,@PathVariable("idAnswer")Long idAnswer) {
+		return quizService.answerQuizQuestion(u.getId(), idAnswer);
 	}
 	@GetMapping(path="calculUserScore/{userId}/{quizId}")
 	public int userScoreCalcul(@PathVariable("userId")Long userId,@PathVariable("quizId")Long quizId) {
@@ -118,6 +118,22 @@ public class QuizRestController {
 	@GetMapping(path="didUserPass/{idUser}/{idCourse}")
 	String userPassed(@PathVariable("idUser")Long idUser,@PathVariable("idCourse") Long idCourse) {
 		return quizService.userPassed(idUser, idCourse);
+	}
+	@GetMapping(path="getQuiz/{idQuiz}")
+	public Quiz getQuiz(@PathVariable("idQuiz")Long idQuiz) {
+		return quizService.getQuiz(idQuiz);
+	}
+	@GetMapping(path="getQuizez/{idCour}")
+	public Set<Quiz> getQuizesByCourseId(@PathVariable("idCour")Long idCour) {
+		return quizService.getQuizezByCourseId(idCour);
+	}
+	@GetMapping(path="getQuizQuestions/{idquiz}")
+	public Set<QuizQuestion> getQuizQuestion(@PathVariable("idquiz")Long idQuiz) {
+		return quizService.getQuestionsByQuizzId(idQuiz);
+	}
+	@GetMapping(path="getAnswers/{idQuestion}")
+	public Set<Answer> getQuizAnswers(@PathVariable("idQuestion")Long idquestion) {
+		return quizService.getAnswersByQuestionId(idquestion);
 	}
 }
 

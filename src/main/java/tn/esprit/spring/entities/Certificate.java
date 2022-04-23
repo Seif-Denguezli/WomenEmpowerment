@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,8 +17,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.springframework.lang.Nullable;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -47,13 +50,14 @@ public class Certificate implements Serializable {
 	boolean isAquired;
 	@Nullable
     String certificateQR;
-
-	@ManyToOne(cascade = CascadeType.ALL)
+	@JsonIgnoreProperties("obtainedCertificates")
+	@ManyToOne
 	User user;
 
 	@ManyToOne
 	@JsonIgnore
 	Course course;
+	@JsonIgnore
 	@OneToMany(mappedBy = "certificate")
 	Set<SanctionLearnner> sanctions;
 	
