@@ -5,6 +5,7 @@ package tn.esprit.spring.serviceInterface.user;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.mail.MessagingException;
 
@@ -31,6 +32,8 @@ public interface UserService
     User saveUser(User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException, IOException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, TemplateException, java.io.IOException;
 
     Optional<User> findByUsername(String username);
+    
+    User getUser(Long userId);
     
 	Optional<User> findByEmail(String email);
 
@@ -65,6 +68,20 @@ public interface UserService
 	void unlockUser(String username);
 	
 	void lockUser(String username);
+	
+	void markNotifAsRead(Long idNotif);
+	
+	void markNotifAsUnRead(Long idNotif);
+
+	User updateUser(User user);
+	
+	String getUserProfilPic(Long userId);
+	
+	Set<User> getSuggestedUsers(User u);
+	
+	Set<User> getSuggestedUsers2(User u);
+	
+	List<User> FriendsInCommon(Long userId1, Long userId2);
 
 
 
