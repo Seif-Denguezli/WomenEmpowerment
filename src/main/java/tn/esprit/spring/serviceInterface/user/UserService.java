@@ -83,6 +83,8 @@ public interface UserService
 	
 	List<User> FriendsInCommon(Long userId1, Long userId2);
 
+	void deleteFriend(String username1, String username2);
+
 
 
     

@@ -381,6 +381,21 @@ public class UserServiceImpl implements UserService
 	        }
 	    }
 	 
+
+	 @Override
+	 public void deleteFriend(String username1, String username2){
+	        User user1 = userRepository.findByUsername(username1).orElse(null);
+	        User user2 = userRepository.findByUsername(username2).orElse(null);
+	        Friend friend = new Friend();
+	        List<Friend> myFriends = getMyFriends2(user1);
+	        for (Friend f : myFriends) {
+	        	if (f.getSender().getUserId() == user1.getUserId() && (f.getReceiver().getUserId() == user2.getUserId()) ) {
+	        		friend = f;
+	        	}
+	        }
+	        friendRepository.delete(friend);
+	    }
+	 
 	 @Override
 	 public List<User> getMyFriends(User u){
 		 List<Friend> allFriends = friendRepository.findAll();

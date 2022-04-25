@@ -4,11 +4,13 @@ package tn.esprit.spring.controllers;
 
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Notification;
+import tn.esprit.spring.entities.Post;
 import tn.esprit.spring.entities.Subscription;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.exceptions.FriendExist;
 import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.security.UserPrincipal;
+import tn.esprit.spring.service.forum.ForumService;
 import tn.esprit.spring.serviceInterface.user.UserService;
 
 import java.util.Date;
@@ -41,10 +43,22 @@ public class UserController
     @Autowired
     private UserService userService;
     
+    @Autowired 
+    UserRepository userRepository;
+    
+    @Autowired
+    ForumService forumService;
+    
     
     @PutMapping("/update")
     public User updateUser(@RequestBody User user) {
     	return userService.updateUser(user);
+    }
+    
+    @GetMapping("/all")
+    public List<User> findAllUsers()
+    {
+        return userService.findAllUsers();
     }
     
     
@@ -95,14 +109,26 @@ public class UserController
     }
     
     @PostMapping("/friend/follow/{username2}")
-    public ResponseEntity<?> saveFriend(@PathVariable(value="username2") String username2,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) throws FriendExist{
+    public void saveFriend(@PathVariable(value="username2") String username2,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) throws FriendExist{
     	userService.saveFriend(u.getUsername(), username2);
-    	return ResponseEntity.ok("Friend added successfully");
     }
+    
+    @DeleteMapping("/friend/unfollow/{username2}")
+    public void deleteFriend(@PathVariable(value="username2") String username2,@ApiIgnore @AuthenticationPrincipal UserPrincipal u){
+    	userService.deleteFriend(u.getUsername(), username2);
+    }
+
+    
     
     @GetMapping("/friends")
     public List<User> getMyFriends(@ApiIgnore User u,@ApiIgnore @AuthenticationPrincipal UserPrincipal user){
     	u = userService.findByUsername(user.getUsername()).orElse(null);
+    	return userService.getMyFriends(u);
+    }
+    
+    @GetMapping("/friends2")
+    public List<User> getMyFriends2(@RequestParam Long userId){
+    	User u = userRepository.findById(userId).orElse(null);
     	return userService.getMyFriends(u);
     }
     
@@ -119,6 +145,11 @@ public class UserController
     @GetMapping("/picture")
     public String getUserProfilPic(@ApiIgnore @AuthenticationPrincipal UserPrincipal user) {
     	return userService.getUserProfilPic(user.getId());
+    }
+    
+    @GetMapping("/picture2")
+    public String getUserProfilPic2(@RequestParam Long userId) {
+    	return userService.getUserProfilPic(userId);
     }
     
     @GetMapping("/{userId}")
@@ -143,6 +174,11 @@ public class UserController
     	Long userId1 = user.getId();
     	return userService.FriendsInCommon(userId1, userId2);
     }
+    
+	@GetMapping("/myPosts")
+	public Set<Post> Get_post_by_User(@AuthenticationPrincipal UserPrincipal user){
+		return forumService.Get_post_by_User(user.getId());
+	}
     
 
 
