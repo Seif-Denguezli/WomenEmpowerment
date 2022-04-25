@@ -42,6 +42,7 @@ import tn.esprit.spring.exceptions.UsernameExist;
 import tn.esprit.spring.exceptions.UsernameNotExist;
 import tn.esprit.spring.repository.CourseRepository;
 import tn.esprit.spring.repository.FriendRepository;
+import tn.esprit.spring.repository.MediaRepo;
 import tn.esprit.spring.repository.NotificationRepository;
 import tn.esprit.spring.repository.SubscriptionRepository;
 import tn.esprit.spring.repository.UserRepository;
@@ -55,9 +56,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.mail.MessagingException;
 
@@ -84,6 +87,9 @@ public class UserServiceImpl implements UserService
     
     @Autowired
     FriendRepository friendRepository;
+    
+    @Autowired
+    MediaRepo mediaRepository;
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder)
     {
@@ -103,6 +109,11 @@ public class UserServiceImpl implements UserService
         User savedUser = userRepository.save(user);
         emailService.sendWelcomeMail(savedUser.getName(), savedUser.getEmail());
         return savedUser;
+    }
+    
+	@Override
+    public User updateUser(User user) {
+    	return userRepository.save(user);
     }
 
     @Override
@@ -218,11 +229,11 @@ public class UserServiceImpl implements UserService
 	}
 	
 	
-	@Scheduled(cron = "*/60 * * * * *")
-	public void nbreUnreadNotifications() {
-		int x = notificationRepository.userNotification(3L).size();
-		log.info("Unread notifs : " + x);
-	}
+	//@Scheduled(cron = "*/60 * * * * *")
+	//public void nbreUnreadNotifications() {
+	//	int x = notificationRepository.userNotification(3L).size();
+	//	log.info("Unread notifs : " + x);
+	//}
 	
 	
 	 private User isvalidUsernameAndEmail(String currentUsername, String newUsername, String newEmail) 
@@ -370,13 +381,41 @@ public class UserServiceImpl implements UserService
 	        }
 	    }
 	 
+
+	 @Override
+	 public void deleteFriend(String username1, String username2){
+	        User user1 = userRepository.findByUsername(username1).orElse(null);
+	        User user2 = userRepository.findByUsername(username2).orElse(null);
+	        Friend friend = new Friend();
+	        List<Friend> myFriends = getMyFriends2(user1);
+	        for (Friend f : myFriends) {
+	        	if (f.getSender().getUserId() == user1.getUserId() && (f.getReceiver().getUserId() == user2.getUserId()) ) {
+	        		friend = f;
+	        	}
+	        }
+	        friendRepository.delete(friend);
+	    }
+	 
 	 @Override
 	 public List<User> getMyFriends(User u){
 		 List<Friend> allFriends = friendRepository.findAll();
-		 List<User> myFriends = new ArrayList<>();
+		 Set<User> myFriends = new HashSet<>();
 		 for (Friend f : allFriends) {
 			 if (f.getSender().getUserId() == u.getUserId() ) {
 				 myFriends.add(f.getReceiver());
+			 }
+		 }
+		 List<User> friends = new ArrayList<>(myFriends);
+		 return friends;
+	 }
+	 
+
+	 public List<Friend> getMyFriends2(User u){
+		 List<Friend> allFriends = friendRepository.findAll();
+		 List<Friend> myFriends = new ArrayList<>();
+		 for (Friend f : allFriends) {
+			 if (f.getSender().getUserId() == u.getUserId() ) {
+				 myFriends.add(f);
 			 }
 		 }
 		 return myFriends;
@@ -389,6 +428,93 @@ public class UserServiceImpl implements UserService
 		u.setLocked(true);
 		userRepository.save(u);
 		
+	}
+
+	@Override
+	public void markNotifAsRead(Long  idNotif) {
+		Notification notification = notificationRepository.findById(idNotif).orElse(null);
+		notification.setRead(true);
+		notificationRepository.save(notification);
+		
+	}
+
+	@Override
+	public void markNotifAsUnRead(Long idNotif) {
+		Notification notification = notificationRepository.findById(idNotif).orElse(null);
+		notification.setRead(false);
+		notificationRepository.save(notification);
+		
+	}
+
+	@Override
+	public String getUserProfilPic(Long userId) {
+		User user = userRepository.findById(userId).orElse(null);
+		return user.getProfilPicture().getImagenUrl();
+	}
+
+	@Override
+	public User getUser(Long userId) {
+		User user = userRepository.findById(userId).orElse(null);
+		return user;
+	}
+
+	@Override
+	public Set<User> getSuggestedUsers(User u) {
+		List<Friend> allFriends = friendRepository.findAll();
+		List<User> myFriends = getMyFriends(u);
+		Set<User> suggestedFriends = new HashSet<>();
+		
+		
+		for (Friend f : allFriends) {
+			for (User myFriend : myFriends) {
+				if ( (f.getSender().getUserId() == myFriend.getUserId()) && (f.getReceiver().getUserId() != u.getUserId()) && (!(myFriends.contains(f.getReceiver()))) ) {
+					suggestedFriends.add(f.getReceiver());
+				}
+			}	
+		}
+			
+		return suggestedFriends;
+	}
+
+	@Override
+	public Set<User> getSuggestedUsers2(User u) {
+		List<Friend> allFriends = friendRepository.findAll();
+		List<User> myFriends = getMyFriends(u);
+		Set<User> suggestedFriends = new HashSet<>();
+		int count = 0;
+		
+		
+		for (Friend f : allFriends) {
+			for (User myFriend : myFriends) {
+				if ( (f.getSender().getUserId() == myFriend.getUserId()) && (f.getReceiver().getUserId() != u.getUserId()) && (!(myFriends.contains(f.getReceiver()))) && (count != 8) ) {
+					suggestedFriends.add(f.getReceiver());
+					count++;
+				}
+			}	
+		}
+			
+		return suggestedFriends;
+	}
+
+	@Override
+	public List<User> FriendsInCommon(Long userId1, Long userId2) {
+		User u1 = userRepository.findById(userId1).orElse(null);
+		User u2 = userRepository.findById(userId1).orElse(null);
+		List<Friend> myFriendList = getMyFriends2(u1);
+		Set<User> FriendsInCommon = new HashSet<>();
+		
+		for (Friend f : myFriendList) {
+			List<Friend> externalList = getMyFriends2(f.getReceiver());
+			
+			for (Friend f2: externalList) {
+				System.err.println("Sender:" + f2.getSender().getUserId() + "----Receiver:" +f2.getReceiver().getUserId()+"\n------------------\n" );
+				if (f2.getReceiver().getUserId() == userId2) {
+					FriendsInCommon.add(f2.getSender());
+				}
+			}
+		}	
+		List<User> commonFriends = new ArrayList<>(FriendsInCommon);
+		return commonFriends;
 	}
 	
 	
