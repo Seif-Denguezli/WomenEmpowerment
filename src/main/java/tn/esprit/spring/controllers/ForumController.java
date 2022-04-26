@@ -111,7 +111,7 @@ public class ForumController {
 	}
 	
 	
-	@PutMapping("/Update-Post/{IdPost}/{IdUser}")
+	@PutMapping("/Update-Post/{IdPost}/")
 	@ResponseBody
 	public ResponseEntity<?> Update_Post(@RequestBody Post post, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		return forumService.Update_post(post,IdPost,u.getId());
@@ -124,7 +124,7 @@ public class ForumController {
 	}
 	
 	
-	@PutMapping("/Update-Comment/{IdPostCom}/{IdUser}")
+	@PutMapping("/Update-Comment/{IdPostCom}/")
 	@ResponseBody
 	public ResponseEntity<?> Update_Comment(@RequestBody PostComment postComment, @PathVariable("IdPostCom") Long IdPostCom, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		return forumService.Update_Comment(postComment,IdPostCom,u.getId());
@@ -181,9 +181,9 @@ public class ForumController {
 		return forumService.Delete_Adversting(IdPost);
 	}
 	
-	@DeleteMapping("/Delete-PostComment/{IdPostCom}/{IdUser}")
-	public ResponseEntity<?> Delete_PostCom( @PathVariable("IdPostCom") Long IdPostCom, @PathVariable("IdUser") Long IdUser) {
-		return forumService.Delete_PostCom(IdPostCom,IdUser);
+	@DeleteMapping("/Delete-PostComment/{IdPostCom}")
+	public ResponseEntity<?> Delete_PostCom( @PathVariable("IdPostCom") Long IdPostCom,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.Delete_PostCom(IdPostCom,u.getId());
 	}
 	//@Scheduled(cron = "*/30 * * * * *")
 	@DeleteMapping("/Delete-Post-Redandant")
@@ -270,6 +270,10 @@ public class ForumController {
 	public ResponseEntity<?> addadvimage(@RequestParam("Image") MultipartFile image,@PathVariable("idadv") Long idadv) throws IOException {
 				return forumService.addimageAdverstingt(image,idadv);
 
-	}
+	}@GetMapping("/Get-Post-Details/{idpost}")
+	public Post Get_Post_Details(@PathVariable("idpost") Long idpost) {
+		return forumService.getPostById(idpost);
+
+}
 }
 

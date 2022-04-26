@@ -32,7 +32,6 @@ import tn.esprit.spring.enumerations.CandidacyState;
 @Entity
 @ToString
 public class PostComment implements Serializable{
-	@JsonIgnore
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long postCommentId;
@@ -50,8 +49,12 @@ public class PostComment implements Serializable{
 	Post post; // The post to comment
 
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "postCo")
 	Set<PostComment> postComments; //Reflexive association : A comment can have multiple replies
+	@JsonIgnore
+	@ManyToOne
+	PostComment postCo;
+	
 
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "postComment")
