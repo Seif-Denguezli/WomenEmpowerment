@@ -48,6 +48,8 @@ public class Candidacy implements Serializable {
 	
 	@OneToOne
 	Interview interview;
+	
+	
 	public void setUser(User user) {
 		// TODO Auto-generated method stub
 		
