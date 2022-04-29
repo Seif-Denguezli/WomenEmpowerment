@@ -50,6 +50,7 @@ import freemarker.template.TemplateNotFoundException;
 @RequestMapping("api/authentication")//pre-path
 public class AuthenticationController
 {
+	public static String uploadDirectory2 = "C:\\Users\\lenovo\\Desktop\\spring git\\font\\WomenEmpowermentAngular\\src\\assets\\img\\";
 	public static String uploadDirectory = System.getProperty("user.dir")+"/uploads/";
 	
 	ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -80,13 +81,13 @@ public class AuthenticationController
     {
     	//upload file
     	
-    	File convertFile = new File(uploadDirectory+file.getOriginalFilename());
+    	File convertFile = new File(uploadDirectory2+file.getOriginalFilename());
     	convertFile.createNewFile();
     	FileOutputStream fout = new FileOutputStream(convertFile);
     	fout.write(file.getBytes());
     	fout.close();
     	Media profilPicture = new Media();
-    	profilPicture.setImagenUrl(uploadDirectory+file.getOriginalFilename());
+    	profilPicture.setImagenUrl(uploadDirectory2+file.getOriginalFilename());
     	profilPicture = mediaRepository.save(profilPicture);
     	User userData = objectMapper.readValue(user, User.class);
     	userData.setProfilPicture(profilPicture);
