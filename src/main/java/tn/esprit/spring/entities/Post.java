@@ -68,7 +68,6 @@ public class Post implements Serializable {
 	@ManyToMany(cascade = CascadeType.ALL)
 	Set<User> reportedby;
 	
-	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
 	Set<Media> medias;
 }

@@ -50,6 +50,7 @@ import freemarker.template.TemplateNotFoundException;
 @RequestMapping("api/authentication")//pre-path
 public class AuthenticationController
 {
+	public static String uploadDirectory2 = "C:\\Users\\lenovo\\Desktop\\spring git\\font\\WomenEmpowermentAngular\\src\\assets\\img\\";
 	public static String uploadDirectory = System.getProperty("user.dir")+"/uploads/";
 	public static String uploadDirectory2 = "C:\\Users\\SeifD\\Desktop\\WomenEmpowermentAngular\\src\\assets\\img\\";
 	
