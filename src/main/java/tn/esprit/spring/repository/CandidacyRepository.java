@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import tn.esprit.spring.entities.Candidacy;
 import tn.esprit.spring.entities.Offer;
+import tn.esprit.spring.entities.User;
 @Repository
 public interface CandidacyRepository extends JpaRepository<Candidacy, Long> {
 	
@@ -39,5 +40,22 @@ public interface CandidacyRepository extends JpaRepository<Candidacy, Long> {
 		@Query (nativeQuery=true,value="select o.title FROM offer o  Join candidacy c on offer_id=offer_offer_id where candidacy_id=:param")
 		public String getOfferTitle(@Param("param") Long candidacy_id);
 		
+	//Jointure Pour récuperer la location d'offre a partir d'une candidature
+				@Query (nativeQuery=true,value="select o.location FROM offer o  Join candidacy c on offer_id=offer_offer_id where candidacy_id=:param")
+				public String getOfferLocation(@Param("param") Long candidacy_id);
+				
+	//Jointure Pour récuperer la location d'offre a partir d'une candidature
+				@Query (nativeQuery=true,value="select o.description FROM offer o  Join candidacy c on offer_id=offer_offer_id where candidacy_id=:param")
+		public String getOfferDescription(@Param("param") Long candidacy_id);
+		
+		
+		
+	//Jointure Pour récuperer l'offre a partir d'une candidature
+		@Query (nativeQuery=true,value="select * FROM offer o  Join candidacy c on offer_offer_id=offer_id where candidacy_id=:param")
+		public Offer getOffer(@Param("param") Long candidacy_id);
+		
+		////Jointure Pour récuperer l'ID de l'offre a partir d'une candidature
+		@Query (nativeQuery=true,value="select o.offer_id FROM offer o  Join candidacy c on offer_id=offer_offer_id where candidacy_id=:param")
+public int getOfferId(@Param("param") Long candidacy_id);
 
 }	

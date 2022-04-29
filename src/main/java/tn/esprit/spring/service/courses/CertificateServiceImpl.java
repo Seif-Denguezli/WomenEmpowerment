@@ -15,13 +15,19 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import tn.esprit.spring.entities.Certificate;
+import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.repository.CertificateRepository;
+import tn.esprit.spring.repository.CourseRepository;
+import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.serviceInterface.courses.CertificateService;
 @Service
 public class CertificateServiceImpl implements CertificateService {
 	@Autowired
 	CertificateRepository certificateRepository;
-	
+	@Autowired
+	CourseRepository courseRepository;
+	@Autowired
+	UserRepository userRepository;
 	
 	@Scheduled(cron = "0/10 * * * * *")
 	public void createCertificateQr() throws IOException, InterruptedException {
@@ -47,7 +53,11 @@ public class CertificateServiceImpl implements CertificateService {
 		}
 
 		}
-
+public List<Certificate> userCertificate(Long courseId) {
+	List<Certificate> certif = certificateRepository.findByCourse(courseId);
+	return certif;
+	
+}
 	@Override
 	public byte[] certif(Long certificateid) throws IOException, InterruptedException{
 		Certificate certif = certificateRepository.findById(certificateid).get();

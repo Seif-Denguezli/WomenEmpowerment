@@ -50,11 +50,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests()
+       /* http.authorizeRequests()
                 .antMatchers("/api/authentication/**", "/swagger-ui/", "/swagger-ui/**",
                 		"/v2/api-docs", "/configuration/ui",
                 		"/swagger-resources/**", "/configuration/security",
-                		"/swagger-ui.html", "/webjars/**").permitAll()//login and register pre-path
+                		"/swagger-ui.html", "/webjars/**","/course/**").permitAll()//login and register pre-path
                 .antMatchers("/api/admin/**").hasRole(Role.ADMIN.name()) 
                 .anyRequest().authenticated()
 		        //.and()
@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 
         
 
-        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);*/    
     }
 
     //Why don't we describe it as a component, because of scope.

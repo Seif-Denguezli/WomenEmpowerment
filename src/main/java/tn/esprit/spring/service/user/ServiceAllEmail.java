@@ -28,6 +28,7 @@ import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateNotFoundException;
 import io.jsonwebtoken.io.IOException;
+import tn.esprit.spring.entities.PasswordResetToken;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.repository.UserRepository;
 
@@ -124,7 +125,7 @@ public class ServiceAllEmail {
         helper.setTo(email);
         helper.setCc("seifeddine.denguezli@esprit.tn");
         helper.setSubject("WomenEmpowerment - Password Reset");
-        String emailContent = getResetEmailContent(user);
+        String emailContent = getResetEmailContent(token);
         helper.setText(emailContent, true);
         helper.setSentDate(new Date());
         return message;
@@ -139,10 +140,10 @@ public class ServiceAllEmail {
     }
 
  
-    String getResetEmailContent(User user) throws IOException, TemplateException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, java.io.IOException {
+    String getResetEmailContent(String token) throws IOException, TemplateException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, java.io.IOException {
         StringWriter stringWriter = new StringWriter();
         Map<String, Object> model = new HashMap();
-        model.put("user", user);
+        model.put("token", token);
         configuration.getTemplate("ResetEmail.ftlh").process(model, stringWriter);
         return stringWriter.getBuffer().toString();
     }

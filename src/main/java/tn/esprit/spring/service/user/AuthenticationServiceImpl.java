@@ -103,9 +103,9 @@ public class AuthenticationServiceImpl implements AuthenticationService
 			PasswordResetToken token = new PasswordResetToken();
 			LocalDateTime nowDate = LocalDateTime.now();
 			token.setCreateDate(nowDate);
-			
+			String tokenValue = RandomString.make(45);
 			token.setUserId(user.getUserId());
-			token.setToken(RandomString.make(45));
+			token.setToken(tokenValue);
 			token.setExprirationDate(nowDate.plusMinutes(15));
 			
 			passwordResetTokenRepository.save(token);

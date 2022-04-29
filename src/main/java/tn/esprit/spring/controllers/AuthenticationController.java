@@ -28,6 +28,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,7 +50,9 @@ import freemarker.template.TemplateNotFoundException;
 @RequestMapping("api/authentication")//pre-path
 public class AuthenticationController
 {
+	public static String uploadDirectory2 = "C:\\Users\\lenovo\\Desktop\\spring git\\font\\WomenEmpowermentAngular\\src\\assets\\img\\";
 	public static String uploadDirectory = System.getProperty("user.dir")+"/uploads/";
+	public static String uploadDirectory2 = "C:\\Users\\SeifD\\Desktop\\WomenEmpowermentAngular\\src\\assets\\img\\";
 	
 	ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	
@@ -78,13 +82,13 @@ public class AuthenticationController
     {
     	//upload file
     	
-    	File convertFile = new File(uploadDirectory+file.getOriginalFilename());
+    	File convertFile = new File(uploadDirectory2+file.getOriginalFilename());
     	convertFile.createNewFile();
     	FileOutputStream fout = new FileOutputStream(convertFile);
     	fout.write(file.getBytes());
     	fout.close();
     	Media profilPicture = new Media();
-    	profilPicture.setImagenUrl(uploadDirectory+file.getOriginalFilename());
+    	profilPicture.setImagenUrl(uploadDirectory2+file.getOriginalFilename());
     	profilPicture = mediaRepository.save(profilPicture);
     	User userData = objectMapper.readValue(user, User.class);
     	userData.setProfilPicture(profilPicture);
@@ -169,6 +173,14 @@ public class AuthenticationController
     	final GoogleIdToken googleIdToken = GoogleIdToken.parse(verifier.getJsonFactory(), tokenDto.getValue());
     	final GoogleIdToken.Payload payload = googleIdToken.getPayload();
     	return new ResponseEntity(payload, HttpStatus.OK);
+    }
+    
+    @PostMapping("/facebook")
+    public ResponseEntity<?> loginWithFacebook(@RequestBody TokenDto tokenDto) throws IOException{
+    	Facebook facebook = new FacebookTemplate(tokenDto.getValue());
+    	final String [] fields = {"email", "picture"};
+    	org.springframework.social.facebook.api.User user = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, fields); 
+    	return new ResponseEntity(user, HttpStatus.OK);
     }
 
 }

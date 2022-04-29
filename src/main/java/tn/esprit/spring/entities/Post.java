@@ -32,7 +32,7 @@ import lombok.experimental.FieldDefaults;
 @Entity
 @ToString
 public class Post implements Serializable {
-	@JsonIgnore
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long postId;
@@ -49,11 +49,10 @@ public class Post implements Serializable {
 	int nb_etoil;
 	
 
-	@JsonIgnore
 	@ManyToOne 
 	User user;
 	
-	@JsonIgnore
+	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
 	Set<PostLike> postLikes;
 	
@@ -62,7 +61,6 @@ public class Post implements Serializable {
 	Set<PostDislike> postDislikes;
 	
 
-	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
 	Set<PostComment> postComments;
 	
@@ -70,7 +68,6 @@ public class Post implements Serializable {
 	@ManyToMany(cascade = CascadeType.ALL)
 	Set<User> reportedby;
 	
-	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
 	Set<Media> medias;
 }

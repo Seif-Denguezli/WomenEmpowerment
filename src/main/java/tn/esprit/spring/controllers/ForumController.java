@@ -67,14 +67,31 @@ public class ForumController {
 	
 	@PostMapping("/add-Comment/{IdPost}/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> addComment_to_Post(@RequestBody PostComment postComment, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-		return forumService.addComment_to_Post(postComment,IdPost,u.getId());
+	public ResponseEntity<?> addComment_to_Post(@RequestBody PostComment postComment, @PathVariable("IdPost") Long IdPost/*, @ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
+		return forumService.addComment_to_Post(postComment,IdPost,(long)1/*,u.getId()*/);
 	}
 	
 	@PostMapping("/add-Like-post/{IdPost}/{IdUser}")
 	@ResponseBody
-	public PostLike addLike_to_Post(@RequestBody PostLike postLike, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-		return forumService.addLike_to_Post(postLike,IdPost,u.getId());
+	public PostLike addLike_to_Post(@RequestBody(required = false) PostLike postLike, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		PostLike pos1 = new PostLike();
+		pos1.setIsLiked(true);
+		
+		return forumService.addLike_to_Post(pos1,IdPost,u.getId());
+	}
+	@PostMapping("/add-DisLike-post/{IdPost}/{IdUser}")
+	@ResponseBody
+	public PostLike addDisLike_to_Post(@RequestBody(required = false) PostLike postLike, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		PostLike pos1 = new PostLike();
+		pos1.setIsLiked(false);
+		
+		return forumService.addLike_to_Post(pos1,IdPost,u.getId());
+	}
+	@GetMapping("/get-user-islike-post/{IdPost}")
+	@ResponseBody
+	public int addDisLike_to_Post( @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		
+		return forumService.PostLikeFromUser(IdPost,u.getId());
 	}
 	/*
 	@PostMapping("/add-DisLike-post/{IdPost}/{IdUser}")
@@ -94,7 +111,7 @@ public class ForumController {
 	}
 	
 	
-	@PutMapping("/Update-Post/{IdPost}/{IdUser}")
+	@PutMapping("/Update-Post/{IdPost}/")
 	@ResponseBody
 	public ResponseEntity<?> Update_Post(@RequestBody Post post, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		return forumService.Update_post(post,IdPost,u.getId());
@@ -107,7 +124,7 @@ public class ForumController {
 	}
 	
 	
-	@PutMapping("/Update-Comment/{IdPostCom}/{IdUser}")
+	@PutMapping("/Update-Comment/{IdPostCom}/")
 	@ResponseBody
 	public ResponseEntity<?> Update_Comment(@RequestBody PostComment postComment, @PathVariable("IdPostCom") Long IdPostCom, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		return forumService.Update_Comment(postComment,IdPostCom,u.getId());
@@ -124,6 +141,11 @@ public class ForumController {
 	@GetMapping("/Get-all-Post")
 	public List<Post> Get_all_post(){
 		return forumService.Get_all_post();
+	}
+	
+	@GetMapping("/Get-all-adversting")
+	public List<Advertising> Get_all_adv(){
+		return forumService.get_all_adversting();
 	}
 	
 	@GetMapping("/Get-Posts-By-user/{IdUser}")
@@ -150,8 +172,8 @@ public class ForumController {
 	
 	
 	@DeleteMapping("/Delete-Post/{IdPost}")
-	public ResponseEntity<?> Delete_Post( @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-		return forumService.Delete_post(IdPost,u.getId());
+	public ResponseEntity<?> Delete_Post( @PathVariable("IdPost") Long IdPost/*, @ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
+		return forumService.Delete_post(IdPost,(long)1/*u.getId()*/);
 	}
 	
 	@DeleteMapping("/Delete-Adversting/{IdAdv}")
@@ -159,9 +181,9 @@ public class ForumController {
 		return forumService.Delete_Adversting(IdPost);
 	}
 	
-	@DeleteMapping("/Delete-PostComment/{IdPostCom}/{IdUser}")
-	public ResponseEntity<?> Delete_PostCom( @PathVariable("IdPostCom") Long IdPostCom, @PathVariable("IdUser") Long IdUser) {
-		return forumService.Delete_PostCom(IdPostCom,IdUser);
+	@DeleteMapping("/Delete-PostComment/{IdPostCom}")
+	public ResponseEntity<?> Delete_PostCom( @PathVariable("IdPostCom") Long IdPostCom,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.Delete_PostCom(IdPostCom,u.getId());
 	}
 	//@Scheduled(cron = "*/30 * * * * *")
 	@DeleteMapping("/Delete-Post-Redandant")
@@ -248,6 +270,10 @@ public class ForumController {
 	public ResponseEntity<?> addadvimage(@RequestParam("Image") MultipartFile image,@PathVariable("idadv") Long idadv) throws IOException {
 				return forumService.addimageAdverstingt(image,idadv);
 
-	}
+	}@GetMapping("/Get-Post-Details/{idpost}")
+	public Post Get_Post_Details(@PathVariable("idpost") Long idpost) {
+		return forumService.getPostById(idpost);
+
+}
 }
 

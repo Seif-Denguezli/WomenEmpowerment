@@ -31,4 +31,5 @@ public void coursesEnded();
 public boolean courseVerificator(Long userId);
 public int userjoinCourseVerificator(Long userId,Long courseId);
 public Period diffCalculator(String date1,String date2);
+
 }

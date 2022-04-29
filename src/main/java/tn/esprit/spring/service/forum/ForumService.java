@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import sun.net.www.content.text.plain;
 import tn.esprit.spring.entities.*;
 
 import tn.esprit.spring.repository.*;
@@ -116,6 +117,9 @@ a.setCategoryadv(c);
 		
 		return badWordRepo.save(b);
 	}
+	public List<Advertising> get_all_adversting(){
+		return advertisingRepo.findAll();
+	}
 	public ResponseEntity<?> addComment_to_Post(PostComment postComment, Long idPost, Long idUser) {
 		Post p = postRepo.findById(idPost).orElse(null);
 		User u = userRepo.findById(idUser).orElse(null);
@@ -125,7 +129,7 @@ a.setCategoryadv(c);
 			postComment.setPost(p);
 
 			postCommentRepo.save(postComment);
-			return ResponseEntity.ok().body(postComment);
+			return ResponseEntity.ok().body(postComment);      }else
 			/*
 			 * Set<PostComment> pc = p.getPostComments(); pc.add(postComment);
 			 * p.setPostComments(pc); postRepo.save(p);
@@ -134,17 +138,31 @@ a.setCategoryadv(c);
 			 * u.setPostComments(pu); userRepo.save(u);
 			 * 
 			 * 
-			 */}
+			 */
+			//}
 		return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");
 	}
 
 		public PostLike addLike_to_Post(PostLike postLike, Long idPost, Long idUser) {
+			int x=0;
+			boolean y =false;
 			Post p = postRepo.findById(idPost).orElse(null);
 			User u = userRepo.findById(idUser).orElse(null);
+			for (PostLike l : postLikeRepo.findAll()) {
+				if(l.getPost().getPostId() == idPost && l.getUser().getUserId() == idUser)
+				{	
+					x=1;
+					y=l.getIsLiked();
+					postLikeRepo.delete(l);
+					}	
+				
+			}
+				if (x ==0 || (x == 1 && y!=postLike.getIsLiked()	)) {
 			DetctaDataLoad(p.getBody(),idUser);
 			postLike.setUser(u);
 			postLike.setPost(p);
-			return postLikeRepo.save(postLike);
+			 postLikeRepo.save(postLike);}
+				return postLike;
 		}
 
 	/*
@@ -359,9 +377,9 @@ a.setCategoryadv(c);
 		User u = userRepo.findById(idUser).orElse(null);
 		if (Filtrage_bad_word(postComment.getCommentBody()) == 0) {
 			postComment.setUser(u);
-			postComment.setPost(p.getPost());
-			p.getPostComments().add(postComment);
-
+		//	postComment.setPost(p.getPost());
+		//	p.getPostComments().add(postComment);
+			postComment.setPostCo(p);
 			postCommentRepo.save(postComment);
 			return ResponseEntity.ok().body(postComment);
 			/*
@@ -706,5 +724,22 @@ public static File convert(MultipartFile file) throws IOException {
     fos.write(file.getBytes());
     fos.close();
     return convFile;
+}
+
+
+public int PostLikeFromUser(Long isUser,Long Idpost) {
+	int x =0;
+	for (PostLike l : postLikeRepo.findAll()) {
+		if (l.getPost().getPostId()== Idpost && l.getUser().getUserId()== isUser) {
+			if (l.getIsLiked() == true) {x= 1;}	
+			else {x=0;}
+		}
+		
+	}
+	return x;
+}
+public Post getPostById (Long id) {
+	Post p = postRepo.findById(id).orElse(null);
+	return p;
 }
 }

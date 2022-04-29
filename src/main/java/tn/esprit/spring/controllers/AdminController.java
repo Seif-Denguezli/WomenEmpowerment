@@ -44,6 +44,12 @@ public class AdminController
     	return ResponseEntity.ok(true);
     }
     
+    @PutMapping("lock/{username}")
+    public ResponseEntity<?> lockUser(String username) {
+    	userService.lockUser(username);
+    	return ResponseEntity.ok(true);
+    }
+    
     @PutMapping("unlock/{username}")
     public ResponseEntity<?> unlockUser(@PathVariable(value="username") String username) {
     	userService.unlockUser(username);

@@ -123,11 +123,14 @@ public class DonationServiceImpl implements DonationService {
 		for (WomenNeedDonation w : womanNeedHelpRepo.findAll()) {
 			if (w.getPriority() == 1) {
 				e.setMontantCollecte(e.getMontantCollecte()-w.getMontant_needed());
-				float montant = w.getMontant_needed();
+				//float montant = w.getMontant_needed();
 				w.setGetHelp(true);
+				//w.setMontantRecu(w.getMontant_needed());
+				//w.setMontant_needed(w.getMontant_needed() - montant);
+				//System.out.println(w.getMontant_needed()-montant);
 				w.setMontantRecu(w.getMontant_needed());
-				w.setMontant_needed(w.getMontant_needed() - montant);
-				System.out.println(w.getMontant_needed()-montant);
+				w.setMontant_needed(0);
+				
 				eventRepo.flush();
 				womanNeedHelpRepo.saveAndFlush(w);
 			}

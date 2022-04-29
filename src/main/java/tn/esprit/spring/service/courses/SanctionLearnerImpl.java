@@ -41,6 +41,7 @@ UserCourseServiceImpl userCourseServiceImpl;
 		
 	}
 	@Override
+	@Transactional
 	@Scheduled(cron="*/10 * * * * *")
 	public void PunishmendDecision()
 		{
@@ -55,12 +56,17 @@ UserCourseServiceImpl userCourseServiceImpl;
 						if(sanctionLearner.getPenality().equals(Penality.KICK))
 							{
 							
-							List<SanctionLearnner> sanctions =sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
-							sanctionLearnerRepository.deleteAll(sanctions);
-							Course c = certificate.getCourse();
-							c.getBuser().add(certificate.getUser());
-							courseRepository.saveAndFlush(c);
-						    userCourseServiceImpl.leaveCourse(certificate.getCertificateId());
+							 Course cour = certificate.getCourse();
+							   User u = certificate.getUser();
+								cour.getBuser().add(certificate.getUser());
+							    u.getObtainedCertificates().remove(certificate);	
+							    System.err.println(u.getObtainedCertificates());
+							    userRepository.save(u);
+								courseRepository.save(cour);
+								List<SanctionLearnner> sanctions =sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
+								sanctionLearnerRepository.deleteAll(sanctions);
+								certificateRepository.delete(certificate);
+								
 							
 							}
 						if(sanctionLearner.getPenality().equals(Penality.WARNING))
@@ -72,23 +78,24 @@ UserCourseServiceImpl userCourseServiceImpl;
 								
 							}
 					}
-					if(warnCount==1 )
+					if(warnCount==3 )
 					{	
 					
-					   Course cour = certificate.getCourse();
-					   User u = certificate.getUser();
-						cour.getBuser().add(certificate.getUser());
-					    u.getObtainedCertificates().remove(certificate);					
-					    cour.getCertificates().remove(certificate);
-					    userRepository.save(u);
-						courseRepository.save(cour);
-					    certificateRepository.save(certificate);
-						List<SanctionLearnner> sanctions =sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
-						sanctionLearnerRepository.deleteAll(sanctions);
+						 Course cour = certificate.getCourse();
+						   User u = certificate.getUser();
+							cour.getBuser().add(certificate.getUser());
+						    u.getObtainedCertificates().remove(certificate);	
+						    System.err.println(u.getObtainedCertificates());
+						    userRepository.save(u);
+							courseRepository.save(cour);
+							List<SanctionLearnner> sanctions =sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
+							sanctionLearnerRepository.deleteAll(sanctions);
+							certificateRepository.delete(certificate);
 					}
 					
 					
-				}		
+				}
+			
 		}
 
 	@Override
