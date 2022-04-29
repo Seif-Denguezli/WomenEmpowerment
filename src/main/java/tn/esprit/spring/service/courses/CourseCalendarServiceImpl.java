@@ -17,10 +17,12 @@ import org.springframework.stereotype.Service;
 import com.nylas.Calendar;
 import com.nylas.Calendars;
 import com.nylas.Event;
+import com.nylas.EventQuery;
 import com.nylas.Events;
 import com.nylas.NylasAccount;
 import com.nylas.NylasClient;
 import com.nylas.Participant;
+import com.nylas.RemoteCollection;
 import com.nylas.RequestFailedException;
 
 import tn.esprit.spring.entities.Certificate;
@@ -40,7 +42,7 @@ public class CourseCalendarServiceImpl {
 	public String createCal(long courseId) throws IOException, RequestFailedException {
 		 Course c =courseRepository.findById(courseId).get();
 		 NylasClient client = new NylasClient();
-		  NylasAccount account = client.account("PfdQX6tyfrwPkqfO1z1dr6oAtxn7zD");
+		  NylasAccount account = client.account("e2vn6wCeGBU9v6TfnxsfWEvsTDPw0I");
 		  Calendars calendars = account.calendars();
 		  Calendar newCal1 = new Calendar();
 		  newCal1.setName(c.getCourseName());
@@ -59,7 +61,7 @@ public class CourseCalendarServiceImpl {
 		 Course c =courseRepository.findById(courseId).get();
 		 List<Certificate> certif = certificateRepository.findByCourse(courseId);
 		  NylasClient client = new NylasClient();
-		  NylasAccount account = client.account("PfdQX6tyfrwPkqfO1z1dr6oAtxn7zD");
+		  NylasAccount account = client.account("e2vn6wCeGBU9v6TfnxsfWEvsTDPw0I");
 		 // Calendars calendars = account.calendars();
 		  Event.When when = null;
 		 // LocalDate today = LocalDate.now();
@@ -99,21 +101,21 @@ public class CourseCalendarServiceImpl {
 	 public Event getEvent(Long eventId) throws IOException, RequestFailedException {
 		CourseCalEvent courseEvent =  courseCalEventRepository.findById(eventId).get();
 		 NylasClient nylas = new NylasClient();
-	        NylasAccount account = nylas.account("PfdQX6tyfrwPkqfO1z1dr6oAtxn7zD");
+	        NylasAccount account = nylas.account("e2vn6wCeGBU9v6TfnxsfWEvsTDPw0I");
 	        Events events = account.events();
 	        return  events.get(courseEvent.getEventOnCalId());
 	 }
 	 public void deleteEvent(long eventId)throws IOException, RequestFailedException {
 		 CourseCalEvent courseEvent =  courseCalEventRepository.findById(eventId).get();
 		 NylasClient nylas = new NylasClient();
-	     NylasAccount account = nylas.account("PfdQX6tyfrwPkqfO1z1dr6oAtxn7zD");
+	     NylasAccount account = nylas.account("e2vn6wCeGBU9v6TfnxsfWEvsTDPw0I");
 		 account.events().delete(courseEvent.getEventOnCalId(), true);
 		 courseCalEventRepository.delete(courseEvent);
 	 }
 	 public void updateEventTime(long eventId,int hour,int minutes,LocalDate date) throws IOException, RequestFailedException {
 		 CourseCalEvent courseEvent =  courseCalEventRepository.findById(eventId).get();
 		 NylasClient nylas = new NylasClient();
-	     NylasAccount account = nylas.account("PfdQX6tyfrwPkqfO1z1dr6oAtxn7zD");
+	     NylasAccount account = nylas.account("e2vn6wCeGBU9v6TfnxsfWEvsTDPw0I");
 	     Event event = account.events().get(courseEvent.getEventOnCalId());
 	     Event.When when = null;
 		 // LocalDate today = LocalDate.now();
@@ -128,6 +130,12 @@ public class CourseCalendarServiceImpl {
 		  event.setBusy(true);
 		  account.events().update(event, true);
 	     
+	 }
+	 public RemoteCollection<Event> getEvents(String calendarId) throws IOException, RequestFailedException{
+		 NylasClient client = new NylasClient();
+		    NylasAccount account = client.account("e2vn6wCeGBU9v6TfnxsfWEvsTDPw0I");
+		    return account.events().list(new EventQuery().calendarId(calendarId));
+		    	   
 	 }
 	 
 	 
