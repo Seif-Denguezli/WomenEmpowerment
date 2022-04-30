@@ -50,6 +50,7 @@ public class Candidacy implements Serializable {
 	Interview interview;
 	
 	
+	
 	public void setUser(User user) {
 		// TODO Auto-generated method stub
 		

@@ -89,7 +89,11 @@ public class User implements Serializable{
 	@JsonIgnore
 	Set<Notification> notifications;
 
-
+	/*@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "candidate")
+	Set<CvInfo> CV;*/ //Cv postulées;
+	@OneToOne
+	CvInfo CV;
 	@OneToOne
 	User woman; // Reflexive association
 	

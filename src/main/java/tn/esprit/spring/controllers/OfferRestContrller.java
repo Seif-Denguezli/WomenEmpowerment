@@ -124,7 +124,7 @@ public class OfferRestContrller {
 	@PostMapping("/Apply-Offer/{userId}/{offerId}")
 	@ResponseBody
 	void ApplyOffer(@RequestBody Candidacy candidacy,@PathVariable("userId") Long userId,@PathVariable("offerId") Long offerId) {
-		CandidacyService.postulerOffre(candidacy, offerId, userId);
+		CandidacyService.postulerOffre( offerId, userId);
 	}
 	/*
 	@PostMapping("/upload/{candidacyId}")

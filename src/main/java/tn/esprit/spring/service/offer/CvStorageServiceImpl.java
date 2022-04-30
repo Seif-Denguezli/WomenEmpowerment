@@ -16,8 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import tn.esprit.spring.entities.Candidacy;
 import tn.esprit.spring.entities.CvInfo;
+import tn.esprit.spring.entities.User;
 import tn.esprit.spring.repository.CandidacyRepository;
 import tn.esprit.spring.repository.CvDBRepository;
+import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.serviceInterface.offer.ICvStorageService;
 @Service
 public class CvStorageServiceImpl implements ICvStorageService {
@@ -25,13 +27,18 @@ public class CvStorageServiceImpl implements ICvStorageService {
 	  private CvDBRepository fileDBRepository;
 	@Autowired 
 	 CandidacyRepository candidacyRepository;
+	@Autowired 
+	 UserRepository UserRepo;
 	@Override
-	  public CvInfo store(MultipartFile file,Long candidacyId) throws IOException {
+	  public CvInfo store(MultipartFile file,Long userId) throws IOException {
 	    String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 	    CvInfo CvInfo = new CvInfo(fileName, file.getContentType(), file.getBytes());
 	   /* Candidacy candidacy = candidacyRepository.findById(candidacyId).get();
 	    candidacy.getCv().add(CvInfo);
 	    candidacyRepository.flush();*/
+	    User user= UserRepo.findById(userId).get();
+	    CvInfo.setCandidate(user);
+	        
 	    return fileDBRepository.save(CvInfo);
 	  }
 	@Override

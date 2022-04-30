@@ -43,10 +43,10 @@ public class CandidacyServiceImpl implements ICandidacyService {
 	}
 	
 	@Override
-	public void postulerOffre( Candidacy candidacy,Long offerId, Long userId) {
+	public  Candidacy postulerOffre (Long offerId, Long userId) {
 		
 
-		
+		Candidacy candidacy =new Candidacy();
 		Offer offer = OfferRepo.findById(offerId).orElse(null);
 		//System.err.println(offer.getOfferId().toString());
 		User user= UserRepo.findById(userId).get();
@@ -58,7 +58,7 @@ public class CandidacyServiceImpl implements ICandidacyService {
 		candidacy.setCandidacyState(CandidacyState.Unseen);
 		
 		// TODO Auto-generated method stub
-		CandidacyRepo.save(candidacy);
+		return CandidacyRepo.save(candidacy);
 	   
 	}
 
