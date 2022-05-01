@@ -43,13 +43,17 @@ import tn.esprit.spring.config.TwilioConfiguration;
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.Media;
+import tn.esprit.spring.entities.Post;
+import tn.esprit.spring.entities.PostComment;
 import tn.esprit.spring.entities.SmsRequest;
 
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.entities.eventComment;
 import tn.esprit.spring.enumerations.EventType;
 import tn.esprit.spring.repository.EventRepo;
 import tn.esprit.spring.repository.MediaRepo;
 import tn.esprit.spring.repository.UserRepository;
+import tn.esprit.spring.repository.eventcommentRepo;
 import tn.esprit.spring.service.user.ServiceAllEmail;
 import tn.esprit.spring.serviceInterface.EventService;
 import tn.esprit.spring.serviceInterface.SmsSender;
@@ -71,6 +75,8 @@ public class EventServiceImpl implements EventService {
 	UserRepository userRepo;
 	@Autowired
 	ServiceAllEmail emailService;
+	@Autowired
+	eventcommentRepo eventcomRepo;
 
 	@Autowired
 	public EventServiceImpl(@Qualifier("twilio") TwilioSmsSender smsSender) {
@@ -92,11 +98,28 @@ public class EventServiceImpl implements EventService {
 	 * 
 	 * }
 	 */
+	
+	
+	@Override
+	public ResponseEntity<?> create(Long iduser, Event event) throws IOException {
+		Set<Event> eventList = new HashSet<Event>();
+		User user = userRepo.findById(iduser).orElse(null);
+		eventList.add(event);
+		user.setCreatedEvents(eventList);
+		event.setCreateurEvent(user);
+		
+		eventRepo.save(event);
+		return new ResponseEntity(event, HttpStatus.OK);
+		
+		
+			
+
+	}
 
 	@Override
 	public ResponseEntity<?> createEventbyUser(Long idUser, MultipartFile multipartFile, String EventName,
-			String description, Date createAt,Date StartAt ,Date endAt, EventType typeEvent, int maxPlace, float targetDonation,
-			String address) throws MessagingException, IOException {
+			String description, Date createAt,Date StartAt ,Date endAt, int maxPlace, float targetDonation,
+			String address,String latitude,String lang) throws MessagingException, IOException {
 		Set<User> usersList = new HashSet<User>();
 		Set<Event> eventList = new HashSet<Event>();
 		User user = userRepo.findById(idUser).orElse(null);
@@ -107,11 +130,12 @@ public class EventServiceImpl implements EventService {
 		event.setEventName(EventName);
 		event.setCreatedAt(createAt);
 		event.setEndAt(endAt);
-		event.setEventType(typeEvent);
 		event.setMaxPlace(maxPlace);
 		event.setTargetDonation(targetDonation);
 		event.setAddress(address);
 		event.setDescription(description);
+		event.setLang(lang);
+		event.setLatitude(latitude);
 
 		event.setCreateurEvent(user);
 
@@ -120,7 +144,7 @@ public class EventServiceImpl implements EventService {
 				, (String) result.get("url"),
 				(String) result.get("public_id"));
 
-		media.setEvent(event);
+		media.setEvents(event);
 		eventList = user.getCreatedEvents();
 		eventList.add(event);
 		eventRepo.save(event);
@@ -243,7 +267,7 @@ public class EventServiceImpl implements EventService {
 			event.setMaxPlace(event.getMaxPlace() - 1);
 			eventRepo.save(event);
 			
-			sendSms(smsrequest, u.getPhoneNumber(), event.getEventName() + " : Participation avec succes");
+			//sendSms(smsrequest, u.getPhoneNumber(), event.getEventName() + " : Participation avec succes");
 			//emailService.sendNewEventCreatedByUser(event.getEventName(), u.getEmail());
 
 
@@ -350,6 +374,15 @@ public class EventServiceImpl implements EventService {
 		return eventRepo.findAll();
 
 	}
+	
+	
+
+	@Override
+	public Event displayEvent(Long idEvent) {
+		
+		return eventRepo.findById(idEvent).get();
+	}
+
 
 
 
@@ -370,6 +403,72 @@ public class EventServiceImpl implements EventService {
     return new ResponseEntity(response.body(), HttpStatus.OK);
     
 	}
+
+	@Override
+	public ResponseEntity<?> addComment_to_Post(eventComment eventcomment, Long idEvent, Long idUser) {
+		Event event = eventRepo.findById(idEvent).orElse(null);
+		User user = userRepo.findById(idUser).orElse(null);
+	//	DetctaDataLoad(postComment.getCommentBody(),idUser);
+	//	if (Filtrage_bad_word(postComment.getCommentBody()) == 0) {
+			//postComment.setUser(u);
+			//postComment.setPost(p);
+		eventcomment.setUser(user);
+		eventcomment.setEventt(event);
+		eventcomRepo.save(eventcomment);
+		//	postCommentRepo.save(postComment);
+			return ResponseEntity.ok().body(eventcomment);
+			/*
+			 * Set<PostComment> pc = p.getPostComments(); pc.add(postComment);
+			 * p.setPostComments(pc); postRepo.save(p);
+			 * 
+			 * Set<PostComment> pu = u.getPostComments(); pu.add(postComment);
+			 * u.setPostComments(pu); userRepo.save(u);
+			 * 
+			 * 
+			 */
+			//}
+	//	return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");
+	}
+
+	@Override
+	public ResponseEntity<?> Update_Comment(eventComment eventcomment, Long idEventCom, Long idUser) {
+		if (eventcomRepo.existsById(idEventCom)) {
+			eventComment eventCom1 = eventcomRepo.findById(idEventCom)
+					.orElseThrow(() -> new EntityNotFoundException("Comment not found"));
+			//User user = userRepo.findById(idUser).orElseThrow(() -> new EntityNotFoundException("User not found"));
+			//if (postCom1.getUser().equals(user)) {
+
+			eventCom1.setCommentBody(eventcomment.getCommentBody());
+			eventcomRepo.save(eventCom1);
+				return ResponseEntity.ok().body(eventCom1);
+			//} else {
+			//	return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("No permission to delete this post ");
+		//	}
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment Not Founf");
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> Delete_eventCom(Long idEventCom, Long idUser) {
+		if (eventcomRepo.existsById(idEventCom)) {
+			eventComment eventCom1 = eventcomRepo.findById(idEventCom)
+					.orElseThrow(() -> new EntityNotFoundException("post not found"));
+			User user = userRepo.findById(idUser).orElseThrow(() -> new EntityNotFoundException("User not found"));
+			if (eventCom1.getUser().equals(user)) {
+				eventcomRepo.delete(eventCom1);
+				return ResponseEntity.ok().body("Delete success");
+			} else {
+				return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("No permission to delete this post");
+			}
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("post Not Founf");
+		}
+	
+	}
+	
+	
+	
 
 	// ------------------------------------------------------------------------------------------------------
 

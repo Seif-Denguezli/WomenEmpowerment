@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,11 +47,14 @@ import tn.esprit.spring.entities.APIResponse;
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.Media;
+import tn.esprit.spring.entities.PostComment;
 import tn.esprit.spring.entities.SmsRequest;
+import tn.esprit.spring.entities.eventComment;
 import tn.esprit.spring.enumerations.EventType;
 import tn.esprit.spring.exceptions.CoursesLimitReached;
 import tn.esprit.spring.repository.EventRepo;
 import tn.esprit.spring.repository.MediaRepo;
+import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.service.event.CloudinaryService;
 
 import tn.esprit.spring.service.event.MediaService;
@@ -75,28 +79,45 @@ public class EventController {
 	//@Autowired
 	//EventCalendarServiceImpl eventCalander;
 	
+	
+	//new api rest angular
+	@PostMapping("/create-event")
+	public ResponseEntity<?> CreateEvent(@ApiIgnore @AuthenticationPrincipal UserPrincipal u,@RequestBody Event event) throws IOException{
+		return eventService.create(u.getId(), event);
+		
+	}
+	
 	@PostMapping(path = "createEventByUser")
 	public void createEventByUser(
 			@RequestParam Long userid
-			,@RequestPart MultipartFile multipartFile
+			,@RequestParam MultipartFile multipartFile
 			,@RequestParam String EventName
 			,@RequestParam String Description
-			
 			,@RequestParam  (name ="startAt") @DateTimeFormat(pattern = "dd-MM-yyyy")  Date startAt
 			,@RequestParam  (name ="endAt") @DateTimeFormat(pattern = "dd-MM-yyyy")  Date endAt
-			,@RequestParam EventType typeEvent
 			,@RequestParam  int maxPlace
 			,@RequestParam  float targetDonation
-			,@RequestParam String address) throws MessagingException, IOException, InterruptedException {
+			,@RequestParam String address
+			,@RequestParam String latitude
+			,@RequestParam String lang) throws MessagingException, IOException, InterruptedException {
 	
 		Date createAt=new Date();
-		eventService.createEventbyUser(userid, multipartFile, EventName, Description, createAt, endAt, startAt,typeEvent, maxPlace, targetDonation, address);
+		eventService.createEventbyUser(userid, multipartFile, EventName, Description, createAt, endAt, startAt, maxPlace, targetDonation, address, latitude, lang);
 		
 		
 	}
-	@PutMapping("/userparticipe-event/{userid}/{eventId}")
-	public ResponseEntity<?> participationToEvent(@PathVariable("userid")Long userid,@PathVariable("eventId")Long eventId) throws MessagingException,IOException, InterruptedException{
-		return eventService.Participer_event(userid,eventId);
+	
+	
+	//new
+		@GetMapping(path="getEvent/{EventId}")
+		public Event getEventById(@PathVariable("EventId")Long EventId){
+			return eventService.displayEvent(EventId);
+		}
+		
+
+	@PostMapping(path = "userparticipe-event/{eventId}")
+	public ResponseEntity<?> participationToEvent(@ApiIgnore @AuthenticationPrincipal UserPrincipal u,@PathVariable("eventId")Long eventId) throws MessagingException,IOException, InterruptedException{
+		return eventService.Participer_event(u.getId(),eventId);
 	}
 	
 	@PutMapping(path="editEventCreatedByUser/{IdEvent}")
@@ -169,11 +190,19 @@ public class EventController {
     
 
 
-    
+    @PostMapping("/add-Commentevent/{idEvent}/{IdUser}")
+	@ResponseBody
+	public ResponseEntity<?> addComment_to_event(@RequestBody eventComment eventcomm, @PathVariable("idEvent") Long idEvent, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return eventService.addComment_to_Post(eventcomm, idEvent,u.getId());
+	}
 
     
 
-    
+    @PutMapping("/Update-eventCom/{idEventCom}/{IdUser}")
+	@ResponseBody
+	public ResponseEntity<?> Update_Comment(@RequestBody eventComment eventcomm, @PathVariable("idEventCom") Long idEventCom, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return eventService.Update_Comment(eventcomm, idEventCom, u.getId());
+	}
     
  
     

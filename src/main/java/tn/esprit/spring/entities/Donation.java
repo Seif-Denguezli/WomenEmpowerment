@@ -43,7 +43,7 @@ public class Donation implements Serializable {
 	
     String qrcode;
     
-    @JsonIgnore
+  
 	@ManyToOne
 	User donor;
 	@JsonIgnore

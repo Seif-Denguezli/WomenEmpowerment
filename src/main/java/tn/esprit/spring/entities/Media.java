@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,10 +37,16 @@ public class Media implements Serializable{
 	
 	
 	private String name;
+	
     private String imagenUrl;
+    
     private String codeImage;
+
+    
+	@JsonIgnore
     @ManyToOne
-    Event event;
+    Event events;
+   
     
     @ManyToOne
     Post post;

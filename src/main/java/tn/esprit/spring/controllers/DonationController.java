@@ -1,5 +1,6 @@
 package tn.esprit.spring.controllers;
 
+import java.awt.print.Pageable;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -11,7 +12,9 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
+
+import springfox.documentation.annotations.ApiIgnore;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,6 +41,8 @@ import tn.esprit.spring.entities.Payment;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.entities.WomenNeedDonation;
 import tn.esprit.spring.repository.*;
+import tn.esprit.spring.security.UserPrincipal;
+import tn.esprit.spring.service.event.PaymentService;
 import tn.esprit.spring.serviceInterface.DonationService;
 import tn.esprit.spring.serviceInterface.EventService;
 @RestController
@@ -48,17 +56,23 @@ public class DonationController {
 	
 	@Autowired
 	DonationRepo donationRepo;
-	
+	 @Autowired
+	    PaymentService paymentService;
 
 
+	@PostMapping("/paymentintent")
+    public ResponseEntity<String> payment(@RequestBody Payment paymentIntentDto) throws StripeException {
+        PaymentIntent paymentIntent = paymentService.paymentIntent(paymentIntentDto);
+        String paymentStr = paymentIntent.toJson();
+        return new ResponseEntity<String>(paymentStr, HttpStatus.OK);
+    }
 	
 	
 	
-	
-	@PostMapping("/add-Donation-Event/{idEvent}/{idUser}")
+	@PostMapping("/add-Donation-Event/{idEvent}")
 	@ResponseBody
-	public Donation addDonation_to_Event(@RequestBody Payment payment ,@PathVariable("idEvent") Long idEvent, @PathVariable("idUser") Long idUser)  throws StripeException {
-		return donationService.addDonation_to_Event(idEvent, idUser,payment);
+	public Donation addDonation_to_Event(@RequestBody Payment payment ,@ApiIgnore @AuthenticationPrincipal UserPrincipal u, @PathVariable("idEvent") Long idEvent)  throws StripeException {
+		return donationService.addDonation_to_Event(u.getId(), idEvent,payment);
 	}
 	
 
@@ -71,6 +85,14 @@ public class DonationController {
 	}
 	
 	
+	
+	@GetMapping("/bestDoner")
+	public List<Object> bestDonner() {
+		//donationRepo.bestDonner();
+		
+		return 	donationRepo.bestDonner();
+		
+	}
 	
 	
 	

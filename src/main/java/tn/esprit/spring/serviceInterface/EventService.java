@@ -17,8 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
+import tn.esprit.spring.entities.PostComment;
 import tn.esprit.spring.entities.SmsRequest;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.entities.eventComment;
 import tn.esprit.spring.enumerations.EventType;
 
 public interface EventService {
@@ -41,13 +43,16 @@ public interface EventService {
 
 	void sendSms(SmsRequest smsRequest, String nb, String msg);
 
-	
-
+	public ResponseEntity<?> addComment_to_Post(eventComment eventcomment, Long idEvent, Long idUser);
+	public ResponseEntity<?> Update_Comment(eventComment eventcomment, Long idEventCom, Long idUser);
+	public ResponseEntity<?> Delete_eventCom(Long idEventCom, Long idUser);
 	public ResponseEntity<?> createEventbyUser(Long idUser, MultipartFile multipartFile, String EventName,
-			String description, Date createAt,Date StartAt, Date endAt, EventType typeEvent, int maxPlace, float targetDonation,
-			String address) throws MessagingException, IOException;
+			String description, Date createAt,Date StartAt, Date endAt, int maxPlace, float targetDonation,
+			String address,String latitude,String lang) throws MessagingException, IOException;
 
-
+	public Event displayEvent(Long idEvent);
+	//new
+	public ResponseEntity<?> create(Long idUser ,Event event) throws IOException;
 
 	public Event EditEventCreateByUser(Event event, Long idEvent);
 

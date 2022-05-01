@@ -71,20 +71,24 @@ public class Event implements Serializable {
 	float TargetDonation;
 	String address;
 
+	String lang;
+	String latitude;
 	
 	
+	String bigDescription;
 	
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "joinedEvents")
 	Set<User> participants;
-	@JsonIgnore
+	
+
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "event")
 	Set<Donation> donations;
-	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "event")
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "events")
 	Set<Media> medias;
 	
-	@JsonIgnore
+	
 	@ManyToOne
 	User createurEvent;
 	
@@ -92,7 +96,8 @@ public class Event implements Serializable {
 	float montantCollecte;
 	
 	
-	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "eventt")
+	Set<eventComment> eventcomment;
 
 	
 }
