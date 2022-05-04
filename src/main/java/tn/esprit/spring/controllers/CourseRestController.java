@@ -141,6 +141,10 @@ public List<Certificate> userCertificate(@PathVariable("courseId") Long courseId
 public Set<Course> userCertificate(@ApiIgnore @AuthenticationPrincipal UserPrincipal u  ) {
 	return userCourseService.getCreatedCourses(u.getId());
 }
+@GetMapping(path="course/FormersNb")
+public int getFormers() {
+	return courseService.getFormersNb();
+}
 
 
 
