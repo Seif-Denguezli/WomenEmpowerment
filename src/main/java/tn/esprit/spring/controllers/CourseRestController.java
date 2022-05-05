@@ -39,9 +39,11 @@ import tn.esprit.spring.entities.FileInfo;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.QuizQuestion;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.enumerations.Domain;
 import tn.esprit.spring.exceptions.CourseNotExist;
 import tn.esprit.spring.exceptions.CourseOwnerShip;
 import tn.esprit.spring.exceptions.CoursesLimitReached;
+import tn.esprit.spring.repository.CourseRepository;
 import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.service.courses.CertificateServiceImpl;
 import tn.esprit.spring.service.courses.CourseCalendarServiceImpl;
@@ -67,6 +69,8 @@ QuizServiceImpl quizService;
 CourseCalendarServiceImpl courseCalendarServiceImpl;
 @Autowired
 CertificateServiceImpl certificateService;
+@Autowired
+CourseRepository courseRep;
 
 /*******************COURSE *********************/
 @PostMapping(path = "addCourse/{userId}")
@@ -144,6 +148,22 @@ public Set<Course> userCertificate(@ApiIgnore @AuthenticationPrincipal UserPrinc
 @GetMapping(path="course/FormersNb")
 public int getFormers() {
 	return courseService.getFormersNb();
+}
+@GetMapping(path="getCoursesByDomain/{domain}")
+public Set<Course> getCoursesByDomain(@PathVariable("domain") String domain){
+	return courseRep.getCoursesByDomain(domain);
+}
+@GetMapping(path="getEndedCourses")
+public Set<Course> getEndedCourses(){
+	return courseRep.getEndedCourses();
+}
+@GetMapping(path="getOnGoingCourses")
+public Set<Course> getonGoingCourses(){
+	return courseRep.getOnGoingCourses();
+}
+@GetMapping(path="getAquiredCertifs")
+public int getAquiredCertifs(){
+	return courseRep.getAquiredCertificates();
 }
 
 
