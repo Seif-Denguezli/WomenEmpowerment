@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,14 +45,14 @@ public class AdminController
     	return ResponseEntity.ok(true);
     }
     
-    @PutMapping("lock/{username}")
-    public ResponseEntity<?> lockUser(String username) {
+    @PutMapping("/lock")
+    public ResponseEntity<?> lockUser(@RequestBody String username) {
     	userService.lockUser(username);
     	return ResponseEntity.ok(true);
     }
     
-    @PutMapping("unlock/{username}")
-    public ResponseEntity<?> unlockUser(@PathVariable(value="username") String username) {
+    @PutMapping("/unlock")
+    public ResponseEntity<?> unlockUser(@RequestBody String username) {
     	userService.unlockUser(username);
     	return ResponseEntity.ok(true);
     }

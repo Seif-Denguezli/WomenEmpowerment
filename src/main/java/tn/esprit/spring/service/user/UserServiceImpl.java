@@ -106,6 +106,7 @@ public class UserServiceImpl implements UserService
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setLocked(false);
         user.setLoginAttempts(0);
+        user.setRegistrationDate(new Date());
         User savedUser = userRepository.save(user);
         emailService.sendWelcomeMail(savedUser.getName(), savedUser.getEmail());
         return savedUser;
@@ -200,6 +201,7 @@ public class UserServiceImpl implements UserService
 
 	@Override
 	public Subscription addSubscription(Subscription s, String username) {
+		s.setSubscriptionDate(new Date());
 		Subscription sub =  subscriptionRepository.save(s);
 		User u = userRepository.findByUsername(username).orElse(null);
 		u.setSubscription(sub);
@@ -207,18 +209,7 @@ public class UserServiceImpl implements UserService
 		return sub;
 	}
 
-	@Override
-	public void extendSubscription(String username, int nbMonths) {
-		User u = userRepository.findByUsername(username).orElse(null);
-		Subscription s = u.getSubscription();
-		Calendar c = Calendar.getInstance();
-		c.setTime(s.getExpiresAt());
-		c.add(Calendar.MONTH, nbMonths);
-		Date date = c.getTime();
-		u.getSubscription().setExpiresAt(date);
-		userRepository.save(u);
-		
-	}
+
 
 	@Override
 	public void removeSubcription(String username) {
