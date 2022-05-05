@@ -66,10 +66,15 @@ public class User implements Serializable{
     
     String PhoneNumber;
     
+    String country;
+    
 	String email;
 	
 	@Temporal(TemporalType.DATE)
 	Date birthDate;
+	
+	@Temporal(TemporalType.DATE)
+	Date registrationDate;
 	
 	boolean isLocked;
 	
@@ -80,6 +85,8 @@ public class User implements Serializable{
 
     @Transient
     String refreshToken;
+    
+    String profilPic;
 	
 	@JsonIgnore
 	@OneToOne

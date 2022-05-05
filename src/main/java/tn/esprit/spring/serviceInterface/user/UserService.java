@@ -57,7 +57,7 @@ public interface UserService
     
     Subscription addSubscription(Subscription s, String username);
     
-    void extendSubscription(String username, int nbMonths);
+    //void extendSubscription(String username, int nbMonths);
     
     void removeSubcription(String username);
 
