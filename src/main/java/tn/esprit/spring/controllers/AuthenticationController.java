@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 import javax.mail.MessagingException;
 
@@ -52,6 +53,7 @@ public class AuthenticationController
 {
 	public static String uploadDirectory22 = "C:\\Users\\lenovo\\Desktop\\spring git\\font\\WomenEmpowermentAngular\\src\\assets\\img\\";
 	public static String uploadDirectory = System.getProperty("user.dir")+"/uploads/";
+	//Static File path
 	public static String uploadDirectory2 = "C:\\Users\\SeifD\\Desktop\\WomenEmpowermentAngular\\src\\assets\\img\\";
 	
 	ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -81,7 +83,7 @@ public class AuthenticationController
     public ResponseEntity<User> signUp(@RequestPart("user") String user, @RequestPart("file") MultipartFile file) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException, IOException, io.jsonwebtoken.io.IOException, TemplateException
     {
     	//upload file
-    	
+ 
     	File convertFile = new File(uploadDirectory2+file.getOriginalFilename());
     	convertFile.createNewFile();
     	FileOutputStream fout = new FileOutputStream(convertFile);
@@ -92,6 +94,7 @@ public class AuthenticationController
     	profilPicture = mediaRepository.save(profilPicture);
     	User userData = objectMapper.readValue(user, User.class);
     	userData.setProfilPicture(profilPicture);
+    	userData.setProfilPic(file.getOriginalFilename());
     	
     	
     	//////
