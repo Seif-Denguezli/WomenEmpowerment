@@ -72,5 +72,18 @@ public List<Certificate> userCertificate(Long courseId) {
 	 byte[] res = response.body();
 	return res;
 	}
+	public List<Certificate> getCertificates(){
+		return certificateRepository.findAll();
+	}
+	public int getAquiredCertificates() {
+		int nb = 0;
+		List<Certificate> certificates = certificateRepository.findAll();
+		for (Certificate certificate : certificates) {
+			if (certificate.isAquired() == true) {
+				nb++;
+			}
+		}
+		return nb;
+	}
 	
 }

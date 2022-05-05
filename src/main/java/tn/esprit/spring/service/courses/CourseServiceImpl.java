@@ -29,6 +29,7 @@ import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.QuizQuestion;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.enumerations.Role;
 import tn.esprit.spring.exceptions.CourseNotExist;
 import tn.esprit.spring.exceptions.CourseOwnerShip;
 import tn.esprit.spring.exceptions.CoursesLimitReached;
@@ -257,6 +258,16 @@ CourseCalendarServiceImpl courseCalendarServiceImpl;
 	            LocalDate.parse(date2).withDayOfMonth(1));
 	}
 	
+	public int getFormersNb() {
+		List<User> users = userRepository.findAll();
+		int count = 0;
+		for (User user : users) {
+			if (user.getRole() == Role.FORMER ){
+				count++;
+			}
+		}
+		return count;
+	}
 	
 	
 	
