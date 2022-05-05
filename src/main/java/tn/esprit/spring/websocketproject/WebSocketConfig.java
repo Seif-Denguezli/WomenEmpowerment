@@ -7,6 +7,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 
+
 @Configuration
 // Enables WebSocket message handling
 @EnableWebSocketMessageBroker
@@ -23,7 +24,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         * designates the /app prefix for messages that are bound for
         * methods annotated with @MessageMapping
         * */
-        config.setApplicationDestinationPrefixes("/app");
+        config.setApplicationDestinationPrefixes("/app");      
+
     }
 
     @Override
@@ -35,6 +37,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         *
         * */
         registry.addEndpoint("/chat-websocket").setAllowedOriginPatterns("*")
+        .setHandshakeHandler(new UserHandshakeHandler())
+
                 .withSockJS();
     }
 

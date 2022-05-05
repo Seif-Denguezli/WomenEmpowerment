@@ -51,6 +51,7 @@ import freemarker.template.TemplateNotFoundException;
 @RequestMapping("api/authentication")//pre-path
 public class AuthenticationController
 {
+
 	public static String uploadDirectory22 = "C:\\Users\\lenovo\\Desktop\\spring git\\font\\WomenEmpowermentAngular\\src\\assets\\img\\";
 	public static String uploadDirectory = System.getProperty("user.dir")+"/uploads/";
 	//Static File path
@@ -83,6 +84,7 @@ public class AuthenticationController
     public ResponseEntity<User> signUp(@RequestPart("user") String user, @RequestPart("file") MultipartFile file) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException, IOException, io.jsonwebtoken.io.IOException, TemplateException
     {
     	//upload file
+
  
     	File convertFile = new File(uploadDirectory2+file.getOriginalFilename());
     	convertFile.createNewFile();
@@ -90,7 +92,7 @@ public class AuthenticationController
     	fout.write(file.getBytes());
     	fout.close();
     	Media profilPicture = new Media();
-    	profilPicture.setImagenUrl(uploadDirectory2+file.getOriginalFilename());
+    	profilPicture.setImagenUrl(uploadDirectory+file.getOriginalFilename());
     	profilPicture = mediaRepository.save(profilPicture);
     	User userData = objectMapper.readValue(user, User.class);
     	userData.setProfilPicture(profilPicture);
