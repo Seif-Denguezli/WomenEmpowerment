@@ -48,7 +48,9 @@ public class Candidacy implements Serializable {
 	
 	@OneToOne
 	Interview interview;
-	
+	@JsonIgnore
+	@OneToOne
+	CvInfo CV;
 	
 	
 	public void setUser(User user) {

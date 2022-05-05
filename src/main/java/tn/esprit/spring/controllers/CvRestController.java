@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import springfox.documentation.annotations.ApiIgnore;
 import tn.esprit.spring.entities.Candidacy;
 import tn.esprit.spring.entities.CvInfo;
+import tn.esprit.spring.repository.CandidacyRepository;
+import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.service.offer.CvStorageServiceImpl;
 import tn.esprit.spring.serviceInterface.offer.ICandidacyService;
 
@@ -30,17 +34,20 @@ public class CvRestController {
 	 @Autowired
 	  private CvStorageServiceImpl storageService;
 	 @Autowired
+	 CandidacyRepository candidacyRepo;
+	 @Autowired
 		ICandidacyService CandidacyService;
 	  @PostMapping("/upload/{userId}/{offerId}")
-	  public ResponseEntity<ResponseMessage> uploadFile(@RequestPart("file") MultipartFile file,@PathVariable("userId") Long userId,@PathVariable("offerId") Long offerId) {
+	  public ResponseEntity<ResponseMessage> uploadFile(@RequestPart("file") MultipartFile file,@ApiIgnore @AuthenticationPrincipal UserPrincipal u,@PathVariable("offerId") Long offerId) {
 	    String message = "";
-
+	    Long userId = u.getId();
 	    try {
-	    	CandidacyService.postulerOffre(offerId, userId);
-	      storageService.store(file,userId);
+	    	Candidacy c = CandidacyService.postulerOffre(offerId, userId);
+	      CvInfo cv = storageService.store(file,userId);
 	      message = "Uploaded the file successfully: " + file.getOriginalFilename();
 		    
-
+	      c.setCV(cv);
+	      candidacyRepo.saveAndFlush(c);
 	      return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
 	      
 
