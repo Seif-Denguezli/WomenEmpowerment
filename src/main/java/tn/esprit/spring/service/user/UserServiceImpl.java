@@ -200,7 +200,8 @@ public class UserServiceImpl implements UserService
 	}
 
 	@Override
-	public Subscription addSubscription(Subscription s, String username) {
+	public Subscription addSubscription(String username) {
+		Subscription s = new Subscription();
 		s.setSubscriptionDate(new Date());
 		Subscription sub =  subscriptionRepository.save(s);
 		User u = userRepository.findByUsername(username).orElse(null);
@@ -559,6 +560,18 @@ public class UserServiceImpl implements UserService
 		}
 		return result;
 		
+	}
+	
+	@Override
+	public List<User> allAdmins(){
+		List<User> users = userRepository.findAll();
+		List<User> result = new ArrayList<>();
+		for (User u : users) {
+			if (u.getRole().name().equals("ADMIN")) {
+				result.add(u);
+			}
+		}
+		return result;
 	}
 	
 	
