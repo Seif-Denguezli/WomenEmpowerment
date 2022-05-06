@@ -40,16 +40,21 @@ import com.twilio.rest.api.v2010.account.MessageCreator;
 import com.twilio.type.PhoneNumber;
 
 import tn.esprit.spring.config.TwilioConfiguration;
+import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.Media;
 import tn.esprit.spring.entities.Post;
 import tn.esprit.spring.entities.PostComment;
+import tn.esprit.spring.entities.PostLike;
 import tn.esprit.spring.entities.SmsRequest;
 
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.entities.eventComment;
 import tn.esprit.spring.enumerations.EventType;
+import tn.esprit.spring.exceptions.CourseNotExist;
+import tn.esprit.spring.exceptions.CourseOwnerShip;
+import tn.esprit.spring.repository.DonationRepo;
 import tn.esprit.spring.repository.EventRepo;
 import tn.esprit.spring.repository.MediaRepo;
 import tn.esprit.spring.repository.UserRepository;
@@ -77,6 +82,9 @@ public class EventServiceImpl implements EventService {
 	ServiceAllEmail emailService;
 	@Autowired
 	eventcommentRepo eventcomRepo;
+	
+	@Autowired
+	DonationRepo donationRepo;
 
 	@Autowired
 	public EventServiceImpl(@Qualifier("twilio") TwilioSmsSender smsSender) {
@@ -128,11 +136,11 @@ public class EventServiceImpl implements EventService {
 		Map result = cloudImage.upload(multipartFile);
 		Event event = new Event();
 		event.setEventName(EventName);
-		event.setCreatedAt(createAt);
+	
 		event.setEndAt(endAt);
-		event.setMaxPlace(maxPlace);
+
 		event.setTargetDonation(targetDonation);
-		event.setAddress(address);
+	
 		event.setDescription(description);
 		event.setLang(lang);
 		event.setLatitude(latitude);
@@ -158,20 +166,7 @@ public class EventServiceImpl implements EventService {
 		return new ResponseEntity(" the event was created with succeed ", HttpStatus.OK);
 	}
 
-	@Override
-	public Event EditEventCreateByUser(Event e, Long idEvent) {
-
-		Event Event = eventRepo.findById(idEvent).get();
-		Event.setEventName(e.getEventName());
-		Event.setEventType(e.getEventType());
-		Event.setLink(e.getLink());
-		Event.setDescription(e.getDescription());
-		Event.setMaxPlace(e.getMaxPlace());
-		Event.setTargetDonation(e.getTargetDonation());
-		Event.setAddress(e.getAddress());
-		eventRepo.flush();
-		return e;
-	}
+	
 
 	@Override
 	public ResponseEntity<?> updateImageForEvent(Long idmedia, MultipartFile multipartFile) throws IOException {
@@ -254,7 +249,7 @@ public class EventServiceImpl implements EventService {
 		SmsRequest smsrequest = new SmsRequest(null, null);
 		User u = userRepo.findById(userid).orElse(null);
 		Event event = eventRepo.findById(eventId).orElse(null);
-		if (event.getParticipants().size() < event.getMaxPlace() && userid != event.getCreateurEvent().getUserId()) {
+		if (userid != event.getCreateurEvent().getUserId()) {
 
 			Set<Event> ev = u.getJoinedEvents();
 			ev.add(event);
@@ -264,7 +259,7 @@ public class EventServiceImpl implements EventService {
 			Set<User> user = event.getParticipants();
 			user.add(u);
 			event.setParticipants(user);
-			event.setMaxPlace(event.getMaxPlace() - 1);
+			
 			eventRepo.save(event);
 			
 			//sendSms(smsrequest, u.getPhoneNumber(), event.getEventName() + " : Participation avec succes");
@@ -280,9 +275,10 @@ public class EventServiceImpl implements EventService {
 
 //			sendSms(smsrequest, u.getPhoneNumber(), event.getEventName()  + " : il y a plus de place");
 			// System.out.println("Place complets");
-			System.out.println(event.getMaxPlace());
-			System.out.println(event.getParticipants().size());
-			return new ResponseEntity(" u are the creator of event or nbr of places are limited ", HttpStatus.OK);
+	
+			
+			//return new ResponseEntity(" u are the creator of event or nbr of places are limited ", HttpStatus.OK);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("particpation non succes");
 		}
 	}
 
@@ -304,7 +300,7 @@ public class EventServiceImpl implements EventService {
 		Event e = eventRepo.findById(eventId).orElse(null);
 
 		for (Donation d : e.getDonations()) {
-			s = s + d.getAmount_forEvent();
+			s = s + d.getAmountForEvent();
 
 		}
 		if (s >= e.getTargetDonation())
@@ -388,24 +384,10 @@ public class EventServiceImpl implements EventService {
 
 	
 
-	@Override
-	public ResponseEntity<?> addressMapss(Long idEvent) throws IOException, InterruptedException {
-		Event event = eventRepo.findById(idEvent).orElse(null);
-    	String ad = event.getAddress().replaceAll(" ","");
-    	HttpRequest request = HttpRequest.newBuilder()
-    			.uri(URI.create("https://trueway-geocoding.p.rapidapi.com/Geocode?address="+ad+"&language=en"))
-    			.header("X-RapidAPI-Host", "trueway-geocoding.p.rapidapi.com")
-    			.header("X-RapidAPI-Key", "ed49ed85d6msh938f7708ed191dbp16c7dfjsne72e10f27091")
-    			.method("GET", HttpRequest.BodyPublishers.noBody())
-    			.build();
-    	HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-    	System.out.println(response.body());
-    return new ResponseEntity(response.body(), HttpStatus.OK);
-    
-	}
+	
 
 	@Override
-	public ResponseEntity<?> addComment_to_Post(eventComment eventcomment, Long idEvent, Long idUser) {
+	public ResponseEntity<?> addComment_to_Event(eventComment eventcomment, Long idEvent, Long idUser) {
 		Event event = eventRepo.findById(idEvent).orElse(null);
 		User user = userRepo.findById(idUser).orElse(null);
 	//	DetctaDataLoad(postComment.getCommentBody(),idUser);
@@ -462,12 +444,118 @@ public class EventServiceImpl implements EventService {
 				return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("No permission to delete this post");
 			}
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("post Not Founf");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("post Not");
 		}
 	
 	}
+
+	@Override
+	public Event deletEvent(Long idUser, Long idEvent) throws CourseNotExist, CourseOwnerShip {
+		  User usr = userRepo.findById(idUser).get();
+			Event e = eventRepo.findById(idEvent).orElse(null);
+			if(e==null) {
+				throw new CourseNotExist("This event does not exist");
+			}
+			if(e.getCreateurEvent().equals(usr)) {
+				usr.getCreatedEvents().remove(e);
+				eventRepo.delete(e);	
+			}else {
+				throw new CourseOwnerShip("You aren't the owner of this event");
+			}
+			
+			return e ;
+	}
 	
 	
+
+	@Override
+	public Event editEvent(Event e, Long idEvent, Long idUser) throws CourseNotExist, CourseOwnerShip {
+	
+		 User usr = userRepo.findById(idUser).get();
+			Event event = eventRepo.findById(idEvent).orElse(null);
+			if(event==null) {
+				throw new CourseNotExist("This event does not exist");
+			}
+			
+		 
+				event.setEventName(e.getEventName());
+			
+			
+				
+				event.setBigDescription(e.getBigDescription());
+			
+			
+				event.setDescription(e.getDescription());
+			
+				
+				event.setStartAt(e.getStartAt());
+				
+			
+				event.setEndAt(e.getEndAt());
+				
+				
+				eventRepo.saveAndFlush(event);
+		
+		
+			
+			return e ;
+	}
+
+
+	@Override
+	public List<Long> findEventYear() {
+		return 	eventRepo.findEventYear();
+	}
+
+	@Override
+	public ResponseEntity<?> getAllComment() {
+	
+		 return new ResponseEntity(	eventcomRepo.findAll(), HttpStatus.OK);
+	}
+
+	@Override
+	public Donation addDonation_to_Event(Long idEvent, Long idUser, Donation donation) {
+		Set<Event> eventList = new HashSet<Event>();
+		Set<Donation> donationList = new HashSet<Donation>();
+
+		User user = userRepo.findById(idUser).orElse(null);
+		Event event = eventRepo.findById(idEvent).orElse(null);
+		donationList.add(donation);
+		user.setDonations(donationList);
+		event.setDonations(donationList);
+	
+		return donationRepo.save(donation);
+	}
+
+	@Override
+	public ResponseEntity<?> addImageForEvent2002(MultipartFile image, Long idEvent) throws IOException {
+		Event e = eventRepo.findById(idEvent).orElse(null);
+		BufferedImage bi = ImageIO.read(image.getInputStream());
+		
+		Map result = cloudImage.upload(image);
+		
+		Media media = new Media((String) 
+				result.get("original_filename")
+				, (String) result.get("url"),
+				(String) result.get("public_id"));
+		media.setEvents(e);
+		mediaService.save(media);
+	
+		return ResponseEntity.status(HttpStatus.OK).body("Image added to adversting");
+	
+	}
+
+	@Override
+	public ResponseEntity<?> addressMapss(Long idEvent) throws IOException, InterruptedException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+
+
 	
 
 	// ------------------------------------------------------------------------------------------------------

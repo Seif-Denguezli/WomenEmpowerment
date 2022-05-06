@@ -99,7 +99,7 @@ public class AuthenticationController
     	return new ResponseEntity<>(userData, HttpStatus.CREATED);
     }
     
-    /*
+   /* 
     @PostMapping("sign-up")
     public ResponseEntity<User> signUp(@RequestBody User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException, io.jsonwebtoken.io.IOException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, TemplateException, IOException{
     	userService.saveUser(user);

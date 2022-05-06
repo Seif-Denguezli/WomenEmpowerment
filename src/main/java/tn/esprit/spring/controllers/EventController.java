@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.text.DateFormat;
@@ -44,17 +45,22 @@ import com.nylas.RequestFailedException;
 
 import springfox.documentation.annotations.ApiIgnore;
 import tn.esprit.spring.entities.APIResponse;
+import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
+import tn.esprit.spring.entities.FileInfo;
 import tn.esprit.spring.entities.Media;
 import tn.esprit.spring.entities.PostComment;
 import tn.esprit.spring.entities.SmsRequest;
 import tn.esprit.spring.entities.eventComment;
 import tn.esprit.spring.enumerations.EventType;
+import tn.esprit.spring.exceptions.CourseNotExist;
+import tn.esprit.spring.exceptions.CourseOwnerShip;
 import tn.esprit.spring.exceptions.CoursesLimitReached;
 import tn.esprit.spring.repository.EventRepo;
 import tn.esprit.spring.repository.MediaRepo;
 import tn.esprit.spring.security.UserPrincipal;
+import tn.esprit.spring.service.courses.FileStorageServiceImpl;
 import tn.esprit.spring.service.event.CloudinaryService;
 
 import tn.esprit.spring.service.event.MediaService;
@@ -68,6 +74,10 @@ public class EventController {
 	@Autowired
 	EventService eventService;
 	
+	
+	 @Autowired
+	  private FileStorageServiceImpl storageService;
+	
 	@Autowired
     CloudinaryService cloudinaryService;
 	
@@ -75,6 +85,7 @@ public class EventController {
 	MediaService mediaService;
 	@Autowired
 	EventRepo eventRepo;
+	
 	
 	//@Autowired
 	//EventCalendarServiceImpl eventCalander;
@@ -86,6 +97,9 @@ public class EventController {
 		return eventService.create(u.getId(), event);
 		
 	}
+	
+	
+	
 	
 	@PostMapping(path = "createEventByUser")
 	public void createEventByUser(
@@ -106,7 +120,10 @@ public class EventController {
 		
 		
 	}
-	
+	@GetMapping("findEventYear")
+	public List<Long> eventYear(){
+		return eventService.findEventYear();
+	}
 	
 	//new
 		@GetMapping(path="getEvent/{EventId}")
@@ -120,11 +137,7 @@ public class EventController {
 		return eventService.Participer_event(u.getId(),eventId);
 	}
 	
-	@PutMapping(path="editEventCreatedByUser/{IdEvent}")
-	public void editEventCreatedByUser(@RequestBody Event e,@PathVariable("IdEvent")Long IdEvent) {
-		eventService.EditEventCreateByUser(e, IdEvent);
-
-	}
+	
 	
 	   @DeleteMapping("/deleteImage/{id}")
 	    public ResponseEntity<?> delete(@PathVariable("id") Long id)throws IOException {
@@ -161,10 +174,6 @@ public class EventController {
 	  
 	  
 
-	 @DeleteMapping("/cancelParticiopation/{iduser}/{idEvent}")
-	public void cancelparticipation(@PathVariable("iduser")Long iduser,@PathVariable("idEvent")Long idEvent) {
-		 eventService.cancelparticipation(iduser, idEvent);
-	 }
 	
 	
 	@PutMapping("/affecte-par-avie/{eventId}")
@@ -193,23 +202,63 @@ public class EventController {
     @PostMapping("/add-Commentevent/{idEvent}/{IdUser}")
 	@ResponseBody
 	public ResponseEntity<?> addComment_to_event(@RequestBody eventComment eventcomm, @PathVariable("idEvent") Long idEvent, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-		return eventService.addComment_to_Post(eventcomm, idEvent,u.getId());
+		return eventService.addComment_to_Event(eventcomm, idEvent,u.getId());
 	}
 
-    
 
-    @PutMapping("/Update-eventCom/{idEventCom}/{IdUser}")
+	 @DeleteMapping("/cancelParticipation/{idEvent}")
+	public void cancelparticipation(@ApiIgnore @AuthenticationPrincipal UserPrincipal u,@PathVariable("idEvent")Long idEvent) {
+		 eventService.cancelparticipation(u.getId(), idEvent);
+	 }    
+
+    @PutMapping("/Update-eventCom/{idEventCom}")
 	@ResponseBody
 	public ResponseEntity<?> Update_Comment(@RequestBody eventComment eventcomm, @PathVariable("idEventCom") Long idEventCom, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		return eventService.Update_Comment(eventcomm, idEventCom, u.getId());
 	}
     
  
+    @DeleteMapping(path="remouveEvent/{idEvent}")
+    public void deleteCourse(@ApiIgnore @AuthenticationPrincipal UserPrincipal u ,@PathVariable("idEvent")Long idEvent) throws CourseNotExist, CourseOwnerShip {
+    	eventService.deletEvent(u.getId(),idEvent);
+    	
+    }
+ 
+   
+    @PutMapping(path="editEvent/{idEvent}")
+    public void editEvent(@RequestBody Event e,@PathVariable("idEvent")Long idEvent,@ApiIgnore @AuthenticationPrincipal UserPrincipal u ) throws CourseNotExist, CourseOwnerShip {
+    	eventService.editEvent(e,idEvent,u.getId());
+
+    }
     
-   
-   
+    
+    
+    
 
     
-    
+	
+	@GetMapping("/getEventComment")
+    public ResponseEntity<?> getAllComment(){
+    	return eventService.getAllComment();
+    	
+    }
+	
+	@PostMapping("add-Donation-Event/{idEvent}")
+	public Donation addDonation_to_Event(Long idEvent, @ApiIgnore @AuthenticationPrincipal UserPrincipal u ,@RequestBody Donation donation) {
+		return eventService.addDonation_to_Event(idEvent, u.getId(), donation);
+		
+		
+		
+	}
+	
+	   @PostMapping(path = "IMAGEEVENT")
+		public ResponseEntity<?>  addImageToEvent(@RequestParam MultipartFile multipartFile,@RequestParam Long idEvent) throws IOException{
+			 return eventService.addImageForEvent2002(multipartFile, idEvent);
+		}
+	   
+	
+	
+	
+
     
 }

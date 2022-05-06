@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
+import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.PostComment;
@@ -22,6 +23,8 @@ import tn.esprit.spring.entities.SmsRequest;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.entities.eventComment;
 import tn.esprit.spring.enumerations.EventType;
+import tn.esprit.spring.exceptions.CourseNotExist;
+import tn.esprit.spring.exceptions.CourseOwnerShip;
 
 public interface EventService {
 
@@ -40,10 +43,10 @@ public interface EventService {
 	public Event affecte_place_event_byavie(Long id_event);
 
 	public void invite_participants(Event t) throws MessagingException;
-
+	public Donation addDonation_to_Event(Long idEvent, Long idUser ,Donation donation);
 	void sendSms(SmsRequest smsRequest, String nb, String msg);
-
-	public ResponseEntity<?> addComment_to_Post(eventComment eventcomment, Long idEvent, Long idUser);
+    public ResponseEntity<?> getAllComment();
+	public ResponseEntity<?> addComment_to_Event(eventComment eventcomment, Long idEvent, Long idUser);
 	public ResponseEntity<?> Update_Comment(eventComment eventcomment, Long idEventCom, Long idUser);
 	public ResponseEntity<?> Delete_eventCom(Long idEventCom, Long idUser);
 	public ResponseEntity<?> createEventbyUser(Long idUser, MultipartFile multipartFile, String EventName,
@@ -53,8 +56,9 @@ public interface EventService {
 	public Event displayEvent(Long idEvent);
 	//new
 	public ResponseEntity<?> create(Long idUser ,Event event) throws IOException;
+	
 
-	public Event EditEventCreateByUser(Event event, Long idEvent);
+	public List<Long> findEventYear();
 
 	public ResponseEntity<?> updateImageForEvent(Long idmedia, MultipartFile multipartFile) throws IOException;
 
@@ -66,5 +70,14 @@ public interface EventService {
 	// ---------------pagination-------------//
 	public Page<Event> findEventWithPaginationAndSorting(int offset, int pageSize, String field);
 	 public ResponseEntity<?> addressMapss(Long  idEvent) throws IOException, InterruptedException;
+	 
+	 
+	 public Event deletEvent(Long idUser, Long idEvent) throws CourseNotExist, CourseOwnerShip ;
+	
+	 
+		public Event editEvent(Event e,Long idEvent,Long idUser) throws CourseNotExist,CourseOwnerShip;
+	 
+	
+		public ResponseEntity<?> addImageForEvent2002(MultipartFile image,Long idEvent) throws IOException;
 
 }

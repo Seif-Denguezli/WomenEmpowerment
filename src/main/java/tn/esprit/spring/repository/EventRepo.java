@@ -77,6 +77,8 @@ public interface EventRepo  extends JpaRepository<Event , Long> {
 	
 	@Query(value="select u.user_id from womenempowerment.users u where role = 'COMPANY'" ,nativeQuery=true)
 	public List<Long> GET_LIST_CAMPANY();
+	@Query(value="select u.user_id from womenempowerment.users u where role = 'ADMIN'" ,nativeQuery=true)
+	public List<Long> GET_LIST_ADMIN();
 	
 	
 	
@@ -90,7 +92,8 @@ public interface EventRepo  extends JpaRepository<Event , Long> {
 	//--------------------------------------------------------------------------------------------------------------
 	//select sum(amount_for_event) from womenempowerment.donation               calculerAllaount
 	//select sum(d.amount_for_event) from womenempowerment.donation d where event_event_id=id
-	
+	@Query(nativeQuery = true , value = "SELECT  COUNT(*)  FROM `event` WHERE year(start_at) = 2022 GROUP BY month(start_at)")
+	public List<Long> findEventYear();
 	
 	
 	}
