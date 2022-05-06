@@ -38,12 +38,12 @@ public class Donation implements Serializable {
 	@Temporal(TemporalType.DATE)
 	Date donationDate;
 	
-    float amount_forEvent;
+    float amountForEvent;
     String codePayement;
 	
     String qrcode;
     
-    @JsonIgnore
+  
 	@ManyToOne
 	User donor;
 	@JsonIgnore

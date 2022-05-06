@@ -9,8 +9,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import tn.esprit.spring.entities.Course;
+import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.FileInfo;
 import tn.esprit.spring.repository.CourseRepository;
+import tn.esprit.spring.repository.EventRepo;
 import tn.esprit.spring.repository.FileDBRepository;
 import tn.esprit.spring.serviceInterface.courses.FileStorageService;
 
@@ -20,6 +22,8 @@ public class FileStorageServiceImpl implements FileStorageService{
 	  private FileDBRepository fileDBRepository;
 	@Autowired
 	CourseRepository courseRepository;
+
+	
 	@Override
 	  public FileInfo store(MultipartFile file,Long courseId) throws IOException {
 	    String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -29,6 +33,7 @@ public class FileStorageServiceImpl implements FileStorageService{
 	    courseRepository.flush();
 	    return fileDBRepository.save(FileInfo);
 	  }
+	
 	@Override
 	  public FileInfo getFile(String id) {
 	    return fileDBRepository.findById(id).get();
@@ -42,4 +47,6 @@ public class FileStorageServiceImpl implements FileStorageService{
 		   fileDBRepository.deleteById(id);
 		   return fileDBRepository.findById(id).get();
 	  }
+
+
 }

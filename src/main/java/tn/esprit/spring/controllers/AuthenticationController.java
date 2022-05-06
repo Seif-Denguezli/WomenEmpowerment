@@ -103,15 +103,15 @@ public class AuthenticationController
     	
     	userService.saveUser(userData);
     	return new ResponseEntity<>(userData, HttpStatus.CREATED);
-
     }
     
-   /* @PostMapping("sign-up")
-    public ResponseEntity<User> signUp(@RequestBody User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException{
+   /* 
+    @PostMapping("sign-up")
+    public ResponseEntity<User> signUp(@RequestBody User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException, io.jsonwebtoken.io.IOException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, TemplateException, IOException{
     	userService.saveUser(user);
     	return new ResponseEntity<>(user, HttpStatus.CREATED);
-    }*/
-    
+    }
+    */
 
     @PostMapping("sign-in")//api/authentication/sign-in
     public ResponseEntity<?> signIn(@RequestBody User user) throws tn.esprit.spring.exceptions.AccountLockedException
