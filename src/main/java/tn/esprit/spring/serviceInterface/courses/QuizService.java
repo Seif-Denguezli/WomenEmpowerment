@@ -25,7 +25,7 @@ public void setCorrectAnswer(Long answerId);
 public Answer answerQuizQuestion(Long idUser,Long idAnswer);
 public int calculScore(Long idUser,Long idQuiz);
 public int userCourseScore(Long idUser,Long idCourse);
-public String userPassed(Long idUser,Long idCourse);
+public Boolean userPassed(Long idUser,Long idCourse);
 public Quiz getQuiz(Long idQuiz);
 public Set<Quiz> getQuizezByCourseId(long courseId);
 public Set<QuizQuestion> getQuestionsByQuizzId(long quizId);

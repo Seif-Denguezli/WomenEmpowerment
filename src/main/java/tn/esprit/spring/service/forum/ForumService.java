@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import sun.net.www.content.text.plain;
 import tn.esprit.spring.entities.*;
 
 import tn.esprit.spring.repository.*;
@@ -122,13 +123,13 @@ a.setCategoryadv(c);
 	public ResponseEntity<?> addComment_to_Post(PostComment postComment, Long idPost, Long idUser) {
 		Post p = postRepo.findById(idPost).orElse(null);
 		User u = userRepo.findById(idUser).orElse(null);
-	//	DetctaDataLoad(postComment.getCommentBody(),idUser);
-	//	if (Filtrage_bad_word(postComment.getCommentBody()) == 0) {
+		DetctaDataLoad(postComment.getCommentBody(),idUser);
+		if (Filtrage_bad_word(postComment.getCommentBody()) == 0) {
 			postComment.setUser(u);
 			postComment.setPost(p);
 
 			postCommentRepo.save(postComment);
-			return ResponseEntity.ok().body(postComment);
+			return ResponseEntity.ok().body(postComment);      }else
 			/*
 			 * Set<PostComment> pc = p.getPostComments(); pc.add(postComment);
 			 * p.setPostComments(pc); postRepo.save(p);
@@ -139,7 +140,7 @@ a.setCategoryadv(c);
 			 * 
 			 */
 			//}
-	//	return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");
+		return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");
 	}
 
 		public PostLike addLike_to_Post(PostLike postLike, Long idPost, Long idUser) {
@@ -190,14 +191,19 @@ a.setCategoryadv(c);
 		if (postRepo.existsById(idPost)) {
 			Post post1 = postRepo.findById(idPost).orElseThrow(() -> new EntityNotFoundException("post not found"));
 			//User user = userRepo.findById(idUser).orElseThrow(() -> new EntityNotFoundException("User not found"));
-			
-
+			if (Filtrage_bad_word(post.getBody()) == 0 && Filtrage_bad_word(post.getPostTitle()) == 0) {
+				if(post.getPostTitle().equals("") == false)	
 				post1.setPostTitle(post.getPostTitle());
+				if(post.getBody().equals("") == false)	
 				post1.setBody(post.getBody());
 				postRepo.saveAndFlush(post1);
 				return ResponseEntity.ok().body(post);
 			
-		} else {
+		} 
+			else
+				return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");}
+
+			else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("post Not Founf");
 		}
 	}
@@ -376,9 +382,9 @@ a.setCategoryadv(c);
 		User u = userRepo.findById(idUser).orElse(null);
 		if (Filtrage_bad_word(postComment.getCommentBody()) == 0) {
 			postComment.setUser(u);
-			postComment.setPost(p.getPost());
-			p.getPostComments().add(postComment);
-
+		//	postComment.setPost(p.getPost());
+		//	p.getPostComments().add(postComment);
+			postComment.setPostCo(p);
 			postCommentRepo.save(postComment);
 			return ResponseEntity.ok().body(postComment);
 			/*
@@ -514,10 +520,7 @@ a.setCategoryadv(c);
 	}
 
 
-	public List<Message> get_conversation(Long idSender, Long idRecever) {
-		
-		return null;
-	}
+
 	
 	
 	public ResponseEntity<?> addCategoryAdv(CategoryAdve a) {
@@ -653,7 +656,7 @@ public ResponseEntity<?> addimagepost(MultipartFile image,Long idpost) throws IO
 	//postRepo.save(p);
 	return ResponseEntity.status(HttpStatus.OK).body("Image added to post");
 	}
-	else return ResponseEntity.status(HttpStatus.OK).body("U r Image Content interdit word");
+	else return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("U r Image Content interdit word");
 
 }
 
@@ -736,5 +739,9 @@ public int PostLikeFromUser(Long isUser,Long Idpost) {
 		
 	}
 	return x;
+}
+public Post getPostById (Long id) {
+	Post p = postRepo.findById(id).orElse(null);
+	return p;
 }
 }

@@ -158,7 +158,7 @@ SanctionLearnerImpl sanctionLearnerImpl;
 	}
 
 	@Override
-	public String userPassed(Long idUser, Long idCourse) {
+	public Boolean userPassed(Long idUser, Long idCourse) {
 		
 	    Date date = new Date();  
 		int nbr=0;
@@ -179,11 +179,11 @@ SanctionLearnerImpl sanctionLearnerImpl;
 			c.setAquired(true);
 			c.setObtainingDate(date);
 			certificateRepository.flush();
-			return "User:"+u.getUsername()+"\t Passed the "+cours.getCourseName()+"\t with a mark of "+userCourseScore(idUser,idCourse)+"/"+nbr; 
+			return true; 
 			
 		}
 		else  {
-			return "User:"+u.getUsername()+"\t failed the "+cours.getCourseName()+"\t with a mark of "+userCourseScore(idUser,idCourse)+"/"+nbr;
+				return false;
 		}
 		
 	}

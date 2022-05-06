@@ -8,7 +8,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import tn.esprit.spring.entities.User;
@@ -44,14 +46,14 @@ public class AdminController
     	return ResponseEntity.ok(true);
     }
     
-    @PutMapping("lock/{username}")
-    public ResponseEntity<?> lockUser(String username) {
+    @PutMapping("/lock")
+    public ResponseEntity<?> lockUser(@RequestBody String username) {
     	userService.lockUser(username);
     	return ResponseEntity.ok(true);
     }
     
-    @PutMapping("unlock/{username}")
-    public ResponseEntity<?> unlockUser(@PathVariable(value="username") String username) {
+    @PutMapping("/unlock")
+    public ResponseEntity<?> unlockUser(@RequestBody String username) {
     	userService.unlockUser(username);
     	return ResponseEntity.ok(true);
     }
@@ -60,5 +62,25 @@ public class AdminController
     @GetMapping("/subscribed")
     public List<User> findSubscribedUsers() {
     	return userService.findSubscribedUsers();
+    }
+    
+    @GetMapping("/usersByMonth")
+    public List<User> usersNumberByMonh(@RequestParam int id){
+    	return userService.usersNumberJanuary(id);
+    }
+    
+    @GetMapping("/subscribedUsersByMonth")
+    public List<User> subscribedUsersNumberByMonh(@RequestParam int id){
+    	return userService.subscribedUsersNumberMonth(id);
+    }
+    
+    @GetMapping("/countries")
+    public List<String> getRegistredCountries(){
+    	return userService.getRegistredCountries();
+    }
+    
+    @GetMapping("numberByCountry")
+	public List<Long> numberRegistrationByCountry(){
+    	return userService.numberRegistrationByCountry();
     }
 }

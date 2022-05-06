@@ -34,9 +34,5 @@ public class Subscription implements Serializable {
 	@Temporal(TemporalType.DATE)
 	Date subscriptionDate;
 	
-	@Temporal(TemporalType.DATE)
-	Date expiresAt;
-	
-	float price;
 
 }

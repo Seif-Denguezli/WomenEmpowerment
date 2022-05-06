@@ -106,6 +106,7 @@ public class UserServiceImpl implements UserService
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setLocked(false);
         user.setLoginAttempts(0);
+        user.setRegistrationDate(new Date());
         User savedUser = userRepository.save(user);
         emailService.sendWelcomeMail(savedUser.getName(), savedUser.getEmail());
         return savedUser;
@@ -200,6 +201,7 @@ public class UserServiceImpl implements UserService
 
 	@Override
 	public Subscription addSubscription(Subscription s, String username) {
+		s.setSubscriptionDate(new Date());
 		Subscription sub =  subscriptionRepository.save(s);
 		User u = userRepository.findByUsername(username).orElse(null);
 		u.setSubscription(sub);
@@ -207,18 +209,7 @@ public class UserServiceImpl implements UserService
 		return sub;
 	}
 
-	@Override
-	public void extendSubscription(String username, int nbMonths) {
-		User u = userRepository.findByUsername(username).orElse(null);
-		Subscription s = u.getSubscription();
-		Calendar c = Calendar.getInstance();
-		c.setTime(s.getExpiresAt());
-		c.add(Calendar.MONTH, nbMonths);
-		Date date = c.getTime();
-		u.getSubscription().setExpiresAt(date);
-		userRepository.save(u);
-		
-	}
+
 
 	@Override
 	public void removeSubcription(String username) {
@@ -515,6 +506,59 @@ public class UserServiceImpl implements UserService
 		}	
 		List<User> commonFriends = new ArrayList<>(FriendsInCommon);
 		return commonFriends;
+	}
+
+	@Override
+	public List<User> usersNumberJanuary(int id){
+		List<User> users = userRepository.findAll();
+		List<User> result = new ArrayList<>();
+		for (User u : users) {
+			if (u.getRegistrationDate().getMonth() == id) {
+				result.add(u);
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	public List<User> subscribedUsersNumberMonth(int id){
+		List<User> users = userRepository.subscribedUsers();
+		List<User> result = new ArrayList<>();
+		for (User u : users) {
+			if (u.getRegistrationDate().getMonth() == id) {
+				result.add(u);
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	public List<String> getRegistredCountries(){
+		List<User> users = userRepository.findAll();
+		Set<String> countries = new HashSet<>();
+		for (User u : users) {
+			countries.add(u.getCountry());
+		}
+		List<String> result = new ArrayList<>(countries);
+		return result;
+	}
+	
+	@Override
+	public List<Long> numberRegistrationByCountry(){
+		List<String> countries = getRegistredCountries();
+		List<User> users = userRepository.findAll();
+		List<Long> result = new ArrayList<>();
+		for (String country : countries){ 
+			Long i = 0L;
+			for (User u : users) {
+				if (country.equals(u.getCountry())) {
+					i++;
+				}
+			}
+			result.add(i);
+		}
+		return result;
+		
 	}
 	
 	

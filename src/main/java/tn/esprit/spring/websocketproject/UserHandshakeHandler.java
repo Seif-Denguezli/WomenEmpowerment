@@ -1,4 +1,4 @@
-package tn.esprit.spring.websocket;
+package tn.esprit.spring.websocketproject;
 
 import com.sun.security.auth.UserPrincipal;
 import org.slf4j.Logger;

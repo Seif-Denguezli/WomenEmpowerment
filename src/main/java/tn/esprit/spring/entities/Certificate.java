@@ -50,7 +50,7 @@ public class Certificate implements Serializable {
 	boolean isAquired;
 	@Nullable
     String certificateQR;
-	@JsonIgnoreProperties("obtainedCertificates")
+	@JsonIgnoreProperties({"obtainedCertificates","createdCourses"})
 	@ManyToOne
 	User user;
 

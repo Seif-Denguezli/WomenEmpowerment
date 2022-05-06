@@ -2,8 +2,11 @@ package tn.esprit.spring.controllers;
 
 
 
+import tn.esprit.spring.entities.Candidacy;
 import tn.esprit.spring.entities.Course;
+import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.Notification;
+import tn.esprit.spring.entities.Offer;
 import tn.esprit.spring.entities.Post;
 import tn.esprit.spring.entities.Subscription;
 import tn.esprit.spring.entities.User;
@@ -11,6 +14,9 @@ import tn.esprit.spring.exceptions.FriendExist;
 import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.service.forum.ForumService;
+import tn.esprit.spring.serviceInterface.EventService;
+import tn.esprit.spring.serviceInterface.courses.CourseService;
+import tn.esprit.spring.serviceInterface.offer.IOfferService;
 import tn.esprit.spring.serviceInterface.user.UserService;
 
 import java.util.Date;
@@ -48,6 +54,15 @@ public class UserController
     
     @Autowired
     ForumService forumService;
+    
+    @Autowired
+    CourseService courseService;
+    
+    @Autowired
+    EventService eventService;
+    
+    @Autowired
+    IOfferService OfferService;
     
     
     @PutMapping("/update")
@@ -88,15 +103,15 @@ public class UserController
     	return userService.findCoursesBetweenDates(startDate, endDate);
     }
     
-    @PostMapping("/subscription/save/{username}")
-    public Subscription addSubscription(@RequestBody Subscription s,@PathVariable(name="username") String username) {
-    	return userService.addSubscription(s, username);
+    @PostMapping("/subscription/save")
+    public Subscription addSubscription(@RequestBody Subscription s,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+    	return userService.addSubscription(s, u.getUsername());
     }
     
-    @PutMapping("/subscription/extend/{username}/{nbMonths}")
+  /*  @PutMapping("/subscription/extend/{username}/{nbMonths}")
     public void extendSubscription(@PathVariable(name="username") String username,@PathVariable(name="nbMonths") int nbMonths) {
     	userService.extendSubscription(username, nbMonths);
-    }
+    }*/
     
     @DeleteMapping("/subscription/remove")
     public void removeSubcription(String username) {
@@ -178,6 +193,26 @@ public class UserController
 	@GetMapping("/myPosts")
 	public Set<Post> Get_post_by_User(@AuthenticationPrincipal UserPrincipal user){
 		return forumService.Get_post_by_User(user.getId());
+	}
+	
+	@GetMapping("/posts")
+	public List<Post> Get_all_post(){
+		return forumService.Get_all_post();
+	}
+	
+	@GetMapping(path="/courses")
+	public List<Course> getAllCourses(){
+		return courseService.displayAllCourses();
+	}
+	
+	@GetMapping("/events")
+	public List<Event> Get_all_Event(){
+		return eventService.Get_all_Event();
+	}
+	
+	@GetMapping("/offers")
+	public List<Offer> getOffers() {
+		return OfferService.getAllOffers();
 	}
     
 

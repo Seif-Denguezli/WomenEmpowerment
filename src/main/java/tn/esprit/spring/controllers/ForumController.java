@@ -3,6 +3,8 @@ package tn.esprit.spring.controllers;
 
 
 import java.io.IOException;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -11,6 +13,7 @@ import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +49,7 @@ public class ForumController {
 	@ResponseBody
 	public ResponseEntity<?> addPost_affectedto_User(@RequestBody Post post,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		Long iduser = u.getId();
+		post.setCreatedAt(Date.valueOf(LocalDate.now()))	;
 		return forumService.addPost(post,iduser);
 	}
 	@PostMapping("/add-Bad-word")
@@ -53,9 +58,9 @@ public class ForumController {
 	
 		return forumService.addBadWord(b);
 	}
-	@PostMapping("/add-Advertising/{IdUser}")
+	@PostMapping("/add-Advertising/{idCategory}")
 	@ResponseBody
-	public ResponseEntity<?> addAdvertising_affectedto_User(@RequestBody Advertising a,@ApiIgnore @AuthenticationPrincipal UserPrincipal u,Long idCategory) {
+	public ResponseEntity<?> addAdvertising_affectedto_User(@RequestBody Advertising a,@PathVariable("idCategory") Long idCategory,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		return forumService.addAdvertising(a,u.getId(),idCategory);
 	}
 	
@@ -68,6 +73,8 @@ public class ForumController {
 	@PostMapping("/add-Comment/{IdPost}/{IdUser}")
 	@ResponseBody
 	public ResponseEntity<?> addComment_to_Post(@RequestBody PostComment postComment, @PathVariable("IdPost") Long IdPost/*, @ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
+		postComment.setCommentedAt(Date.valueOf(LocalDate.now()))	;
+
 		return forumService.addComment_to_Post(postComment,IdPost,(long)1/*,u.getId()*/);
 	}
 	
@@ -111,7 +118,7 @@ public class ForumController {
 	}
 	
 	
-	@PutMapping("/Update-Post/{IdPost}/{IdUser}")
+	@PutMapping("/Update-Post/{IdPost}/")
 	@ResponseBody
 	public ResponseEntity<?> Update_Post(@RequestBody Post post, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		return forumService.Update_post(post,IdPost,u.getId());
@@ -124,7 +131,7 @@ public class ForumController {
 	}
 	
 	
-	@PutMapping("/Update-Comment/{IdPostCom}/{IdUser}")
+	@PutMapping("/Update-Comment/{IdPostCom}/")
 	@ResponseBody
 	public ResponseEntity<?> Update_Comment(@RequestBody PostComment postComment, @PathVariable("IdPostCom") Long IdPostCom, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		return forumService.Update_Comment(postComment,IdPostCom,u.getId());
@@ -181,9 +188,9 @@ public class ForumController {
 		return forumService.Delete_Adversting(IdPost);
 	}
 	
-	@DeleteMapping("/Delete-PostComment/{IdPostCom}/{IdUser}")
-	public ResponseEntity<?> Delete_PostCom( @PathVariable("IdPostCom") Long IdPostCom, @PathVariable("IdUser") Long IdUser) {
-		return forumService.Delete_PostCom(IdPostCom,IdUser);
+	@DeleteMapping("/Delete-PostComment/{IdPostCom}")
+	public ResponseEntity<?> Delete_PostCom( @PathVariable("IdPostCom") Long IdPostCom,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.Delete_PostCom(IdPostCom,u.getId());
 	}
 	//@Scheduled(cron = "*/30 * * * * *")
 	@DeleteMapping("/Delete-Post-Redandant")
@@ -210,7 +217,7 @@ public class ForumController {
 		return forumService.Give_Etoile_Post (idPost,nb_etoile);
 	}
 	
-	@PutMapping("/Report-Post/{idPost}")
+	@GetMapping("/Report-Post/{idPost}")
 	public  ResponseEntity<?> Report_User(@PathVariable("idPost") Long idPost ,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) throws MessagingException{
 		return forumService.Report_User (idPost,u.getId());
 	}
@@ -261,7 +268,8 @@ public class ForumController {
 	}	
 	
 	@PostMapping("/add-Post-image/{idpost}")
-	public ResponseEntity<?> addpostimage(@RequestParam("Image") MultipartFile image,@PathVariable("idpost") Long idpost) throws IOException {
+	@ResponseBody
+	public ResponseEntity<?> addpostimage(@RequestParam MultipartFile image,@PathVariable("idpost") Long idpost) throws IOException {
 				return forumService.addimagepost(image,idpost);
 
 	}
@@ -270,6 +278,10 @@ public class ForumController {
 	public ResponseEntity<?> addadvimage(@RequestParam("Image") MultipartFile image,@PathVariable("idadv") Long idadv) throws IOException {
 				return forumService.addimageAdverstingt(image,idadv);
 
-	}
+	}@GetMapping("/Get-Post-Details/{idpost}")
+	public Post Get_Post_Details(@PathVariable("idpost") Long idpost) {
+		return forumService.getPostById(idpost);
+
+}
 }
 

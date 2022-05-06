@@ -116,7 +116,7 @@ public class QuizRestController {
 		return quizService.userCourseScore(idUser, idCourse);
 	}
 	@GetMapping(path="didUserPass/{idUser}/{idCourse}")
-	String userPassed(@PathVariable("idUser")Long idUser,@PathVariable("idCourse") Long idCourse) {
+	Boolean userPassed(@PathVariable("idUser")Long idUser,@PathVariable("idCourse") Long idCourse) {
 		return quizService.userPassed(idUser, idCourse);
 	}
 	@GetMapping(path="getQuiz/{idQuiz}")

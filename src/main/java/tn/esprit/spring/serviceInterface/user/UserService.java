@@ -57,7 +57,7 @@ public interface UserService
     
     Subscription addSubscription(Subscription s, String username);
     
-    void extendSubscription(String username, int nbMonths);
+    //void extendSubscription(String username, int nbMonths);
     
     void removeSubcription(String username);
 
@@ -84,6 +84,14 @@ public interface UserService
 	List<User> FriendsInCommon(Long userId1, Long userId2);
 
 	void deleteFriend(String username1, String username2);
+
+	List<User> usersNumberJanuary(int id);
+
+	List<User> subscribedUsersNumberMonth(int id);
+
+	List<String> getRegistredCountries();
+
+	List<Long> numberRegistrationByCountry();
 
 
 
