@@ -26,6 +26,7 @@ import com.sun.xml.bind.v2.runtime.reflect.Lister.CollectionLister;
 import tn.esprit.spring.entities.Answer;
 import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Course;
+import tn.esprit.spring.entities.Notification;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.QuizQuestion;
 import tn.esprit.spring.entities.User;
@@ -34,6 +35,7 @@ import tn.esprit.spring.exceptions.CourseNotExist;
 import tn.esprit.spring.exceptions.CourseOwnerShip;
 import tn.esprit.spring.exceptions.CoursesLimitReached;
 import tn.esprit.spring.repository.CourseRepository;
+import tn.esprit.spring.repository.NotificationRepository;
 import tn.esprit.spring.repository.QuizzRepository;
 import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.serviceInterface.courses.CourseService;
@@ -47,6 +49,8 @@ UserRepository userRepository;
 QuizzRepository quizzRepository; 
 @Autowired
 CourseCalendarServiceImpl courseCalendarServiceImpl;
+@Autowired
+NotificationRepository notificationRepository;
 	@Override
 	public Course addCourse(Course c) {
 		
@@ -84,6 +88,15 @@ CourseCalendarServiceImpl courseCalendarServiceImpl;
 		Set<Course> courses = usr.getCreatedCourses();
 		courses.add(c);
 		userRepository.save(usr);
+		
+
+
+				Notification notif = new Notification();
+	            notif.setCreatedAt(new Date());
+	            notif.setMessage(c.getCourseName() +" has been successfully created !");
+	            notif.setRead(false);
+	            notif.setUser(usr);
+	            notificationRepository.save(notif);
 		
 		}
 		else {

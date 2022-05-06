@@ -13,4 +13,5 @@ public interface FileStorageService {
 	public FileInfo getFile(String id);
 	public Stream<FileInfo> getAllFiles();
 	public FileInfo removeFile(String id);
+	 
 }

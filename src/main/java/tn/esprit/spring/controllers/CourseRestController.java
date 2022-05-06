@@ -73,13 +73,13 @@ CertificateServiceImpl certificateService;
 CourseRepository courseRep;
 
 /*******************COURSE *********************/
-@PostMapping(path = "addCourse/{userId}")
-public ResponseEntity<Object> addCourse(@RequestBody Course c,@PathVariable("userId")Long userId) throws CoursesLimitReached, IOException, RequestFailedException {
+@PostMapping(path = "addCourse")
+public ResponseEntity<Object> addCourse(@RequestBody Course c,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) throws CoursesLimitReached, IOException, RequestFailedException {
 	if(c.getStartDate().compareTo(c.getEndDate())>0) {
 		return new ResponseEntity<>("Start date shouldn't be after end date",HttpStatus.EXPECTATION_FAILED);
 	}
 	else {
-	courseService.affectCourseToUser(userId, c);
+	courseService.affectCourseToUser(u.getId(), c);
 	return new ResponseEntity<>(c,HttpStatus.OK);
 	}
 }
@@ -90,9 +90,14 @@ public void deleteCourse(@ApiIgnore @AuthenticationPrincipal UserPrincipal u ,@P
 }
 
 @PutMapping(path="editCourse/{courseId}")
-public void editCourse(@RequestBody Course c,@PathVariable("courseId")Long courseId,@ApiIgnore @AuthenticationPrincipal UserPrincipal u ) throws CourseNotExist, CourseOwnerShip {
+public ResponseEntity<Object> editCourse(@RequestBody Course c,@PathVariable("courseId")Long courseId,@ApiIgnore @AuthenticationPrincipal UserPrincipal u ) throws CourseNotExist, CourseOwnerShip {
+	if(c.getStartDate().compareTo(c.getEndDate())>0) {
+		return new ResponseEntity<>("Start date shouldn't be after end date",HttpStatus.EXPECTATION_FAILED);
+	}
+	else {
 	courseService.editCourse(c,courseId,u.getId());
-
+	return new ResponseEntity<>(c,HttpStatus.OK);
+	}
 }
 @GetMapping(path="getAllCourses")
 public List<Course> getAllCourses(){

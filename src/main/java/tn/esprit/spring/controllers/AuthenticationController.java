@@ -86,13 +86,13 @@ public class AuthenticationController
     	//upload file
 
  
-    	File convertFile = new File(uploadDirectory+file.getOriginalFilename());
+    	File convertFile = new File(uploadDirectory2+file.getOriginalFilename());
     	convertFile.createNewFile();
     	FileOutputStream fout = new FileOutputStream(convertFile);
     	fout.write(file.getBytes());
     	fout.close();
     	Media profilPicture = new Media();
-    	profilPicture.setImagenUrl(uploadDirectory+file.getOriginalFilename());
+    	profilPicture.setImagenUrl(uploadDirectory2+file.getOriginalFilename());
     	profilPicture = mediaRepository.save(profilPicture);
     	User userData = objectMapper.readValue(user, User.class);
     	userData.setProfilPicture(profilPicture);
@@ -103,15 +103,15 @@ public class AuthenticationController
     	
     	userService.saveUser(userData);
     	return new ResponseEntity<>(userData, HttpStatus.CREATED);
-
     }
     
-   /* @PostMapping("sign-up")
-    public ResponseEntity<User> signUp(@RequestBody User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException{
+   /* 
+    @PostMapping("sign-up")
+    public ResponseEntity<User> signUp(@RequestBody User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException, io.jsonwebtoken.io.IOException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, TemplateException, IOException{
     	userService.saveUser(user);
     	return new ResponseEntity<>(user, HttpStatus.CREATED);
-    }*/
-    
+    }
+    */
 
     @PostMapping("sign-in")//api/authentication/sign-in
     public ResponseEntity<?> signIn(@RequestBody User user) throws tn.esprit.spring.exceptions.AccountLockedException

@@ -37,10 +37,16 @@ public class Media implements Serializable{
 	
 	
 	private String name;
+	
     private String imagenUrl;
+    
     private String codeImage;
+
+    
+	@JsonIgnore
     @ManyToOne
-    Event event;
+    Event events;
+   
     
     @JsonIgnore
     @ManyToOne

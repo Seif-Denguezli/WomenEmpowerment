@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import tn.esprit.spring.entities.User;
@@ -61,5 +62,30 @@ public class AdminController
     @GetMapping("/subscribed")
     public List<User> findSubscribedUsers() {
     	return userService.findSubscribedUsers();
+    }
+    
+    @GetMapping("/usersByMonth")
+    public List<User> usersNumberByMonh(@RequestParam int id){
+    	return userService.usersNumberJanuary(id);
+    }
+    
+    @GetMapping("/subscribedUsersByMonth")
+    public List<User> subscribedUsersNumberByMonh(@RequestParam int id){
+    	return userService.subscribedUsersNumberMonth(id);
+    }
+    
+    @GetMapping("/countries")
+    public List<String> getRegistredCountries(){
+    	return userService.getRegistredCountries();
+    }
+    
+    @GetMapping("numberByCountry")
+	public List<Long> numberRegistrationByCountry(){
+    	return userService.numberRegistrationByCountry();
+    }
+    
+    @GetMapping("/admins")
+    public List<User> allAdmins(){
+    	return userService.allAdmins();
     }
 }

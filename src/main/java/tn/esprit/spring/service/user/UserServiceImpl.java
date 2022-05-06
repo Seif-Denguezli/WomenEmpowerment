@@ -200,7 +200,8 @@ public class UserServiceImpl implements UserService
 	}
 
 	@Override
-	public Subscription addSubscription(Subscription s, String username) {
+	public Subscription addSubscription(String username) {
+		Subscription s = new Subscription();
 		s.setSubscriptionDate(new Date());
 		Subscription sub =  subscriptionRepository.save(s);
 		User u = userRepository.findByUsername(username).orElse(null);
@@ -506,6 +507,71 @@ public class UserServiceImpl implements UserService
 		}	
 		List<User> commonFriends = new ArrayList<>(FriendsInCommon);
 		return commonFriends;
+	}
+
+	@Override
+	public List<User> usersNumberJanuary(int id){
+		List<User> users = userRepository.findAll();
+		List<User> result = new ArrayList<>();
+		for (User u : users) {
+			if (u.getRegistrationDate().getMonth() == id) {
+				result.add(u);
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	public List<User> subscribedUsersNumberMonth(int id){
+		List<User> users = userRepository.subscribedUsers();
+		List<User> result = new ArrayList<>();
+		for (User u : users) {
+			if (u.getRegistrationDate().getMonth() == id) {
+				result.add(u);
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	public List<String> getRegistredCountries(){
+		List<User> users = userRepository.findAll();
+		Set<String> countries = new HashSet<>();
+		for (User u : users) {
+			countries.add(u.getCountry());
+		}
+		List<String> result = new ArrayList<>(countries);
+		return result;
+	}
+	
+	@Override
+	public List<Long> numberRegistrationByCountry(){
+		List<String> countries = getRegistredCountries();
+		List<User> users = userRepository.findAll();
+		List<Long> result = new ArrayList<>();
+		for (String country : countries){ 
+			Long i = 0L;
+			for (User u : users) {
+				if (country.equals(u.getCountry())) {
+					i++;
+				}
+			}
+			result.add(i);
+		}
+		return result;
+		
+	}
+	
+	@Override
+	public List<User> allAdmins(){
+		List<User> users = userRepository.findAll();
+		List<User> result = new ArrayList<>();
+		for (User u : users) {
+			if (u.getRole().name().equals("ADMIN")) {
+				result.add(u);
+			}
+		}
+		return result;
 	}
 	
 	

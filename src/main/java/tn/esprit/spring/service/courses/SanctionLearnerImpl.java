@@ -1,5 +1,6 @@
 package tn.esprit.spring.service.courses;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -11,11 +12,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Course;
+import tn.esprit.spring.entities.Notification;
 import tn.esprit.spring.entities.SanctionLearnner;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.enumerations.Penality;
 import tn.esprit.spring.repository.CertificateRepository;
 import tn.esprit.spring.repository.CourseRepository;
+import tn.esprit.spring.repository.NotificationRepository;
 import tn.esprit.spring.repository.SanctionLearnerRepository;
 import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.serviceInterface.courses.SanctionLearner;
@@ -31,6 +34,8 @@ SanctionLearnerRepository sanctionLearnerRepository;
 UserRepository userRepository;
 @Autowired
 UserCourseServiceImpl userCourseServiceImpl;
+@Autowired
+NotificationRepository notificationRepository;
 	@Override
 	public void Sanction(Long courseId, Long userId,Penality p) {
 		SanctionLearnner sc = new 	SanctionLearnner();
@@ -66,15 +71,28 @@ UserCourseServiceImpl userCourseServiceImpl;
 								List<SanctionLearnner> sanctions =sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
 								sanctionLearnerRepository.deleteAll(sanctions);
 								certificateRepository.delete(certificate);
+								Notification notif = new Notification();
+					            notif.setCreatedAt(new Date());
+					            notif.setMessage("You have been kicked from " + cour.getCourseName());
+					            notif.setRead(false);
+					            notif.setUser(u);
+					            notificationRepository.save(notif);
 								
 							
 							}
 						if(sanctionLearner.getPenality().equals(Penality.WARNING))
 							{
-								
+							Course cour = certificate.getCourse();
+							User u = certificate.getUser();
 								warnCount = warnCount + 1 ;
 								
 								System.err.println( certificate.getCertificateId() + ":::::::" +warnCount);
+								Notification notif = new Notification();
+					            notif.setCreatedAt(new Date());
+					            notif.setMessage("Watchout ! You have " + warnCount + "on " + cour.getCourseName());
+					            notif.setRead(false);
+					            notif.setUser(u);
+					            notificationRepository.save(notif);
 								
 							}
 					}

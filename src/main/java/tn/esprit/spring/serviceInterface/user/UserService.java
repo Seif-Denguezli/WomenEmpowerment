@@ -55,7 +55,7 @@ public interface UserService
     
     List<Course> findCoursesBetweenDates(Date startDate, Date endDate);
     
-    Subscription addSubscription(Subscription s, String username);
+    Subscription addSubscription(String username);
     
     //void extendSubscription(String username, int nbMonths);
     
@@ -84,6 +84,16 @@ public interface UserService
 	List<User> FriendsInCommon(Long userId1, Long userId2);
 
 	void deleteFriend(String username1, String username2);
+
+	List<User> usersNumberJanuary(int id);
+
+	List<User> subscribedUsersNumberMonth(int id);
+
+	List<String> getRegistredCountries();
+
+	List<Long> numberRegistrationByCountry();
+	
+	public List<User> allAdmins();
 
 
 
