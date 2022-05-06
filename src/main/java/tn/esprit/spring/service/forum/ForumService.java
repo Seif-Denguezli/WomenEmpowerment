@@ -656,7 +656,7 @@ public ResponseEntity<?> addimagepost(MultipartFile image,Long idpost) throws IO
 	//postRepo.save(p);
 	return ResponseEntity.status(HttpStatus.OK).body("Image added to post");
 	}
-	else return ResponseEntity.status(HttpStatus.OK).body("U r Image Content interdit word");
+	else return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("U r Image Content interdit word");
 
 }
 
