@@ -206,15 +206,6 @@ public class User implements Serializable{
 	
 	//******************************************************************//
 
-	// message
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="sender")
-	private Set<Message> senders;
-	
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="reciver")
-	private Set<Message> recivers;
-	
-	
 	
 	String ExpertCalander;
 	}
