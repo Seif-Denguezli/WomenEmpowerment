@@ -191,14 +191,19 @@ a.setCategoryadv(c);
 		if (postRepo.existsById(idPost)) {
 			Post post1 = postRepo.findById(idPost).orElseThrow(() -> new EntityNotFoundException("post not found"));
 			//User user = userRepo.findById(idUser).orElseThrow(() -> new EntityNotFoundException("User not found"));
-			
-
+			if (Filtrage_bad_word(post.getBody()) == 0 && Filtrage_bad_word(post.getPostTitle()) == 0) {
+				if(post.getPostTitle().equals("") == false)	
 				post1.setPostTitle(post.getPostTitle());
+				if(post.getBody().equals("") == false)	
 				post1.setBody(post.getBody());
 				postRepo.saveAndFlush(post1);
 				return ResponseEntity.ok().body(post);
 			
-		} else {
+		} 
+			else
+				return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");}
+
+			else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("post Not Founf");
 		}
 	}
@@ -515,10 +520,7 @@ a.setCategoryadv(c);
 	}
 
 
-	public List<Message> get_conversation(Long idSender, Long idRecever) {
-		
-		return null;
-	}
+
 	
 	
 	public ResponseEntity<?> addCategoryAdv(CategoryAdve a) {
@@ -654,7 +656,7 @@ public ResponseEntity<?> addimagepost(MultipartFile image,Long idpost) throws IO
 	//postRepo.save(p);
 	return ResponseEntity.status(HttpStatus.OK).body("Image added to post");
 	}
-	else return ResponseEntity.status(HttpStatus.OK).body("U r Image Content interdit word");
+	else return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("U r Image Content interdit word");
 
 }
 

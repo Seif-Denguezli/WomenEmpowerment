@@ -85,6 +85,14 @@ public interface UserService
 
 	void deleteFriend(String username1, String username2);
 
+	List<User> usersNumberJanuary(int id);
+
+	List<User> subscribedUsersNumberMonth(int id);
+
+	List<String> getRegistredCountries();
+
+	List<Long> numberRegistrationByCountry();
+
 
 
     
