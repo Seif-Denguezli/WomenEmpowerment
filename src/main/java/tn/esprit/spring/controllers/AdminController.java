@@ -83,4 +83,9 @@ public class AdminController
 	public List<Long> numberRegistrationByCountry(){
     	return userService.numberRegistrationByCountry();
     }
+    
+    @GetMapping("/admins")
+    public List<User> allAdmins(){
+    	return userService.allAdmins();
+    }
 }

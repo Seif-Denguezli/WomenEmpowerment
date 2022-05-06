@@ -13,6 +13,7 @@ import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.exceptions.CourseOwnerShip;
 import tn.esprit.spring.repository.CourseRepository;
+import tn.esprit.spring.repository.NotificationRepository;
 import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.serviceInterface.courses.CourseLiveService;
 @Service
@@ -21,6 +22,8 @@ public class CourseChannelImpl implements CourseLiveService {
 CourseRepository courseRepository;
 @Autowired
 UserRepository userRepository;
+@Autowired
+NotificationRepository notificationRepository;
 	@Override
 	public String createchannel(long courseId,long userId) throws IOException, InterruptedException {
 		Course cour = courseRepository.findById(courseId).get();
