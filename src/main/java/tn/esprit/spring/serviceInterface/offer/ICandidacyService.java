@@ -12,7 +12,7 @@ public interface ICandidacyService {
 	
 	public  Candidacy postulerOffre (Long offerId,Long userId );
 	
-	public void SetFavorite(Long candidacy_id,boolean is_bookmarked);
+	public void SetFavorite(Long candidacy_id);
 	
     public List<String> getMyCandidacy(String keyword);
     

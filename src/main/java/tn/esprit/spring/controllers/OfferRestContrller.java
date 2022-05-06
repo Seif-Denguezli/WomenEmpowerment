@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,10 +45,13 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import com.nylas.RequestFailedException;
 
 import io.swagger.annotations.ApiOperation;
+import springfox.documentation.annotations.ApiIgnore;
 import tn.esprit.spring.entities.Candidacy;
 import tn.esprit.spring.entities.CvInfo;
 import tn.esprit.spring.entities.Offer;
+import tn.esprit.spring.repository.CandidacyRepository;
 import tn.esprit.spring.repository.IOfferRepository;
+import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.service.offer.CalendarServiceImpl;
 import tn.esprit.spring.serviceInterface.offer.ICandidacyService;
 import tn.esprit.spring.serviceInterface.offer.ICvStorageService;
@@ -61,6 +65,8 @@ public class OfferRestContrller {
 	IOfferService OfferService;
 	@Autowired
 	IOfferRepository OfferRepo ;
+	@Autowired
+	CandidacyRepository candidacyRepo;
 	@Autowired
 	ICandidacyService CandidacyService;
 	@Autowired
@@ -142,19 +148,26 @@ public class OfferRestContrller {
 	
 	@PutMapping ("/Set-Favorite/{id}")
 	@ResponseBody
-	public void SetFavorite ( @PathVariable(value="id") Long candidacy_id,boolean is_bookmarked) {
-		CandidacyService.SetFavorite(candidacy_id, is_bookmarked);
+	public void SetFavorite ( @PathVariable(value="id") Long candidacy_id) {
+		CandidacyService.SetFavorite(candidacy_id);
 	}
 	
 	
 	@GetMapping("/listMyCandidacy")
-    public List <String>  listMyCandidacy( @Param("userId") String keyword) {
-        return CandidacyService.getMyCandidacy(keyword);
+    public List <Candidacy>  listMyCandidacy( @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		Long userId = u.getId();
+		String keyword = userId.toString();
+        return (List<Candidacy>) candidacyRepo.mycand(keyword);
+        		
+        		// CandidacyService.getMyCandidacy(keyword);*/
 	}
 	
 	@GetMapping("/listMyFavoriteCandidacy")
-    public List <String>  listMyFavoriteCandidacy( @Param("userId") String keyword) {
-        return CandidacyService.getMyFavoriteCandidacy(keyword);
+    public List <Candidacy>  listMyFavoriteCandidacy(  @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		Long userId = u.getId();
+		String keyword = userId.toString();
+        return (List<Candidacy>) candidacyRepo.searchFavorite(keyword);
+        		//CandidacyService.getMyFavoriteCandidacy(keyword);
 	}
 	
 	
