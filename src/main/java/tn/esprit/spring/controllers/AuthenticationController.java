@@ -86,7 +86,7 @@ public class AuthenticationController
     	//upload file
 
  
-    	File convertFile = new File(uploadDirectory2+file.getOriginalFilename());
+    	File convertFile = new File(uploadDirectory+file.getOriginalFilename());
     	convertFile.createNewFile();
     	FileOutputStream fout = new FileOutputStream(convertFile);
     	fout.write(file.getBytes());
