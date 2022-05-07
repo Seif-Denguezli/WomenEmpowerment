@@ -13,9 +13,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import tn.esprit.spring.entities.Donation;
+import tn.esprit.spring.entities.Event;
+import tn.esprit.spring.entities.Post;
+import tn.esprit.spring.entities.PostComment;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.enumerations.Role;
+import tn.esprit.spring.repository.DonationRepo;
+import tn.esprit.spring.repository.PostCommentRepo;
+import tn.esprit.spring.repository.PostRepo;
 import tn.esprit.spring.security.UserPrincipal;
+import tn.esprit.spring.serviceInterface.EventService;
 import tn.esprit.spring.serviceInterface.user.UserService;
 
 
@@ -25,6 +33,15 @@ public class AdminController
 {
     @Autowired
     private UserService userService;
+    
+	@Autowired
+	DonationRepo donationRepo;
+	
+	@Autowired
+	PostCommentRepo postCommentRepo;
+	
+	@Autowired
+	PostRepo postRepo;
 
     @GetMapping("all")//api/admin/all
     public ResponseEntity<?> findAllUsers()
@@ -88,4 +105,20 @@ public class AdminController
     public List<User> allAdmins(){
     	return userService.allAdmins();
     }
+    
+    @GetMapping("/transactionsNumber")
+    public List<Donation> getAllDonations(){
+    	return donationRepo.findAll();
+    }
+    
+    @GetMapping("/allPosts")
+    public List<Post> getAllPosts(){
+    	return postRepo.findAll();
+    }
+    
+    @GetMapping("/allComments")
+    public List<PostComment> getAllComments(){
+    	return postCommentRepo.findAll();
+    }
+ 
 }

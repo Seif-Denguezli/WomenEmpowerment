@@ -221,11 +221,6 @@ public class UserServiceImpl implements UserService
 	}
 	
 	
-	//@Scheduled(cron = "*/60 * * * * *")
-	//public void nbreUnreadNotifications() {
-	//	int x = notificationRepository.userNotification(3L).size();
-	//	log.info("Unread notifs : " + x);
-	//}
 	
 	
 	 private User isvalidUsernameAndEmail(String currentUsername, String newUsername, String newEmail) 
