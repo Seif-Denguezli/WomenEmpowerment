@@ -32,7 +32,7 @@ public class Appointment implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonIgnore
+
 	Long appointmentId;
 	
 	@Temporal(TemporalType.DATE)
@@ -42,10 +42,9 @@ public class Appointment implements Serializable {
 	Date bookedAt;
 	@JsonIgnore
 	Boolean caseSolved;
-	@JsonIgnore
 	@ManyToOne
 	User user;
-	@JsonIgnore
+	
 	@ManyToOne
 	User Expert;
 	

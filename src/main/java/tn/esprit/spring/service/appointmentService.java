@@ -36,21 +36,22 @@ public appointmentService(@Qualifier("twilio") TwilioSmsSender smsSender) {
 }
 
 @Override
-public void addRdv(Appointment apt, Long serviceId, Long userId, Long expert_id) {
-	SmsRequest smsrequest = new SmsRequest(null, null);
-	tn.esprit.spring.entities.Service s = serrepo.findById(serviceId).orElse(null);
+public Appointment addRdv(Appointment apt, Long serviceId, Long userId, Long expert_id) {
+//{
+	//SmsRequest smsrequest = new SmsRequest(null, null);
+tn.esprit.spring.entities.Service s = serrepo.findById(serviceId).orElse(null);
 	User user = userrepo.findById(userId).orElse(null);
 	User expert = userrepo.findById(expert_id).orElse(null);
 	
 
 	apt.setService(s);
 	  apt.setUser(user);
-	  apt.setExpert(expert);
+	 apt.setExpert(expert);
       //twilio
-	  sendSms(smsrequest, user.getPhoneNumber(), apt.getAppointmentDate()+ " : YOUR APPOINTEMENT IS VALID FOR THIS DATE");	
+	 // sendSms(smsrequest, user.getPhoneNumber(), apt.getAppointmentDate()+ " : YOUR APPOINTEMENT IS VALID FOR THIS DATE");	
 	//if (apt.getAppointmentDate().before(s.getEndDate()) && apt.getAppointmentDate().after(s.getStartDate())){
 		
-		apprepo.save(apt);
+	return	apprepo.save(apt);
 		
 	//}
 }
@@ -58,21 +59,19 @@ public void addRdv(Appointment apt, Long serviceId, Long userId, Long expert_id)
 
 
 @Override
-public void updateRdv(Appointment apt, Long serviceId, Long appointmentId ) {
-	tn.esprit.spring.entities.Service serv= serrepo.findById(serviceId).orElse(null);
+public void updateRdv(Appointment apt,  Long appointmentId ) {
 	
 	Appointment app = apprepo.findById(appointmentId).orElse(null); 
 	
 	
 	
-	if (serv.getStartDate().before(apt.getAppointmentDate())&&serv.getEndDate().after(apt.getAppointmentDate())){
-		
+
 		app.setAppointmentDate(apt.getAppointmentDate());
 		app.setService(apt.getService());
 		app.setUser(apt.getUser());
 		apprepo.flush();
 		
-	}
+	
 }
 @Override
 public List<Appointment> affichRdv() {

@@ -36,11 +36,11 @@ import tn.esprit.spring.enumerations.Job;
 @Entity
 @ToString
 public class Service implements Serializable {
-	@JsonIgnore
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long serviceId;
-	@JsonIgnore
+	
 	@Enumerated(EnumType.STRING)
 	Job job;
 	
@@ -50,7 +50,6 @@ public class Service implements Serializable {
 	@Temporal(TemporalType.DATE)
 	Date endDate;
 	
-	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
 	List<Appointment> appointments;
 	

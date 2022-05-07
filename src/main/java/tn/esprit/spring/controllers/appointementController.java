@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import springfox.documentation.annotations.ApiIgnore;
 import tn.esprit.spring.entities.Appointment;
 import tn.esprit.spring.entities.Complaint;
+import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.service.IAppointment;
 import tn.esprit.spring.service.appointmentService;
 
@@ -24,14 +27,16 @@ import tn.esprit.spring.service.appointmentService;
 public class appointementController {
 @Autowired
 IAppointment appserv;
+//
 @PostMapping("/addrdv/{serviceId}/{userId}/{exId}")
 @ResponseBody
-public void addRdv(@RequestBody Appointment apt ,@PathVariable Long serviceId,@PathVariable  Long userId,@PathVariable  Long exId){
-	appserv.addRdv(apt, serviceId, userId,exId);
+public Appointment addRdv(@RequestBody Appointment apt,@PathVariable Long serviceId,@ApiIgnore @AuthenticationPrincipal UserPrincipal u,@PathVariable  Long exId) {
+	  Long iduser = u.getId();
+	return appserv.addRdv(apt, serviceId, iduser, exId);
 }
-@PutMapping("/modifier/{serviceId}/{appointmentId}")
-public void updateRdv(@RequestBody Appointment apt ,@PathVariable Long serviceId,@PathVariable Long appointmentId){
-	appserv.updateRdv(apt, serviceId, appointmentId);
+@PutMapping("/modifier/{appointmentId}")
+public void updateRdv(@RequestBody Appointment apt ,@PathVariable Long appointmentId){
+	appserv.updateRdv(apt, appointmentId);
 }
 @GetMapping("/aff")
 public List<Appointment> affichRdv(){
