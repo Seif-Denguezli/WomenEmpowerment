@@ -111,7 +111,7 @@ public class User implements Serializable{
 	List<Appointment> appointments; // Booked appointments
 	
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL ,mappedBy = "user")
 	Set<Complaint> complaints; // Created complaints
 	
 	@JsonIgnore

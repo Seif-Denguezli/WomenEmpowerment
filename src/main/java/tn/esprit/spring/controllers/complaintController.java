@@ -6,6 +6,7 @@ import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import springfox.documentation.annotations.ApiIgnore;
 import tn.esprit.spring.entities.Complaint;
+import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.service.IComplaint;
 import tn.esprit.spring.service.complaintService;
 
@@ -27,10 +29,12 @@ public class complaintController {
 @Autowired
 IComplaint compservice;
 
-  @PostMapping("/addReclamation/{userId}")
+  @PostMapping("/addReclamation/{userid}")
 @ResponseBody
-public ResponseEntity<?> addComplaint(@RequestBody Complaint complaint, Long userId){
-	return compservice.addComplaint(complaint, userId);
+public Complaint addComplaint(@RequestBody Complaint complaint,@ApiIgnore @AuthenticationPrincipal UserPrincipal u){
+	  Long iduser = u.getId();
+	  return compservice.addComplaint(complaint, iduser);
+		
 }
 
 @PutMapping("update/{complaintId}")
@@ -39,10 +43,11 @@ public void updatereclamation(@RequestBody Complaint complaint,@PathVariable Lon
 	compservice.updatereclamation(complaint, complaintId);
 
 }
-@DeleteMapping("delet/{idUser}/{complaintId}")
+@DeleteMapping("delet/{complaintId}")
 @ResponseBody
-public void deletreclamation(@PathVariable Long idUser,@PathVariable Long complaintId){
-	compservice.deletreclamation(idUser, complaintId);
+public void deletreclamation(@PathVariable Long complaintId ){
+	
+	compservice.deletreclamation(complaintId);
 	
 }
 @GetMapping("/affichReclamation")

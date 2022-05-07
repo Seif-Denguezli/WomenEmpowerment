@@ -25,14 +25,14 @@ public class serviceService implements IService {
 	UserRepository userrepo;
 
 	@Override
-	public void addService(tn.esprit.spring.entities.Service s , Long userId){
+	public tn.esprit.spring.entities.Service addService(tn.esprit.spring.entities.Service s,Long userId ){
 		User u = userrepo.findById(userId).orElse(null);
 		
 		 
 	
 			
 			s.setJob(u.getJob());
-		servrepo.save(s);
+		return servrepo.save(s);
 		
 	}
 	@Override
@@ -59,7 +59,7 @@ public class serviceService implements IService {
 	public List<tn.esprit.spring.entities.Service> recherche(String keyword){
 	if(keyword != null){
 		return	servrepo.recherche(keyword);
-	}
+	}else 
 		return servrepo.findAll();
 	}/*
 	@Override
