@@ -30,7 +30,7 @@ public class ExceptionProcessing implements ErrorController {
     private static final String ACCOUNT_LOCKED = "Your account has been locked. Please contact administration";
     private static final String METHOD_IS_NOT_ALLOWED = "This request method is not allowed on this endpoint. Please send a '%s' request";
     private static final String INTERNAL_SERVER_ERROR_MSG = "An  error occurred while processing the request";
-    private static final String INCORRECT_CREDENTIALS = "Username / password incorrect. Please try again OR Invalid Login Credentials";
+    private static final String INCORRECT_CREDENTIALS = "Username / password incorrect. Please try again";
     private static final String ACCOUNT_DISABLED = "Your account has been disabled. If this is an error, please contact administration";
     private static final String ERROR_PROCESSING_FILE = "Error occurred while processing file";
     private static final String NOT_ENOUGH_PERMISSION = "You do not have enough permission";
@@ -40,7 +40,7 @@ public class ExceptionProcessing implements ErrorController {
 
     @ExceptionHandler(PasswordValidException.class)
     public ResponseEntity<HTTPProtocolResponse> passwordValidException(PasswordValidException exception) {
-        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+        return createHttpResponse(NOT_ACCEPTABLE, exception.getMessage());
     }
     @ExceptionHandler(PasswordMatchException.class)
     public ResponseEntity<HTTPProtocolResponse> passwordMatchException(PasswordMatchException exception) {
@@ -54,7 +54,7 @@ public class ExceptionProcessing implements ErrorController {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<HTTPProtocolResponse> badCredentialsException() {
-        return createHttpResponse(BAD_REQUEST, INCORRECT_CREDENTIALS);
+        return createHttpResponse(CONFLICT, INCORRECT_CREDENTIALS);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -88,7 +88,7 @@ public class ExceptionProcessing implements ErrorController {
     }
    @ExceptionHandler(UsernameExist.class)
     public ResponseEntity<HTTPProtocolResponse> usernameExistException(UsernameExist exception) {
-        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+        return createHttpResponse(CONFLICT, exception.getMessage());
     }
 
     @ExceptionHandler(EmailNotExist.class)
@@ -99,6 +99,11 @@ public class ExceptionProcessing implements ErrorController {
     @ExceptionHandler(UsernameNotExist.class)
     public ResponseEntity<HTTPProtocolResponse> userNotFoundException(UsernameNotExist exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+    
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<HTTPProtocolResponse> accountLockedException(AccountLockedException exception) {
+        return createHttpResponse(LOCKED, exception.getMessage());
     }
 
 

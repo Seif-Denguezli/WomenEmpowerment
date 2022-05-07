@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import javax.mail.MessagingException;
+
 import org.cryptacular.bean.EncodingHashBean;
 import org.cryptacular.spec.CodecSpec;
 import org.cryptacular.spec.DigestSpec;
@@ -44,6 +46,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
 import lombok.SneakyThrows;
 import net.bytebuddy.utility.RandomString;
 
@@ -68,6 +74,9 @@ public class AuthenticationServiceImpl implements AuthenticationService
 
     @Autowired
     private JwtRefreshTokenService jwtRefreshTokenService;
+    
+    @Autowired
+    ServiceAllEmail emailService;
 
     @Override
     public User signInAndReturnJWT(User signInRequest)
@@ -86,19 +95,26 @@ public class AuthenticationServiceImpl implements AuthenticationService
         return signInUser;
     }
 
+
 	@Override
-	public PasswordResetToken generatePasswordResetToken(String email) throws EmailNotExist {
+	public PasswordResetToken generatePasswordResetToken(String email) throws EmailNotExist, io.jsonwebtoken.io.IOException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, TemplateException, IOException {
 		User user = userRepository.findByEmail(email).orElse(null);
 		if (user!=null) {
 			PasswordResetToken token = new PasswordResetToken();
 			LocalDateTime nowDate = LocalDateTime.now();
 			token.setCreateDate(nowDate);
-			
+			String tokenValue = RandomString.make(45);
 			token.setUserId(user.getUserId());
-			token.setToken(RandomString.make(45));
+			token.setToken(tokenValue);
 			token.setExprirationDate(nowDate.plusMinutes(15));
 			
 			passwordResetTokenRepository.save(token);
+			try {
+				emailService.sendNewResetPasswordMail(token.getToken(), email);
+			} catch (MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return token;
 		} 
 		else {
@@ -121,6 +137,7 @@ public class AuthenticationServiceImpl implements AuthenticationService
 				String encodedPassword = passwordEncoder.encode(newPassword);
 				u.setPassword(encodedPassword);
 				userRepository.save(u);
+				passwordResetTokenRepository.delete(resetToken);
 			}
 			
 			else {

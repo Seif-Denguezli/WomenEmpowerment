@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.exceptions.CourseOwnerShip;
 import tn.esprit.spring.repository.CourseRepository;
+import tn.esprit.spring.repository.NotificationRepository;
 import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.serviceInterface.courses.CourseLiveService;
 @Service
@@ -20,6 +22,8 @@ public class CourseChannelImpl implements CourseLiveService {
 CourseRepository courseRepository;
 @Autowired
 UserRepository userRepository;
+@Autowired
+NotificationRepository notificationRepository;
 	@Override
 	public String createchannel(long courseId,long userId) throws IOException, InterruptedException {
 		Course cour = courseRepository.findById(courseId).get();
@@ -37,7 +41,12 @@ UserRepository userRepository;
 			System.out.println(response.body());
 			cour.setChannelId(response.body().substring(14, 39));
 			courseRepository.saveAndFlush(cour);
+			int index =response.body().toString().indexOf("streamKey")+12;
+			int index2 = index+36;
+			cour.setStreamKey(response.body().substring(index,index2));
+			courseRepository.save(cour);
 			return response.body().substring(14, 39);
+		
 		}
 		else 
 			return "You aren't the owner of this course";
@@ -59,6 +68,7 @@ UserRepository userRepository;
 				    .build();
 				HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 				System.out.println(response.body());
+				
 		}
 		else {
 			System.out.println("you aren't the owner of the channel");
@@ -67,7 +77,7 @@ UserRepository userRepository;
 	}
 
 
-
+	
 	@Override
 	public void stopChannel(long courseId, long userId) throws IOException, InterruptedException {
 		Course cour = courseRepository.findById(courseId).get();
@@ -90,7 +100,7 @@ UserRepository userRepository;
 
 
 	@Override
-	public void deleteChannel(long courseId, long userId) throws IOException, InterruptedException {
+	public void deleteChannel(long courseId, long userId) throws IOException, InterruptedException, CourseOwnerShip {
 		Course cour = courseRepository.findById(courseId).get();
 		User user = userRepository.findById(userId).get();
 		if(user.getCreatedCourses().contains(cour)) {
@@ -106,7 +116,7 @@ UserRepository userRepository;
 			courseRepository.saveAndFlush(cour);
 		}
 		else {
-			System.out.println("No permission");
+			throw new CourseOwnerShip("You aren not the owner of the course");
 		}
 	}
 
@@ -115,6 +125,7 @@ UserRepository userRepository;
 	@Override
 	public HttpResponse<String> getChannelStatus(long courseId) throws IOException, InterruptedException {
 		Course cour = courseRepository.findById(courseId).get();
+		{
 		HttpRequest request = HttpRequest.newBuilder()
 			    .uri(URI.create("https://api.hesp.live/channels/"+cour.getChannelId() +"/status"))
 			    .header("Accept", "application/json")
@@ -124,6 +135,7 @@ UserRepository userRepository;
 			HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 			System.out.println(response.body());
 			return response;
+		}
 		
 	}
 

@@ -2,21 +2,31 @@ package tn.esprit.spring.controllers;
 
 
 
+import java.io.IOException;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-
+import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 
 
 import tn.esprit.spring.security.UserPrincipal;
@@ -28,6 +38,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 
 @RestController
+@RequestMapping("/forum")
 public class ForumController {
 	
 	@Autowired
@@ -38,13 +49,19 @@ public class ForumController {
 	@ResponseBody
 	public ResponseEntity<?> addPost_affectedto_User(@RequestBody Post post,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		Long iduser = u.getId();
+		post.setCreatedAt(Date.valueOf(LocalDate.now()))	;
 		return forumService.addPost(post,iduser);
 	}
-	
-	@PostMapping("/add-Advertising/{IdUser}")
+	@PostMapping("/add-Bad-word")
 	@ResponseBody
-	public ResponseEntity<?> addAdvertising_affectedto_User(@RequestBody Advertising a,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-		return forumService.addAdvertising(a,u.getId());
+	public BadWord addPost_affectedto_User(@RequestBody BadWord b) {
+	
+		return forumService.addBadWord(b);
+	}
+	@PostMapping("/add-Advertising/{idCategory}")
+	@ResponseBody
+	public ResponseEntity<?> addAdvertising_affectedto_User(@RequestBody Advertising a,@PathVariable("idCategory") Long idCategory,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.addAdvertising(a,u.getId(),idCategory);
 	}
 	
 	@PostMapping("/add-Com-to-Com/{IdCom}/{IdUser}")
@@ -55,14 +72,33 @@ public class ForumController {
 	
 	@PostMapping("/add-Comment/{IdPost}/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> addComment_to_Post(@RequestBody PostComment postComment, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-		return forumService.addComment_to_Post(postComment,IdPost,u.getId());
+	public ResponseEntity<?> addComment_to_Post(@RequestBody PostComment postComment, @PathVariable("IdPost") Long IdPost/*, @ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
+		postComment.setCommentedAt(Date.valueOf(LocalDate.now()))	;
+
+		return forumService.addComment_to_Post(postComment,IdPost,(long)1/*,u.getId()*/);
 	}
 	
 	@PostMapping("/add-Like-post/{IdPost}/{IdUser}")
 	@ResponseBody
-	public PostLike addLike_to_Post(@RequestBody PostLike postLike, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-		return forumService.addLike_to_Post(postLike,IdPost,u.getId());
+	public PostLike addLike_to_Post(@RequestBody(required = false) PostLike postLike, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		PostLike pos1 = new PostLike();
+		pos1.setIsLiked(true);
+		
+		return forumService.addLike_to_Post(pos1,IdPost,u.getId());
+	}
+	@PostMapping("/add-DisLike-post/{IdPost}/{IdUser}")
+	@ResponseBody
+	public PostLike addDisLike_to_Post(@RequestBody(required = false) PostLike postLike, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		PostLike pos1 = new PostLike();
+		pos1.setIsLiked(false);
+		
+		return forumService.addLike_to_Post(pos1,IdPost,u.getId());
+	}
+	@GetMapping("/get-user-islike-post/{IdPost}")
+	@ResponseBody
+	public int addDisLike_to_Post( @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		
+		return forumService.PostLikeFromUser(IdPost,u.getId());
 	}
 	/*
 	@PostMapping("/add-DisLike-post/{IdPost}/{IdUser}")
@@ -82,7 +118,7 @@ public class ForumController {
 	}
 	
 	
-	@PutMapping("/Update-Post/{IdPost}/{IdUser}")
+	@PutMapping("/Update-Post/{IdPost}/")
 	@ResponseBody
 	public ResponseEntity<?> Update_Post(@RequestBody Post post, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		return forumService.Update_post(post,IdPost,u.getId());
@@ -95,7 +131,7 @@ public class ForumController {
 	}
 	
 	
-	@PutMapping("/Update-Comment/{IdPostCom}/{IdUser}")
+	@PutMapping("/Update-Comment/{IdPostCom}/")
 	@ResponseBody
 	public ResponseEntity<?> Update_Comment(@RequestBody PostComment postComment, @PathVariable("IdPostCom") Long IdPostCom, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		return forumService.Update_Comment(postComment,IdPostCom,u.getId());
@@ -114,14 +150,19 @@ public class ForumController {
 		return forumService.Get_all_post();
 	}
 	
+	@GetMapping("/Get-all-adversting")
+	public List<Advertising> Get_all_adv(){
+		return forumService.get_all_adversting();
+	}
+	
 	@GetMapping("/Get-Posts-By-user/{IdUser}")
 	public Set<Post> Get_post_by_User( @PathVariable("IdUser") Long IdUser){
 		return forumService.Get_post_by_User(IdUser);
 	}
 	
-	@DeleteMapping("/Delete-Like/{IdLike}/{IdUser}")
-	public ResponseEntity<?> Delete_Like( @PathVariable("IdLike") Long IdLike, @PathVariable("IdUser") Long IdUser) {
-		return forumService.Delete_Like(IdLike,IdUser);
+	@DeleteMapping("/Delete-Like/{IdLike}")
+	public ResponseEntity<?> Delete_Like( @PathVariable("IdLike") Long IdLike, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.Delete_Like(IdLike,u.getId());
 	}
 	
 	
@@ -137,9 +178,9 @@ public class ForumController {
 	}
 	
 	
-	@DeleteMapping("/Delete-Post/{IdPost}/{IdUser}")
-	public ResponseEntity<?> Delete_Post( @PathVariable("IdPost") Long IdPost, @PathVariable("IdUser") Long IdUser) {
-		return forumService.Delete_post(IdPost,IdUser);
+	@DeleteMapping("/Delete-Post/{IdPost}")
+	public ResponseEntity<?> Delete_Post( @PathVariable("IdPost") Long IdPost/*, @ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
+		return forumService.Delete_post(IdPost,(long)1/*u.getId()*/);
 	}
 	
 	@DeleteMapping("/Delete-Adversting/{IdAdv}")
@@ -147,17 +188,17 @@ public class ForumController {
 		return forumService.Delete_Adversting(IdPost);
 	}
 	
-	@DeleteMapping("/Delete-PostComment/{IdPostCom}/{IdUser}")
-	public ResponseEntity<?> Delete_PostCom( @PathVariable("IdPostCom") Long IdPostCom, @PathVariable("IdUser") Long IdUser) {
-		return forumService.Delete_PostCom(IdPostCom,IdUser);
+	@DeleteMapping("/Delete-PostComment/{IdPostCom}")
+	public ResponseEntity<?> Delete_PostCom( @PathVariable("IdPostCom") Long IdPostCom,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+		return forumService.Delete_PostCom(IdPostCom,u.getId());
 	}
-	
+	//@Scheduled(cron = "*/30 * * * * *")
 	@DeleteMapping("/Delete-Post-Redandant")
 	public void Delete_post_Redendant( ){
 		 forumService.delete_sujet_sans_Int();
 	}
 	@GetMapping("/Get-best-podt-week")
-	public Post Get_best_Post( ){
+	public Post Get_best_Post( ) throws MessagingException{
 		return forumService.Get_best_Post();
 	}
 	
@@ -176,13 +217,13 @@ public class ForumController {
 		return forumService.Give_Etoile_Post (idPost,nb_etoile);
 	}
 	
-	@PutMapping("/Report-Post/{idPost}")
-	public  Post Report_User(@PathVariable("idPost") Long idPost ){
-		return forumService.Report_User (idPost);
+	@GetMapping("/Report-Post/{idPost}")
+	public  ResponseEntity<?> Report_User(@PathVariable("idPost") Long idPost ,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) throws MessagingException{
+		return forumService.Report_User (idPost,u.getId());
 	}
 	
 	@DeleteMapping("/Delete-reported-Post")
-	public  void Delete_reported_post(){
+	public  void Delete_reported_post() throws MessagingException{
 		 forumService.delete_reported_post();
 	}
 	
@@ -191,6 +232,56 @@ public class ForumController {
 		 return forumService.Get_more_likers_user();
 	}
 	
+	@PostMapping("/add-categor-adv")
+	public  ResponseEntity<?> addCategorAdv(@RequestBody CategoryAdve a ){
+		 return forumService.addCategoryAdv(a);
+	}
+	
+	
+	@PutMapping("/Put-test-Data")
+	public  void aa(@ApiIgnore @AuthenticationPrincipal UserPrincipal u){
+		forumService.DetctaDataLoad("sabri krima",u.getId());
+	}
+	
+	
+	@GetMapping("/Get-Adversting-By-Loaddata-age")
+	public  List<Advertising> adversting_bydata(@ApiIgnore @AuthenticationPrincipal UserPrincipal u){
+		return forumService.getAdverByUserData(u.getId());
+	}
+	
+	@GetMapping("/Get-Search-post{ch}")
+	public  List<Post> adversting_bydata(@PathVariable("ch") String ch,@ApiIgnore @AuthenticationPrincipal UserPrincipal u ){
+		return forumService.Searchpost(ch,u.getId());
+	}
+	
+	@GetMapping("/Get-post-report-users/{id}")
+	public  Set<User> getre(@PathVariable("id") Long id ){
+		return forumService.reportuser(id);
+	}
 
+	
+	@PostMapping("/api/ocr")
+	public String DoOCR(
+			@RequestParam("Image") MultipartFile image) throws IOException {
+				return forumService.DoOCR(image);
+
+	}	
+	
+	@PostMapping("/add-Post-image/{idpost}")
+	@ResponseBody
+	public ResponseEntity<?> addpostimage(@RequestParam MultipartFile image,@PathVariable("idpost") Long idpost) throws IOException {
+				return forumService.addimagepost(image,idpost);
+
+	}
+	
+	@PostMapping("/add-Adversting-image/{idadv}")
+	public ResponseEntity<?> addadvimage(@RequestParam("Image") MultipartFile image,@PathVariable("idadv") Long idadv) throws IOException {
+				return forumService.addimageAdverstingt(image,idadv);
+
+	}@GetMapping("/Get-Post-Details/{idpost}")
+	public Post Get_Post_Details(@PathVariable("idpost") Long idpost) {
+		return forumService.getPostById(idpost);
+
+}
 }
 

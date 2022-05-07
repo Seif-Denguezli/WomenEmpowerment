@@ -1,5 +1,6 @@
 package tn.esprit.spring.service.courses;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -11,11 +12,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Course;
+import tn.esprit.spring.entities.Notification;
 import tn.esprit.spring.entities.SanctionLearnner;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.enumerations.Penality;
 import tn.esprit.spring.repository.CertificateRepository;
 import tn.esprit.spring.repository.CourseRepository;
+import tn.esprit.spring.repository.NotificationRepository;
 import tn.esprit.spring.repository.SanctionLearnerRepository;
 import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.serviceInterface.courses.SanctionLearner;
@@ -31,6 +34,8 @@ SanctionLearnerRepository sanctionLearnerRepository;
 UserRepository userRepository;
 @Autowired
 UserCourseServiceImpl userCourseServiceImpl;
+@Autowired
+NotificationRepository notificationRepository;
 	@Override
 	public void Sanction(Long courseId, Long userId,Penality p) {
 		SanctionLearnner sc = new 	SanctionLearnner();
@@ -41,6 +46,7 @@ UserCourseServiceImpl userCourseServiceImpl;
 		
 	}
 	@Override
+	@Transactional
 	@Scheduled(cron="*/10 * * * * *")
 	public void PunishmendDecision()
 		{
@@ -55,40 +61,54 @@ UserCourseServiceImpl userCourseServiceImpl;
 						if(sanctionLearner.getPenality().equals(Penality.KICK))
 							{
 							
-							List<SanctionLearnner> sanctions =sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
-							sanctionLearnerRepository.deleteAll(sanctions);
-							Course c = certificate.getCourse();
-							c.getBuser().add(certificate.getUser());
-							courseRepository.saveAndFlush(c);
-						    userCourseServiceImpl.leaveCourse(certificate.getCertificateId());
+							 Course cour = certificate.getCourse();
+							   User u = certificate.getUser();
+								cour.getBuser().add(certificate.getUser());
+							    u.getObtainedCertificates().remove(certificate);	
+							    System.err.println(u.getObtainedCertificates());
+							    userRepository.save(u);
+								courseRepository.save(cour);
+								List<SanctionLearnner> sanctions =sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
+								sanctionLearnerRepository.deleteAll(sanctions);
+								certificateRepository.delete(certificate);
+								Notification notif = new Notification();
+					            notif.setCreatedAt(new Date());
+					            notif.setMessage("You have been kicked from " + cour.getCourseName());
+					            notif.setRead(false);
+					            notif.setUser(u);
+					            notificationRepository.save(notif);
+								
 							
 							}
 						if(sanctionLearner.getPenality().equals(Penality.WARNING))
 							{
-								
+							Course cour = certificate.getCourse();
+							User u = certificate.getUser();
 								warnCount = warnCount + 1 ;
 								
 								System.err.println( certificate.getCertificateId() + ":::::::" +warnCount);
+
 								
 							}
 					}
-					if(warnCount==1 )
+					if(warnCount==3 )
 					{	
 					
-					   Course cour = certificate.getCourse();
-					   User u = certificate.getUser();
-						cour.getBuser().add(certificate.getUser());
-					    u.getObtainedCertificates().remove(certificate);					
-					    cour.getCertificates().remove(certificate);
-					    userRepository.save(u);
-						courseRepository.save(cour);
-					    certificateRepository.save(certificate);
-						List<SanctionLearnner> sanctions =sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
-						sanctionLearnerRepository.deleteAll(sanctions);
+						 Course cour = certificate.getCourse();
+						   User u = certificate.getUser();
+							cour.getBuser().add(certificate.getUser());
+						    u.getObtainedCertificates().remove(certificate);	
+						    System.err.println(u.getObtainedCertificates());
+						    userRepository.save(u);
+							courseRepository.save(cour);
+							List<SanctionLearnner> sanctions =sanctionLearnerRepository.findByCertificateId(certificate.getCertificateId());
+							sanctionLearnerRepository.deleteAll(sanctions);
+							certificateRepository.delete(certificate);
 					}
 					
 					
-				}		
+				}
+			
 		}
 
 	@Override

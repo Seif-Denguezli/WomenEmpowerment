@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import tn.esprit.spring.entities.Answer;
@@ -114,7 +115,6 @@ SanctionLearnerImpl sanctionLearnerImpl;
 	@Override
 	public Answer answerQuizQuestion(Long idUser,Long idAnswer) {
 		User user = userRepository.findById(idUser).get();
-		
 		Answer answer = answerRepository.findById(idAnswer).get();
 		user.getAnswers().add(answer);
 		userRepository.flush();
@@ -158,7 +158,7 @@ SanctionLearnerImpl sanctionLearnerImpl;
 	}
 
 	@Override
-	public String userPassed(Long idUser, Long idCourse) {
+	public Boolean userPassed(Long idUser, Long idCourse) {
 		
 	    Date date = new Date();  
 		int nbr=0;
@@ -179,13 +179,37 @@ SanctionLearnerImpl sanctionLearnerImpl;
 			c.setAquired(true);
 			c.setObtainingDate(date);
 			certificateRepository.flush();
-			return "User:"+u.getUsername()+"\t Passed the "+cours.getCourseName()+"\t with a mark of "+userCourseScore(idUser,idCourse)+"/"+nbr; 
+			return true; 
 			
 		}
 		else  {
-			return "User:"+u.getUsername()+"\t failed the "+cours.getCourseName()+"\t with a mark of "+userCourseScore(idUser,idCourse)+"/"+nbr;
+				return false;
 		}
 		
+	}
+
+	@Override
+	public Quiz getQuiz(Long idQuiz) {
+		return quizzRepository.findById(idQuiz).get();
+		
+	}
+
+	@Override
+	public Set<Quiz> getQuizezByCourseId(long courseId) {
+		Course c = courseRepository.findById(courseId).get();
+		return c.getQuiz();
+	}
+
+	@Override
+	public Set<QuizQuestion> getQuestionsByQuizzId(long quizId) {
+		Quiz q =  quizzRepository.findById(quizId).get();
+		return q.getQuestions();
+	}
+
+	@Override
+	public Set<Answer> getAnswersByQuestionId(long questionId) {
+		QuizQuestion qq = questionRepository.findById(questionId).get();
+		return qq.getAnswers();
 	}
 
 	

@@ -23,7 +23,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import tn.esprit.spring.entities.Course;
@@ -39,10 +42,10 @@ import tn.esprit.spring.exceptions.UsernameExist;
 import tn.esprit.spring.exceptions.UsernameNotExist;
 import tn.esprit.spring.repository.CourseRepository;
 import tn.esprit.spring.repository.FriendRepository;
+import tn.esprit.spring.repository.MediaRepo;
 import tn.esprit.spring.repository.NotificationRepository;
 import tn.esprit.spring.repository.SubscriptionRepository;
 import tn.esprit.spring.repository.UserRepository;
-import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.serviceInterface.user.UserService;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -53,9 +56,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.mail.MessagingException;
 
@@ -64,6 +69,7 @@ import javax.mail.MessagingException;
 @Service
 public class UserServiceImpl implements UserService
 {
+	
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     
@@ -81,6 +87,9 @@ public class UserServiceImpl implements UserService
     
     @Autowired
     FriendRepository friendRepository;
+    
+    @Autowired
+    MediaRepo mediaRepository;
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder)
     {
@@ -89,14 +98,23 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public User saveUser(User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException
+    public User saveUser(User user) throws UsernameNotExist, UsernameExist, EmailExist, MessagingException, io.jsonwebtoken.io.IOException, TemplateNotFoundException, MalformedTemplateNameException, ParseException, TemplateException, IOException
     {
     	isvalidUsernameAndEmail(EMPTY, user.getUsername(), user.getEmail());
     	isValid(user.getPassword());
-        user.setRole(Role.USER);
-        emailService.sendNewPasswordEmail(user.getName(), user.getPassword(), user.getEmail());
+        //user.setRole(Role.USER);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        user.setLocked(false);
+        user.setLoginAttempts(0);
+        user.setRegistrationDate(new Date());
+        User savedUser = userRepository.save(user);
+        emailService.sendWelcomeMail(savedUser.getName(), savedUser.getEmail());
+        return savedUser;
+    }
+    
+	@Override
+    public User updateUser(User user) {
+    	return userRepository.save(user);
     }
 
     @Override
@@ -129,6 +147,14 @@ public class UserServiceImpl implements UserService
 	public void makeAdmin(String username) {
 		userRepository.makeAdmin(username);
 		
+	}
+	
+	@Override
+	public void unlockUser(String username) {
+		User u = userRepository.findByUsername(username).get();
+		u.setLoginAttempts(0);
+		u.setLocked(false);
+		userRepository.save(u);
 	}
 
 	@Override
@@ -174,7 +200,9 @@ public class UserServiceImpl implements UserService
 	}
 
 	@Override
-	public Subscription addSubscription(Subscription s, String username) {
+	public Subscription addSubscription(String username) {
+		Subscription s = new Subscription();
+		s.setSubscriptionDate(new Date());
 		Subscription sub =  subscriptionRepository.save(s);
 		User u = userRepository.findByUsername(username).orElse(null);
 		u.setSubscription(sub);
@@ -182,18 +210,7 @@ public class UserServiceImpl implements UserService
 		return sub;
 	}
 
-	@Override
-	public void extendSubscription(String username, int nbMonths) {
-		User u = userRepository.findByUsername(username).orElse(null);
-		Subscription s = u.getSubscription();
-		Calendar c = Calendar.getInstance();
-		c.setTime(s.getExpiresAt());
-		c.add(Calendar.MONTH, nbMonths);
-		Date date = c.getTime();
-		u.getSubscription().setExpiresAt(date);
-		userRepository.save(u);
-		
-	}
+
 
 	@Override
 	public void removeSubcription(String username) {
@@ -203,11 +220,7 @@ public class UserServiceImpl implements UserService
 		subscriptionRepository.delete(s);
 	}
 	
-	@Scheduled(cron = "*/30 * * * * *")
-	public void nbreUnreadNotifications() {
-		int x = notificationRepository.userNotification(3L).size();
-		log.info("Unread notifs : " + x);
-	}
+	
 	
 	
 	 private User isvalidUsernameAndEmail(String currentUsername, String newUsername, String newEmail) 
@@ -343,23 +356,218 @@ public class UserServiceImpl implements UserService
 	            friend.setSender(firstuser);
 	            friend.setReceiver(seconduser);
 	            friendRepository.save(friend);
+	            Notification notif = new Notification();
+	            notif.setCreatedAt(new Date());
+	            notif.setMessage(firstuser.getName() +  " Started following you !");
+	            notif.setRead(false);
+	            notif.setUser(seconduser);
+	            notificationRepository.save(notif);
 	        }
 	        else {
 	        	throw new FriendExist("Error processing friend request !");
 	        }
 	    }
 	 
-	@Override
+
+	 @Override
+	 public void deleteFriend(String username1, String username2){
+	        User user1 = userRepository.findByUsername(username1).orElse(null);
+	        User user2 = userRepository.findByUsername(username2).orElse(null);
+	        Friend friend = new Friend();
+	        List<Friend> myFriends = getMyFriends2(user1);
+	        for (Friend f : myFriends) {
+	        	if (f.getSender().getUserId() == user1.getUserId() && (f.getReceiver().getUserId() == user2.getUserId()) ) {
+	        		friend = f;
+	        	}
+	        }
+	        friendRepository.delete(friend);
+	    }
+	 
+	 @Override
 	 public List<User> getMyFriends(User u){
 		 List<Friend> allFriends = friendRepository.findAll();
-		 List<User> myFriends = new ArrayList<>();
+		 Set<User> myFriends = new HashSet<>();
 		 for (Friend f : allFriends) {
 			 if (f.getSender().getUserId() == u.getUserId() ) {
 				 myFriends.add(f.getReceiver());
 			 }
 		 }
+		 List<User> friends = new ArrayList<>(myFriends);
+		 return friends;
+	 }
+	 
+
+	 public List<Friend> getMyFriends2(User u){
+		 List<Friend> allFriends = friendRepository.findAll();
+		 List<Friend> myFriends = new ArrayList<>();
+		 for (Friend f : allFriends) {
+			 if (f.getSender().getUserId() == u.getUserId() ) {
+				 myFriends.add(f);
+			 }
+		 }
 		 return myFriends;
 	 }
+
+	@Override
+	public void lockUser(String username) {
+		User u = userRepository.findByUsername(username).get();
+		u.setLoginAttempts(0);
+		u.setLocked(true);
+		userRepository.save(u);
+		
+	}
+
+	@Override
+	public void markNotifAsRead(Long  idNotif) {
+		Notification notification = notificationRepository.findById(idNotif).orElse(null);
+		notification.setRead(true);
+		notificationRepository.save(notification);
+		
+	}
+
+	@Override
+	public void markNotifAsUnRead(Long idNotif) {
+		Notification notification = notificationRepository.findById(idNotif).orElse(null);
+		notification.setRead(false);
+		notificationRepository.save(notification);
+		
+	}
+
+	@Override
+	public String getUserProfilPic(Long userId) {
+		User user = userRepository.findById(userId).orElse(null);
+		return user.getProfilPicture().getImagenUrl();
+	}
+
+	@Override
+	public User getUser(Long userId) {
+		User user = userRepository.findById(userId).orElse(null);
+		return user;
+	}
+
+	@Override
+	public Set<User> getSuggestedUsers(User u) {
+		List<Friend> allFriends = friendRepository.findAll();
+		List<User> myFriends = getMyFriends(u);
+		Set<User> suggestedFriends = new HashSet<>();
+		
+		
+		for (Friend f : allFriends) {
+			for (User myFriend : myFriends) {
+				if ( (f.getSender().getUserId() == myFriend.getUserId()) && (f.getReceiver().getUserId() != u.getUserId()) && (!(myFriends.contains(f.getReceiver()))) ) {
+					suggestedFriends.add(f.getReceiver());
+				}
+			}	
+		}
+			
+		return suggestedFriends;
+	}
+
+	@Override
+	public Set<User> getSuggestedUsers2(User u) {
+		List<Friend> allFriends = friendRepository.findAll();
+		List<User> myFriends = getMyFriends(u);
+		Set<User> suggestedFriends = new HashSet<>();
+		int count = 0;
+		
+		
+		for (Friend f : allFriends) {
+			for (User myFriend : myFriends) {
+				if ( (f.getSender().getUserId() == myFriend.getUserId()) && (f.getReceiver().getUserId() != u.getUserId()) && (!(myFriends.contains(f.getReceiver()))) && (count != 8) ) {
+					suggestedFriends.add(f.getReceiver());
+					count++;
+				}
+			}	
+		}
+			
+		return suggestedFriends;
+	}
+
+	@Override
+	public List<User> FriendsInCommon(Long userId1, Long userId2) {
+		User u1 = userRepository.findById(userId1).orElse(null);
+		User u2 = userRepository.findById(userId1).orElse(null);
+		List<Friend> myFriendList = getMyFriends2(u1);
+		Set<User> FriendsInCommon = new HashSet<>();
+		
+		for (Friend f : myFriendList) {
+			List<Friend> externalList = getMyFriends2(f.getReceiver());
+			
+			for (Friend f2: externalList) {
+				System.err.println("Sender:" + f2.getSender().getUserId() + "----Receiver:" +f2.getReceiver().getUserId()+"\n------------------\n" );
+				if (f2.getReceiver().getUserId() == userId2) {
+					FriendsInCommon.add(f2.getSender());
+				}
+			}
+		}	
+		List<User> commonFriends = new ArrayList<>(FriendsInCommon);
+		return commonFriends;
+	}
+
+	@Override
+	public List<User> usersNumberJanuary(int id){
+		List<User> users = userRepository.findAll();
+		List<User> result = new ArrayList<>();
+		for (User u : users) {
+			if (u.getRegistrationDate().getMonth() == id) {
+				result.add(u);
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	public List<User> subscribedUsersNumberMonth(int id){
+		List<User> users = userRepository.subscribedUsers();
+		List<User> result = new ArrayList<>();
+		for (User u : users) {
+			if (u.getRegistrationDate().getMonth() == id) {
+				result.add(u);
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	public List<String> getRegistredCountries(){
+		List<User> users = userRepository.findAll();
+		Set<String> countries = new HashSet<>();
+		for (User u : users) {
+			countries.add(u.getCountry());
+		}
+		List<String> result = new ArrayList<>(countries);
+		return result;
+	}
+	
+	@Override
+	public List<Long> numberRegistrationByCountry(){
+		List<String> countries = getRegistredCountries();
+		List<User> users = userRepository.findAll();
+		List<Long> result = new ArrayList<>();
+		for (String country : countries){ 
+			Long i = 0L;
+			for (User u : users) {
+				if (country.equals(u.getCountry())) {
+					i++;
+				}
+			}
+			result.add(i);
+		}
+		return result;
+		
+	}
+	
+	@Override
+	public List<User> allAdmins(){
+		List<User> users = userRepository.findAll();
+		List<User> result = new ArrayList<>();
+		for (User u : users) {
+			if (u.getRole().name().equals("ADMIN")) {
+				result.add(u);
+			}
+		}
+		return result;
+	}
 	
 	
 	 

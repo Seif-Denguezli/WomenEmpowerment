@@ -1,5 +1,6 @@
 package tn.esprit.spring.controllers;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +20,7 @@ import tn.esprit.spring.service.IAppointment;
 import tn.esprit.spring.service.appointmentService;
 
 @RestController
+@RequestMapping("/appointment")
 public class appointementController {
 @Autowired
 IAppointment appserv;
@@ -41,6 +44,10 @@ public void deleteAppoitment(@PathVariable Long appointmentId){
 @PutMapping ("/nbre")
 public void NombresCaseSolved() {
 	 appserv.NombresCaseSolved();
+}
+@GetMapping("calendrier/{date}/{service_id}")
+public Boolean isDisponible(@PathVariable Date date,@PathVariable Long service_id)
+{ return appserv.isDisponible(date, service_id);
 }
 
 

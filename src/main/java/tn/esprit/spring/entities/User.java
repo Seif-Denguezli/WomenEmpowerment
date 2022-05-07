@@ -23,6 +23,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -66,16 +67,27 @@ public class User implements Serializable{
     
     String PhoneNumber;
     
+    String country;
+    
 	String email;
 	
 	@Temporal(TemporalType.DATE)
 	Date birthDate;
+	
+	@Temporal(TemporalType.DATE)
+	Date registrationDate;
+	
+	boolean isLocked;
+	
+	int loginAttempts;
 
     @Transient
     String accessToken;
 
     @Transient
     String refreshToken;
+    
+    String profilPic;
 	
 	@JsonIgnore
 	@OneToOne
@@ -85,17 +97,13 @@ public class User implements Serializable{
 	@OneToOne
 	Subscription subscription;
 	
+	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	@JsonIgnore
 	Set<Notification> notifications;
 
-	/*@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "candidate")
-	Set<CvInfo> CV;*/ //Cv postulées;
 	@OneToOne
 	CvInfo CV;
-	@OneToOne
-	User woman; // Reflexive association
 	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "candidate")
@@ -123,9 +131,10 @@ public class User implements Serializable{
 	
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
 	Set<Certificate> obtainedCertificates; // Certificates obtained after joining courses
 	@ManyToMany(cascade = CascadeType.ALL)
+	@JsonIgnore
 	Set<Answer> answers;
 
 
@@ -146,10 +155,11 @@ public class User implements Serializable{
 	//******************************************************************//
 	
 	// Specefic Former Attributes
-	@JsonIgnore
+	@JsonInclude
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Course> createdCourses; // Courses created By the former
-	@ManyToMany(mappedBy = "buser",fetch = FetchType.EAGER)
+	@ManyToMany(mappedBy = "buser",fetch = FetchType.LAZY)
+	@JsonIgnore
 	Set<Course> bcourses;
 	
 	//******************************************************************//
@@ -159,7 +169,7 @@ public class User implements Serializable{
 	String activityDomain;
 	
 	String address;
-	@JsonIgnore
+
 	@Temporal(TemporalType.DATE)
 	Date establishmentDate;
 	@JsonIgnore
@@ -171,7 +181,7 @@ public class User implements Serializable{
 	
 	// Specefic Association Attributes
 	
-	int nbEventsCreated;
+
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Event> createdEvents;
@@ -199,12 +209,6 @@ public class User implements Serializable{
 	
 	//******************************************************************//
 
-	// message
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="sender")
-	private Set<Message> senders;
 	
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="reciver")
-	private Set<Message> recivers;
-	
+	String ExpertCalander;
 	}

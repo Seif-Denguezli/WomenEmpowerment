@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -15,21 +15,27 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.nylas.RequestFailedException;
 import com.sun.xml.bind.v2.runtime.reflect.Lister.CollectionLister;
 
 import tn.esprit.spring.entities.Answer;
 import tn.esprit.spring.entities.Certificate;
 import tn.esprit.spring.entities.Course;
+import tn.esprit.spring.entities.Notification;
 import tn.esprit.spring.entities.Quiz;
 import tn.esprit.spring.entities.QuizQuestion;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.enumerations.Role;
 import tn.esprit.spring.exceptions.CourseNotExist;
 import tn.esprit.spring.exceptions.CourseOwnerShip;
 import tn.esprit.spring.exceptions.CoursesLimitReached;
 import tn.esprit.spring.repository.CourseRepository;
+import tn.esprit.spring.repository.NotificationRepository;
 import tn.esprit.spring.repository.QuizzRepository;
 import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.serviceInterface.courses.CourseService;
@@ -41,14 +47,22 @@ CourseRepository courseRepository;
 UserRepository userRepository;
 @Autowired
 QuizzRepository quizzRepository; 
+@Autowired
+CourseCalendarServiceImpl courseCalendarServiceImpl;
+@Autowired
+NotificationRepository notificationRepository;
 	@Override
 	public Course addCourse(Course c) {
+		
 		return courseRepository.save(c);
 	}
 	@Override
-	public Course editCourse(Course c,Long courseId) throws CourseNotExist {
-		
+	public Course editCourse(Course c,Long courseId,Long userId) throws CourseNotExist,CourseOwnerShip {
+		User user = userRepository.findById(userId).get();
 		Course course = courseRepository.findById(courseId).orElse(null);
+		if(!user.getCreatedCourses().contains(course)) {
+			throw new CourseOwnerShip("You aren't the owner of this course");
+		}
 		if(course==null) {
 			throw new CourseNotExist("This course does not exist");
 			
@@ -74,12 +88,30 @@ QuizzRepository quizzRepository;
 		Set<Course> courses = usr.getCreatedCourses();
 		courses.add(c);
 		userRepository.save(usr);
+		
+
+
+				Notification notif = new Notification();
+	            notif.setCreatedAt(new Date());
+	            notif.setMessage(c.getCourseName() +" has been successfully created !");
+	            notif.setRead(false);
+	            notif.setUser(usr);
+	            notificationRepository.save(notif);
+		
 		}
 		else {
 		throw new CoursesLimitReached("Limit reached : The maximum ongoing courses is 2 ");
 	}
 	}
-
+	@Scheduled(cron= "0/10 * * * * *")
+ public void verifyCourseCalendar() throws IOException, RequestFailedException {
+	 List<Course> courses = courseRepository.findAll();
+	 for (Course course : courses) {
+		if(course.getCalendarId()==null) {
+			courseCalendarServiceImpl.createCal(course.getCourseId());
+		}
+	}
+ }
 	@Override
 	public Course deleteCourse(Long idUser, Long idCourse) throws CourseNotExist, CourseOwnerShip {
 		    User usr = userRepository.findById(idUser).get();
@@ -184,12 +216,6 @@ QuizzRepository quizzRepository;
 			
 		}
 		
-		
-		
-		
-		
-		
-
 	}
 	@Override
 	public boolean courseVerificator(Long userId) {
@@ -245,6 +271,16 @@ QuizzRepository quizzRepository;
 	            LocalDate.parse(date2).withDayOfMonth(1));
 	}
 	
+	public int getFormersNb() {
+		List<User> users = userRepository.findAll();
+		int count = 0;
+		for (User user : users) {
+			if (user.getRole() == Role.FORMER ){
+				count++;
+			}
+		}
+		return count;
+	}
 	
 	
 	

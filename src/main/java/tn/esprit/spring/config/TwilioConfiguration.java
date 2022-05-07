@@ -24,7 +24,7 @@ public class TwilioConfiguration {
 
 
 	public String getAccountSid() {
-		return "AC2c4063cee0d989aba25164d1f13fc2c2";
+		return "ACc26b75363b8a3e8397b617e6bd44ae25";
 	}
 
 
@@ -36,7 +36,7 @@ public class TwilioConfiguration {
 
 
 	public String getAuthToken() {
-		return "08ef089685403ff1885f0b27a099b71e";
+		return "57e91d2120cd40e8555d382ee31760b8";
 	}
 
 
@@ -56,7 +56,7 @@ public class TwilioConfiguration {
 
 
 	public String getTrialNumber() {
-		return "+17577810152";
+		return "+17402475611";
 	}
 
 

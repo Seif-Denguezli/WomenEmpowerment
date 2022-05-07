@@ -65,10 +65,14 @@ public class Course implements Serializable {
 	@Enumerated(EnumType.STRING)
 	Domain domain;
 	String channelId;
-	
+	String calendarId;
 	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
 	Set<FileInfo> files;
-	@ManyToMany(fetch = FetchType.EAGER)
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY)
 	Set<User> buser;
-
+	@JsonIgnore
+	@OneToMany(mappedBy = "course")
+	Set<CourseCalEvent> courseEvents;
+	String streamKey;
 }

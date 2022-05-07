@@ -15,13 +15,19 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import tn.esprit.spring.entities.Certificate;
+import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.repository.CertificateRepository;
+import tn.esprit.spring.repository.CourseRepository;
+import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.serviceInterface.courses.CertificateService;
 @Service
 public class CertificateServiceImpl implements CertificateService {
 	@Autowired
 	CertificateRepository certificateRepository;
-	
+	@Autowired
+	CourseRepository courseRepository;
+	@Autowired
+	UserRepository userRepository;
 	
 	@Scheduled(cron = "0/10 * * * * *")
 	public void createCertificateQr() throws IOException, InterruptedException {
@@ -29,24 +35,29 @@ public class CertificateServiceImpl implements CertificateService {
 		List<Certificate> c = certificateRepository.findAll();
 		for (Certificate certificate : c) {
 			if(certificate.isAquired()==true && certificate.getCertificateQR()==null) {
-				String text=certificate.getCourse().getCourseName()+certificate.getUser().getUsername()+"'mail'"+certificate.getUser().getEmail();
+				String text=certificate.getUser().getUsername()+"'mail'"+certificate.getUser().getEmail();
+				String texttrimmed = text.replaceAll("\\s","");
 				
 				HttpRequest request = HttpRequest.newBuilder()
-						.uri(URI.create("https://codzz-qr-cods.p.rapidapi.com/getQrcode?type=text&value="+text+""))
+						.uri(URI.create("https://codzz-qr-cods.p.rapidapi.com/getQrcode?type=text&value="+texttrimmed+""))
 						.header("x-rapidapi-host", "codzz-qr-cods.p.rapidapi.com")
 						.header("x-rapidapi-key", "b648c42070msh2f1e24111397e42p1155f4jsn864d7705eee5")
 						.method("GET", HttpRequest.BodyPublishers.noBody())
 						.build();
 				HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 				System.err.println(response.body());
-				certificate.setCertificateQR(response.body().substring(8, 61));
+			 certificate.setCertificateQR(response.body().substring(8, 61));
 				certificateRepository.saveAndFlush(certificate);
 				
 			}
 		}
 
 		}
-
+public List<Certificate> userCertificate(Long courseId) {
+	List<Certificate> certif = certificateRepository.findByCourse(courseId);
+	return certif;
+	
+}
 	@Override
 	public byte[] certif(Long certificateid) throws IOException, InterruptedException{
 		Certificate certif = certificateRepository.findById(certificateid).get();
@@ -60,6 +71,19 @@ public class CertificateServiceImpl implements CertificateService {
 	 HttpResponse<byte[]> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofByteArray());
 	 byte[] res = response.body();
 	return res;
+	}
+	public List<Certificate> getCertificates(){
+		return certificateRepository.findAll();
+	}
+	public int getAquiredCertificates() {
+		int nb = 0;
+		List<Certificate> certificates = certificateRepository.findAll();
+		for (Certificate certificate : certificates) {
+			if (certificate.isAquired() == true) {
+				nb++;
+			}
+		}
+		return nb;
 	}
 	
 }
