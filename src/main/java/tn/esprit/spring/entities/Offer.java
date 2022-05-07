@@ -47,7 +47,7 @@ public class Offer implements Serializable {
 	Date createdAt;
 	
 	String CalendId;
-
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "offer")
 	Set<Candidacy> candidacies;
 	

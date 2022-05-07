@@ -10,9 +10,9 @@ public interface ICandidacyService {
 	
     public List<Candidacy> getAllCandidacies();
 	
-	public void postulerOffre (Candidacy candidacy,Long offerId,Long userId );
+	public  Candidacy postulerOffre (Long offerId,Long userId );
 	
-	public void SetFavorite(Long candidacy_id,boolean is_bookmarked);
+	public void SetFavorite(Long candidacy_id);
 	
     public List<String> getMyCandidacy(String keyword);
     

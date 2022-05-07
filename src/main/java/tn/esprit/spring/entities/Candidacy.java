@@ -43,11 +43,18 @@ public class Candidacy implements Serializable {
 	@ManyToOne
 	User candidate;
 
+	
 	@ManyToOne
 	Offer offer; 
 	
 	@OneToOne
 	Interview interview;
+	
+	@JsonIgnore
+	@OneToOne
+	CvInfo CV;
+	
+	
 	public void setUser(User user) {
 		// TODO Auto-generated method stub
 		
