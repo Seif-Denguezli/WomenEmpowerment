@@ -5,7 +5,6 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sun.javafx.font.CharToGlyphMapper;
 
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.repository.UserRepository;

@@ -54,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/api/authentication/**", "/swagger-ui/", "/swagger-ui/**",
                 		"/v2/api-docs", "/configuration/ui",
                 		"/swagger-resources/**", "/configuration/security",
-                		"/swagger-ui.html", "/webjars/**","/course/**").permitAll()//login and register pre-path
+                		"/swagger-ui.html", "/webjars/**","/course/**", "/chat-websocket/**","/forum/**").permitAll()//login and register pre-path
                 .antMatchers("/api/admin/**").hasRole(Role.ADMIN.name()) 
                 .anyRequest().authenticated()
 		        //.and()

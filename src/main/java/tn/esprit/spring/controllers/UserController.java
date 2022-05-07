@@ -104,8 +104,8 @@ public class UserController
     }
     
     @PostMapping("/subscription/save")
-    public Subscription addSubscription(@RequestBody Subscription s,@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
-    	return userService.addSubscription(s, u.getUsername());
+    public Subscription addSubscription(@ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
+    	return userService.addSubscription(u.getUsername());
     }
     
   /*  @PutMapping("/subscription/extend/{username}/{nbMonths}")

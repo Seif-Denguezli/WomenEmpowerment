@@ -5,11 +5,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletResponse;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import com.stripe.model.PaymentIntent;
 
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
+import tn.esprit.spring.entities.Media;
 import tn.esprit.spring.entities.Payment;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.entities.WomenNeedDonation;
@@ -71,36 +73,27 @@ public class DonationServiceImpl implements DonationService {
 
 		return donation;
 	}
+	
+	
+	
+	
+	
+	
+	
 
 	@Override
-	public Donation addDonation_to_Event(Long idEvent, Long idUser, Payment pi) throws StripeException {
-		Donation donation = new Donation();
-
+	public Donation addDonation_to_Event(Long idEvent, Long idUser ,Donation donation){
 		Event event = eventRepo.findById(idEvent).orElse(null);
 		User user = userRepo.findById(idUser).orElse(null);
-		PaymentIntent p = ps.paymentIntent(pi);
+	
 		donation.setEvent(event);
 		donation.setDonor(user);
-		donation.setAmount_forEvent(p.getAmount());
-		donation.setCodePayement(p.getId());
-		// donation.setDonationDate(p.GET);
-			event.setMontantCollecte(event.getMontantCollecte()+p.getAmount());
-		 ps.confirm(p.getId());
+	
 		return donationRepo.save(donation);
 
 	}
 
-	@Override
-	public Donation editDonation(Donation donation, Long idEvent) {
-		donation.setAmount_forEvent(donation.getAmount_forEvent());
 
-		Event event = eventRepo.findById(idEvent).orElse(null);
-		donation.setEvent(event);
-
-		donationRepo.flush();
-		return donation;
-
-	}
 
 	@Override
 	public void removeDonation(Long idDonation) {
@@ -158,9 +151,67 @@ public class DonationServiceImpl implements DonationService {
 		
 	}
 
+
+
+
+
+
+
+
+	@Override
+	public Donation addDonation(Long idEvent, Long idUser,Donation donation) {
+		Set<Event> eventList = new HashSet<Event>();
+		Set<Donation> donationList = new HashSet<Donation>();
+
+		User user = userRepo.findById(idUser).orElse(null);
+		Event event = eventRepo.findById(idEvent).orElse(null);
+		donationList.add(donation);
+		user.setDonations(donationList);
+		event.setDonations(donationList);
+	
+		return donationRepo.save(donation);
+	}
+
+
+
+
+
+
+
+
+	@Override
+	public Donation addDonationVfinal(Long idEvent, Long idUser, Donation donation) {
+	
+
+		Event event = eventRepo.findById(idEvent).orElse(null);
+		User user = userRepo.findById(idUser).orElse(null);
+	
+		donation.setEvent(event);
+		donation.setDonor(user);
+	
+		return donationRepo.save(donation);
+	
+	}
+
 	
 	
-	
+	/*@Override
+	public Donation addDonation_to_Event(Long idEvent, Long idUser, Payment pi) throws StripeException {
+		Donation donation = new Donation();
+
+		Event event = eventRepo.findById(idEvent).orElse(null);
+		User user = userRepo.findById(idUser).orElse(null);
+		PaymentIntent p = ps.paymentIntent(pi);
+		donation.setEvent(event);
+		donation.setDonor(user);
+		donation.setAmount_forEvent(p.getAmount());
+		donation.setCodePayement(p.getId());
+		// donation.setDonationDate(p.GET);
+			event.setMontantCollecte(event.getMontantCollecte()+p.getAmount());
+		 ps.confirm(p.getId());
+		return donationRepo.save(donation);
+
+	}*/
 
 	
 

@@ -40,16 +40,25 @@ import com.twilio.rest.api.v2010.account.MessageCreator;
 import com.twilio.type.PhoneNumber;
 
 import tn.esprit.spring.config.TwilioConfiguration;
+import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Donation;
 import tn.esprit.spring.entities.Event;
 import tn.esprit.spring.entities.Media;
+import tn.esprit.spring.entities.Post;
+import tn.esprit.spring.entities.PostComment;
+import tn.esprit.spring.entities.PostLike;
 import tn.esprit.spring.entities.SmsRequest;
 
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.entities.eventComment;
 import tn.esprit.spring.enumerations.EventType;
+import tn.esprit.spring.exceptions.CourseNotExist;
+import tn.esprit.spring.exceptions.CourseOwnerShip;
+import tn.esprit.spring.repository.DonationRepo;
 import tn.esprit.spring.repository.EventRepo;
 import tn.esprit.spring.repository.MediaRepo;
 import tn.esprit.spring.repository.UserRepository;
+import tn.esprit.spring.repository.eventcommentRepo;
 import tn.esprit.spring.service.user.ServiceAllEmail;
 import tn.esprit.spring.serviceInterface.EventService;
 import tn.esprit.spring.serviceInterface.SmsSender;
@@ -71,6 +80,11 @@ public class EventServiceImpl implements EventService {
 	UserRepository userRepo;
 	@Autowired
 	ServiceAllEmail emailService;
+	@Autowired
+	eventcommentRepo eventcomRepo;
+	
+	@Autowired
+	DonationRepo donationRepo;
 
 	@Autowired
 	public EventServiceImpl(@Qualifier("twilio") TwilioSmsSender smsSender) {
@@ -92,11 +106,28 @@ public class EventServiceImpl implements EventService {
 	 * 
 	 * }
 	 */
+	
+	
+	@Override
+	public ResponseEntity<?> create(Long iduser, Event event) throws IOException {
+		Set<Event> eventList = new HashSet<Event>();
+		User user = userRepo.findById(iduser).orElse(null);
+		eventList.add(event);
+		user.setCreatedEvents(eventList);
+		event.setCreateurEvent(user);
+		
+		eventRepo.save(event);
+		return new ResponseEntity(event, HttpStatus.OK);
+		
+		
+			
+
+	}
 
 	@Override
 	public ResponseEntity<?> createEventbyUser(Long idUser, MultipartFile multipartFile, String EventName,
-			String description, Date createAt,Date StartAt ,Date endAt, EventType typeEvent, int maxPlace, float targetDonation,
-			String address) throws MessagingException, IOException {
+			String description, Date createAt,Date StartAt ,Date endAt, int maxPlace, float targetDonation,
+			String address,String latitude,String lang) throws MessagingException, IOException {
 		Set<User> usersList = new HashSet<User>();
 		Set<Event> eventList = new HashSet<Event>();
 		User user = userRepo.findById(idUser).orElse(null);
@@ -105,13 +136,14 @@ public class EventServiceImpl implements EventService {
 		Map result = cloudImage.upload(multipartFile);
 		Event event = new Event();
 		event.setEventName(EventName);
-		event.setCreatedAt(createAt);
+	
 		event.setEndAt(endAt);
-		event.setEventType(typeEvent);
-		event.setMaxPlace(maxPlace);
+
 		event.setTargetDonation(targetDonation);
-		event.setAddress(address);
+	
 		event.setDescription(description);
+		event.setLang(lang);
+		event.setLatitude(latitude);
 
 		event.setCreateurEvent(user);
 
@@ -120,7 +152,7 @@ public class EventServiceImpl implements EventService {
 				, (String) result.get("url"),
 				(String) result.get("public_id"));
 
-		media.setEvent(event);
+		media.setEvents(event);
 		eventList = user.getCreatedEvents();
 		eventList.add(event);
 		eventRepo.save(event);
@@ -134,20 +166,7 @@ public class EventServiceImpl implements EventService {
 		return new ResponseEntity(" the event was created with succeed ", HttpStatus.OK);
 	}
 
-	@Override
-	public Event EditEventCreateByUser(Event e, Long idEvent) {
-
-		Event Event = eventRepo.findById(idEvent).get();
-		Event.setEventName(e.getEventName());
-		Event.setEventType(e.getEventType());
-		Event.setLink(e.getLink());
-		Event.setDescription(e.getDescription());
-		Event.setMaxPlace(e.getMaxPlace());
-		Event.setTargetDonation(e.getTargetDonation());
-		Event.setAddress(e.getAddress());
-		eventRepo.flush();
-		return e;
-	}
+	
 
 	@Override
 	public ResponseEntity<?> updateImageForEvent(Long idmedia, MultipartFile multipartFile) throws IOException {
@@ -230,7 +249,7 @@ public class EventServiceImpl implements EventService {
 		SmsRequest smsrequest = new SmsRequest(null, null);
 		User u = userRepo.findById(userid).orElse(null);
 		Event event = eventRepo.findById(eventId).orElse(null);
-		if (event.getParticipants().size() < event.getMaxPlace() && userid != event.getCreateurEvent().getUserId()) {
+		if (userid != event.getCreateurEvent().getUserId()) {
 
 			Set<Event> ev = u.getJoinedEvents();
 			ev.add(event);
@@ -240,10 +259,10 @@ public class EventServiceImpl implements EventService {
 			Set<User> user = event.getParticipants();
 			user.add(u);
 			event.setParticipants(user);
-			event.setMaxPlace(event.getMaxPlace() - 1);
+			
 			eventRepo.save(event);
 			
-			sendSms(smsrequest, u.getPhoneNumber(), event.getEventName() + " : Participation avec succes");
+			//sendSms(smsrequest, u.getPhoneNumber(), event.getEventName() + " : Participation avec succes");
 			//emailService.sendNewEventCreatedByUser(event.getEventName(), u.getEmail());
 
 
@@ -256,9 +275,10 @@ public class EventServiceImpl implements EventService {
 
 //			sendSms(smsrequest, u.getPhoneNumber(), event.getEventName()  + " : il y a plus de place");
 			// System.out.println("Place complets");
-			System.out.println(event.getMaxPlace());
-			System.out.println(event.getParticipants().size());
-			return new ResponseEntity(" u are the creator of event or nbr of places are limited ", HttpStatus.OK);
+	
+			
+			//return new ResponseEntity(" u are the creator of event or nbr of places are limited ", HttpStatus.OK);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("particpation non succes");
 		}
 	}
 
@@ -280,7 +300,7 @@ public class EventServiceImpl implements EventService {
 		Event e = eventRepo.findById(eventId).orElse(null);
 
 		for (Donation d : e.getDonations()) {
-			s = s + d.getAmount_forEvent();
+			s = s + d.getAmountForEvent();
 
 		}
 		if (s >= e.getTargetDonation())
@@ -350,26 +370,193 @@ public class EventServiceImpl implements EventService {
 		return eventRepo.findAll();
 
 	}
+	
+	
+
+	@Override
+	public Event displayEvent(Long idEvent) {
+		
+		return eventRepo.findById(idEvent).get();
+	}
+
 
 
 
 	
 
+	
+
+	@Override
+	public ResponseEntity<?> addComment_to_Event(eventComment eventcomment, Long idEvent, Long idUser) {
+		Event event = eventRepo.findById(idEvent).orElse(null);
+		User user = userRepo.findById(idUser).orElse(null);
+	//	DetctaDataLoad(postComment.getCommentBody(),idUser);
+	//	if (Filtrage_bad_word(postComment.getCommentBody()) == 0) {
+			//postComment.setUser(u);
+			//postComment.setPost(p);
+		eventcomment.setUser(user);
+		eventcomment.setEventt(event);
+		eventcomRepo.save(eventcomment);
+		//	postCommentRepo.save(postComment);
+			return ResponseEntity.ok().body(eventcomment);
+			/*
+			 * Set<PostComment> pc = p.getPostComments(); pc.add(postComment);
+			 * p.setPostComments(pc); postRepo.save(p);
+			 * 
+			 * Set<PostComment> pu = u.getPostComments(); pu.add(postComment);
+			 * u.setPostComments(pu); userRepo.save(u);
+			 * 
+			 * 
+			 */
+			//}
+	//	return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("Bads Word Detected");
+	}
+
+	@Override
+	public ResponseEntity<?> Update_Comment(eventComment eventcomment, Long idEventCom, Long idUser) {
+		if (eventcomRepo.existsById(idEventCom)) {
+			eventComment eventCom1 = eventcomRepo.findById(idEventCom)
+					.orElseThrow(() -> new EntityNotFoundException("Comment not found"));
+			//User user = userRepo.findById(idUser).orElseThrow(() -> new EntityNotFoundException("User not found"));
+			//if (postCom1.getUser().equals(user)) {
+
+			eventCom1.setCommentBody(eventcomment.getCommentBody());
+			eventcomRepo.save(eventCom1);
+				return ResponseEntity.ok().body(eventCom1);
+			//} else {
+			//	return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("No permission to delete this post ");
+		//	}
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment Not Founf");
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> Delete_eventCom(Long idEventCom, Long idUser) {
+		if (eventcomRepo.existsById(idEventCom)) {
+			eventComment eventCom1 = eventcomRepo.findById(idEventCom)
+					.orElseThrow(() -> new EntityNotFoundException("post not found"));
+			User user = userRepo.findById(idUser).orElseThrow(() -> new EntityNotFoundException("User not found"));
+			if (eventCom1.getUser().equals(user)) {
+				eventcomRepo.delete(eventCom1);
+				return ResponseEntity.ok().body("Delete success");
+			} else {
+				return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body("No permission to delete this post");
+			}
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("post Not");
+		}
+	
+	}
+
+	@Override
+	public Event deletEvent(Long idUser, Long idEvent) throws CourseNotExist, CourseOwnerShip {
+		  User usr = userRepo.findById(idUser).get();
+			Event e = eventRepo.findById(idEvent).orElse(null);
+			if(e==null) {
+				throw new CourseNotExist("This event does not exist");
+			}
+			if(e.getCreateurEvent().equals(usr)) {
+				usr.getCreatedEvents().remove(e);
+				eventRepo.delete(e);	
+			}else {
+				throw new CourseOwnerShip("You aren't the owner of this event");
+			}
+			
+			return e ;
+	}
+	
+	
+
+	@Override
+	public Event editEvent(Event e, Long idEvent, Long idUser) throws CourseNotExist, CourseOwnerShip {
+	
+		 User usr = userRepo.findById(idUser).get();
+			Event event = eventRepo.findById(idEvent).orElse(null);
+			if(event==null) {
+				throw new CourseNotExist("This event does not exist");
+			}
+			
+		 
+				event.setEventName(e.getEventName());
+			
+			
+				
+				event.setBigDescription(e.getBigDescription());
+			
+			
+				event.setDescription(e.getDescription());
+			
+				
+				event.setStartAt(e.getStartAt());
+				
+			
+				event.setEndAt(e.getEndAt());
+				
+				
+				eventRepo.saveAndFlush(event);
+		
+		
+			
+			return e ;
+	}
+
+
+	@Override
+	public List<Long> findEventYear() {
+		return 	eventRepo.findEventYear();
+	}
+
+	@Override
+	public ResponseEntity<?> getAllComment() {
+	
+		 return new ResponseEntity(	eventcomRepo.findAll(), HttpStatus.OK);
+	}
+
+	@Override
+	public Donation addDonation_to_Event(Long idEvent, Long idUser, Donation donation) {
+		Set<Event> eventList = new HashSet<Event>();
+		Set<Donation> donationList = new HashSet<Donation>();
+
+		User user = userRepo.findById(idUser).orElse(null);
+		Event event = eventRepo.findById(idEvent).orElse(null);
+		donationList.add(donation);
+		user.setDonations(donationList);
+		event.setDonations(donationList);
+	
+		return donationRepo.save(donation);
+	}
+
+	@Override
+	public ResponseEntity<?> addImageForEvent2002(MultipartFile image, Long idEvent) throws IOException {
+		Event e = eventRepo.findById(idEvent).orElse(null);
+		BufferedImage bi = ImageIO.read(image.getInputStream());
+		
+		Map result = cloudImage.upload(image);
+		
+		Media media = new Media((String) 
+				result.get("original_filename")
+				, (String) result.get("url"),
+				(String) result.get("public_id"));
+		media.setEvents(e);
+		mediaService.save(media);
+	
+		return ResponseEntity.status(HttpStatus.OK).body("Image added to adversting");
+	
+	}
+
 	@Override
 	public ResponseEntity<?> addressMapss(Long idEvent) throws IOException, InterruptedException {
-		Event event = eventRepo.findById(idEvent).orElse(null);
-    	String ad = event.getAddress().replaceAll(" ","");
-    	HttpRequest request = HttpRequest.newBuilder()
-    			.uri(URI.create("https://trueway-geocoding.p.rapidapi.com/Geocode?address="+ad+"&language=en"))
-    			.header("X-RapidAPI-Host", "trueway-geocoding.p.rapidapi.com")
-    			.header("X-RapidAPI-Key", "ed49ed85d6msh938f7708ed191dbp16c7dfjsne72e10f27091")
-    			.method("GET", HttpRequest.BodyPublishers.noBody())
-    			.build();
-    	HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-    	System.out.println(response.body());
-    return new ResponseEntity(response.body(), HttpStatus.OK);
-    
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+
+
+
+
+
+	
 
 	// ------------------------------------------------------------------------------------------------------
 

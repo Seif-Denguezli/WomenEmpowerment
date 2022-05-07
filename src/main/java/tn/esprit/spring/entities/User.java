@@ -178,7 +178,7 @@ public class User implements Serializable{
 	
 	// Specefic Association Attributes
 	
-	int nbEventsCreated;
+
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	Set<Event> createdEvents;
@@ -206,10 +206,6 @@ public class User implements Serializable{
 	
 	//******************************************************************//
 
-	// message
-
-	
-	
 	
 	String ExpertCalander;
 	}

@@ -19,7 +19,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 	public List<String> getUserJoinedCourses(@Param("param")Long idUser,@Param("domain")String domain);
 	@Query(nativeQuery=true,value="SELECT * FROM course where course.domain=:domain")
 	public Set<Course> getCoursesByDomain(@Param("domain")String domain);
-	@Query(nativeQuery=true,value="SELECT * FROM certificate WHERE certificate.is_aquired=1")
+	@Query(nativeQuery=true,value="SELECT COUNT(*) FROM certificate WHERE certificate.is_aquired=1")
 	public int getAquiredCertificates();
 	@Query(nativeQuery=true,value="SELECT * FROM course WHERE DATEDIFF(NOW(),end_date)<=0 ")
 	public Set<Course> getOnGoingCourses();
