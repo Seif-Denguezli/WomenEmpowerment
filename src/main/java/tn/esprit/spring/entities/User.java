@@ -101,6 +101,9 @@ public class User implements Serializable{
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	@JsonIgnore
 	Set<Notification> notifications;
+
+	@OneToOne
+	CvInfo CV;
 	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "candidate")

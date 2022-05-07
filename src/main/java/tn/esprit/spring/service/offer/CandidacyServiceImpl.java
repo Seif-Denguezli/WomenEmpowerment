@@ -43,10 +43,10 @@ public class CandidacyServiceImpl implements ICandidacyService {
 	}
 	
 	@Override
-	public void postulerOffre( Candidacy candidacy,Long offerId, Long userId) {
+	public  Candidacy postulerOffre (Long offerId, Long userId) {
 		
 
-		
+		Candidacy candidacy =new Candidacy();
 		Offer offer = OfferRepo.findById(offerId).orElse(null);
 		//System.err.println(offer.getOfferId().toString());
 		User user= UserRepo.findById(userId).get();
@@ -58,19 +58,12 @@ public class CandidacyServiceImpl implements ICandidacyService {
 		candidacy.setCandidacyState(CandidacyState.Unseen);
 		
 		// TODO Auto-generated method stub
-		CandidacyRepo.save(candidacy);
+		return CandidacyRepo.save(candidacy);
 	   
 	}
 
-	@Override
-	public void SetFavorite(Long candidacy_id,boolean is_bookmarked) {
-		// TODO Auto-generated method stub
-		Candidacy cc = CandidacyRepo.findById(candidacy_id).orElse(null);
-		cc.setBookmarked(is_bookmarked);
-		CandidacyRepo.save(cc);
-		
-		
-	}
+	
+	
 
 	@Override
 	public List<String> getMyCandidacy( String keyword) {
@@ -79,12 +72,12 @@ public class CandidacyServiceImpl implements ICandidacyService {
 	            return CandidacyRepo.search(keyword);}
 		 return null;	    }
 
-	@Override
-	public List<String> getMyFavoriteCandidacy(String keyword) {
+	/*@Override
+	public List<Candidacy> getMyFavoriteCandidacy(String keyword) {
 		// TODO Auto-generated method stub
 		if (keyword != null) {
             return CandidacyRepo.searchFavorite(keyword);}
-	 return null;	    }
+	 return null;	    }*/
 
 	@Override
 	public void HoldCandidacy(Long candidacy_id) throws MessagingException {
@@ -112,6 +105,19 @@ public class CandidacyServiceImpl implements ICandidacyService {
 		emailservice.sendCandidacyEmail(firstName, title, email, candidacyState);		
 		CandidacyRepo.deleteById(candidacy_id);
 		
+	}
+
+	@Override
+	public void SetFavorite(Long candidacy_id) {
+		Candidacy cc = CandidacyRepo.findById(candidacy_id).orElse(null);
+		cc.setBookmarked(true);
+		CandidacyRepo.save(cc);		
+	}
+
+	@Override
+	public List<String> getMyFavoriteCandidacy(String keyword) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	}
 	
