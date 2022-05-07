@@ -87,12 +87,7 @@ NotificationRepository notificationRepository;
 								warnCount = warnCount + 1 ;
 								
 								System.err.println( certificate.getCertificateId() + ":::::::" +warnCount);
-								Notification notif = new Notification();
-					            notif.setCreatedAt(new Date());
-					            notif.setMessage("Watchout ! You have " + warnCount + "on " + cour.getCourseName());
-					            notif.setRead(false);
-					            notif.setUser(u);
-					            notificationRepository.save(notif);
+
 								
 							}
 					}
