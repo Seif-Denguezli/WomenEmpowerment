@@ -54,9 +54,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/api/authentication/**", "/swagger-ui/", "/swagger-ui/**",
                 		"/v2/api-docs", "/configuration/ui",
                 		"/swagger-resources/**", "/configuration/security",
-                		"/swagger-ui.html", "/webjars/**","/course/**", "/chat-websocket/**","/forum/**").permitAll()//login and register pre-path
+                		"/swagger-ui.html", "/webjars/**","/course/**","/forum/**","/file/**", "/chat-websocket/**").permitAll()//login and register pre-path
                 .antMatchers("/api/admin/**").hasRole(Role.ADMIN.name()) 
-                .anyRequest().permitAll();
                 .anyRequest().authenticated()
 		        //.and()
 		        //.oauth2Login();
@@ -64,7 +63,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 		         .exceptionHandling().accessDeniedHandler(jwtAccessDenied)
 		         .authenticationEntryPoint(jwtAuthenticationHttp403);
 
-        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        
+
+        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);  
     }
 
     //Why don't we describe it as a component, because of scope.

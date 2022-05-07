@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nylas.RequestFailedException;
 
+import springfox.documentation.annotations.ApiIgnore;
 import tn.esprit.spring.entities.Service;
+import tn.esprit.spring.security.UserPrincipal;
 import tn.esprit.spring.service.CalendarServiceImpla;
 import tn.esprit.spring.service.IService;
 import tn.esprit.spring.service.serviceService;
@@ -37,8 +40,9 @@ public class serviceController {
 	IService servserv;
 	@PostMapping("/addService/{userId}")
 	@ResponseBody
-	public void addService(@RequestBody tn.esprit.spring.entities.Service s,@PathVariable Long userId ){
-		servserv.addService(s, userId);
+	public Service addService(@RequestBody tn.esprit.spring.entities.Service s,@ApiIgnore @AuthenticationPrincipal UserPrincipal u){
+		 Long iduser = u.getId();
+		return servserv.addService(s, iduser);
 	}
 @PutMapping("/updateService/{serviceId}")
 @ResponseBody

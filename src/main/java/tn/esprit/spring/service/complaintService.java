@@ -30,7 +30,7 @@ complaintRepo comprepo ;
 UserRepository userrepository;
 
 @Override
-public ResponseEntity<?> addComplaint(Complaint complaint, Long userId) {
+public Complaint addComplaint(Complaint complaint,Long userId) {
 
 	User u = userrepository.findById(userId).orElse(null);
 
@@ -38,8 +38,8 @@ public ResponseEntity<?> addComplaint(Complaint complaint, Long userId) {
 		
 		u.getComplaints().add(complaint);
 		complaint.setUser(u);
-		comprepo.save(complaint);
-		return ResponseEntity.ok().body(complaint);
+		return comprepo.save(complaint);
+		
 	} 
 
 @Override
@@ -51,11 +51,11 @@ public void updatereclamation(Complaint complaint,Long complaintId){
 	
 }
 @Override
-public void deletreclamation(Long idUser ,Long complaintId){
-	User usr = userrepository.findById(idUser).get();
+public void deletreclamation(Long complaintId ){
+// User usr = userrepository.findById(idUser).get();
 	Complaint comp= comprepo.findById(complaintId).get();
-  
-	usr.getComplaints().remove(comp);
+	
+//	usr.getComplaints().remove(comp);
 	comprepo.deleteById(complaintId);
 	
 	

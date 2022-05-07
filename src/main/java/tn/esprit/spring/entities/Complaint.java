@@ -33,7 +33,7 @@ import lombok.experimental.FieldDefaults;
 @ToString
 public class Complaint implements Serializable{
 	
-	@JsonIgnore
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long complaintId;
@@ -43,7 +43,7 @@ public class Complaint implements Serializable{
 	@Temporal(TemporalType.DATE)
 	Date createdAt;
 	
-	@JsonIgnore
+	
 	Boolean isTreated = false;
 	String content;
 	@JsonIgnore
