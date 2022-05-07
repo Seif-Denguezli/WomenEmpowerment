@@ -37,7 +37,7 @@ public class CvRestController {
 	 CandidacyRepository candidacyRepo;
 	 @Autowired
 		ICandidacyService CandidacyService;
-	  @PostMapping("/upload/{userId}/{offerId}")
+	  @PostMapping("/upload/{offerId}")
 	  public ResponseEntity<ResponseMessage> uploadFile(@RequestPart("file") MultipartFile file,@ApiIgnore @AuthenticationPrincipal UserPrincipal u,@PathVariable("offerId") Long offerId) {
 	    String message = "";
 	    Long userId = u.getId();

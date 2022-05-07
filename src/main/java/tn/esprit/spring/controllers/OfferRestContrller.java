@@ -123,7 +123,8 @@ public class OfferRestContrller {
 	
 	@GetMapping("/get-ALL-Candidacies")
     public List <Candidacy> getAllCandidacies( ) {
-        return CandidacyService.getAllCandidacies();
+        return candidacyRepo.findAll();
+        		//CandidacyService.getAllCandidacies();
       
     }
 	
