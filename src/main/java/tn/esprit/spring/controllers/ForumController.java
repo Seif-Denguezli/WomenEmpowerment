@@ -72,10 +72,10 @@ public class ForumController {
 	
 	@PostMapping("/add-Comment/{IdPost}/{IdUser}")
 	@ResponseBody
-	public ResponseEntity<?> addComment_to_Post(@RequestBody PostComment postComment, @PathVariable("IdPost") Long IdPost/*, @ApiIgnore @AuthenticationPrincipal UserPrincipal u*/) {
+	public ResponseEntity<?> addComment_to_Post(@RequestBody PostComment postComment, @PathVariable("IdPost") Long IdPost, @ApiIgnore @AuthenticationPrincipal UserPrincipal u) {
 		postComment.setCommentedAt(Date.valueOf(LocalDate.now()))	;
 
-		return forumService.addComment_to_Post(postComment,IdPost,(long)1/*,u.getId()*/);
+		return forumService.addComment_to_Post(postComment,IdPost,u.getId());
 	}
 	
 	@PostMapping("/add-Like-post/{IdPost}/{IdUser}")
