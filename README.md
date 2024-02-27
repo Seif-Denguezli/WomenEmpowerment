@@ -5,7 +5,7 @@ This application is dedicated for all women across the world. It aims for gender
 <img src="https://user-images.githubusercontent.com/73201973/155884051-11c6ff50-bef9-4d13-816b-e265703f3c16.jpg" />
 </p>
 
-# ![fusee (1)](https://user-images.githubusercontent.com/73201973/155882989-1e9acd8d-9f45-4f90-927f-d93fed3870ee.png) &nbsp; Technology
+# ![fusee (1)](https://user-images.githubusercontent.com/73201973/155882989-1e9acd8d-9f45-4f90-927f-d93fed3870ee.png) &nbsp; Technologies
 * [Angular](https://angular.io/)
 * [Spring](https://spring.io/)
 
